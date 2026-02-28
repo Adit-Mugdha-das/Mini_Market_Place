@@ -24,6 +24,7 @@ public class BuyerOrderView {
     public static class ItemView {
         private Long productId;
         private String productName;
+        private String productImageUrl;
         private String sellerUsername;
         private Integer quantity;
         private BigDecimal unitPrice;
@@ -33,6 +34,7 @@ public class BuyerOrderView {
             ItemView v = new ItemView();
             v.setProductId(oi.getProduct().getId());
             v.setProductName(oi.getProduct().getName());
+            v.setProductImageUrl(oi.getProduct().getImageUrl());
             v.setSellerUsername(oi.getProduct().getSeller().getUsername());
             v.setQuantity(oi.getQuantity());
             v.setUnitPrice(oi.getUnitPrice());

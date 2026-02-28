@@ -36,6 +36,10 @@ public class Product {
     @Column(nullable = false)
     private boolean active = true;
 
+    /** Optional product image – seller pastes any public image URL */
+    @Column(length = 1000)
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private User seller;

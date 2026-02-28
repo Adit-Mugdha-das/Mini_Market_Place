@@ -22,45 +22,90 @@
         nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
         .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
 
-        .container { max-width: 680px; margin: 40px auto; padding: 0 20px; }
-
-        .back-link { display: inline-block; color: #667eea; text-decoration: none; font-size: 0.9rem; margin-bottom: 20px; }
+        .container { max-width: 900px; margin: 36px auto; padding: 0 20px; }
+        .back-link { display: inline-flex; align-items: center; gap: 4px; color: #667eea; text-decoration: none; font-size: 0.875rem; margin-bottom: 20px; font-weight: 600; }
         .back-link:hover { text-decoration: underline; }
 
-        .card {
-            background: #fff; border-radius: 14px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 36px;
-        }
-        .product-name { font-size: 1.6rem; font-weight: 700; color: #1f2937; margin-bottom: 8px; }
-        .product-seller { color: #9ca3af; font-size: 0.9rem; margin-bottom: 16px; }
-        .product-seller strong { color: #4b5563; }
-        .product-desc { color: #4b5563; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
-        .product-price { font-size: 2rem; font-weight: 700; color: #059669; margin-bottom: 8px; }
-        .product-stock { font-size: 0.9rem; color: #6b7280; margin-bottom: 24px; }
-        .stock-low { color: #dc2626; font-weight: 600; }
+        .alert-error { background: #fee2e2; color: #991b1b; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
 
-        .divider { border: none; border-top: 1px solid #f3f4f6; margin: 24px 0; }
-
-        .order-form label { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 8px; }
-        .order-form input[type="number"] {
-            width: 120px; padding: 10px 14px; border: 1px solid #d1d5db;
-            border-radius: 8px; font-size: 0.95rem; outline: none;
+        /* ── Two-column layout ── */
+        .detail-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start;
         }
-        .order-form input[type="number"]:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.15); }
+        @media (max-width: 680px) { .detail-layout { grid-template-columns: 1fr; } }
+
+        /* ── Image panel ── */
+        .img-panel {
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07); overflow: hidden;
+        }
+        .img-wrap { width: 100%; aspect-ratio: 1; background: #f3f4f6; overflow: hidden; position: relative; }
+        .img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .img-placeholder {
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; color: #d1d5db; gap: 8px;
+        }
+        .img-placeholder .ph-icon { font-size: 4rem; }
+        .img-placeholder .ph-text { font-size: 0.8rem; color: #e5e7eb; }
+        .stock-row {
+            padding: 12px 18px; display: flex; align-items: center; gap: 8px;
+            border-top: 1px solid #f3f4f6; font-size: 0.82rem;
+        }
+        .badge {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .badge-green  { background: #dcfce7; color: #166534; }
+        .badge-yellow { background: #fef3c7; color: #92400e; }
+        .badge-red    { background: #fee2e2; color: #991b1b; }
+
+        /* ── Info panel ── */
+        .info-panel {
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07); padding: 28px;
+        }
+        .product-name { font-size: 1.5rem; font-weight: 800; color: #1f2937; margin-bottom: 6px; line-height: 1.3; }
+        .product-seller { color: #9ca3af; font-size: 0.82rem; margin-bottom: 18px; }
+        .product-seller strong { color: #6b7280; }
+        .product-desc {
+            color: #4b5563; font-size: 0.9rem; line-height: 1.7;
+            margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid #f3f4f6;
+        }
+        .price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 20px; }
+        .product-price { font-size: 2.2rem; font-weight: 800; color: #059669; }
+        .price-label { font-size: 0.8rem; color: #9ca3af; }
+
+        /* ── Order form ── */
+        .order-section label {
+            display: block; font-size: 0.78rem; font-weight: 700; color: #374151;
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+        }
+        .qty-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .qty-btn {
+            width: 36px; height: 36px; border: 1.5px solid #e5e7eb; border-radius: 8px;
+            background: #f9fafb; cursor: pointer; font-size: 1.1rem; font-weight: 700;
+            color: #374151; display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s;
+        }
+        .qty-btn:hover { background: #e5e7eb; }
+        .qty-input {
+            width: 70px; text-align: center; padding: 8px; border: 1.5px solid #e5e7eb;
+            border-radius: 8px; font-size: 1rem; font-weight: 700; color: #1f2937;
+            outline: none;
+        }
+        .qty-input:focus { border-color: #667eea; }
         .btn-order {
-            display: inline-block; margin-top: 16px;
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
             background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff; border: none; padding: 12px 32px;
-            border-radius: 10px; font-size: 1rem; font-weight: 600;
-            cursor: pointer; transition: opacity 0.2s;
+            color: #fff; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: opacity 0.2s, transform 0.1s;
         }
-        .btn-order:hover { opacity: 0.9; }
-        .btn-order:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .alert-error {
-            background: #fee2e2; color: #991b1b; border-radius: 8px;
-            padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem;
+        .btn-order:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+        .btn-order:disabled { opacity: 0.45; cursor: not-allowed; }
+        .trust-row {
+            display: flex; gap: 14px; margin-top: 14px; flex-wrap: wrap;
         }
+        .trust-item { font-size: 0.75rem; color: #9ca3af; display: flex; align-items: center; gap: 4px; }
     </style>
 </head>
 <body>
@@ -85,42 +130,90 @@
 
     <div th:if="${errorMessage}" class="alert-error" th:text="${errorMessage}"></div>
 
-    <div class="card">
-        <div class="product-name" th:text="${product.name}">Product Name</div>
-        <div class="product-seller">🏪 Sold by: <strong th:text="${product.seller.username}">seller</strong></div>
-        <div class="product-desc"
-             th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">
-            Description
+    <div class="detail-layout">
+
+        <!-- ── Left: Image ── -->
+        <div class="img-panel">
+            <div class="img-wrap">
+                <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                     th:src="${product.imageUrl}" th:alt="${product.name}"
+                     onerror="this.style.display='none'; document.getElementById('phDetail').style.display='flex';" />
+                <div id="phDetail"
+                     th:style="${product.imageUrl != null and !product.imageUrl.isEmpty()} ? 'display:none' : 'display:flex'"
+                     class="img-placeholder">
+                    <span class="ph-icon">🛒</span>
+                    <span class="ph-text">No image provided</span>
+                </div>
+            </div>
+            <div class="stock-row">
+                <span th:if="${product.quantity > 5}" class="badge badge-green">✅ In Stock</span>
+                <span th:if="${product.quantity > 0 and product.quantity <= 5}" class="badge badge-yellow">⚠️ Low Stock</span>
+                <span th:if="${product.quantity == 0}" class="badge badge-red">❌ Out of Stock</span>
+                <span style="color:#6b7280; font-size:0.82rem;"
+                      th:text="${product.quantity} + ' units available'">0 units available</span>
+            </div>
         </div>
 
-        <div class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</div>
+        <!-- ── Right: Details + Order ── -->
+        <div class="info-panel">
+            <div class="product-name" th:text="${product.name}">Product Name</div>
+            <div class="product-seller">
+                🏪 Sold by: <strong th:text="${product.seller.username}">seller</strong>
+            </div>
 
-        <div class="product-stock">
-            <span th:if="${product.quantity > 5}">✅ In stock: <strong th:text="${product.quantity}">0</strong> units</span>
-            <span th:if="${product.quantity > 0 and product.quantity <= 5}" class="stock-low">
-                ⚠️ Only <strong th:text="${product.quantity}">0</strong> left in stock!
-            </span>
-            <span th:if="${product.quantity == 0}" class="stock-low">❌ Out of stock</span>
+            <div class="product-desc"
+                 th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">
+            </div>
+
+            <div class="price-row">
+                <span class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</span>
+                <span class="price-label">per unit</span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #f3f4f6; margin-bottom:20px;" />
+
+            <!-- Order form -->
+            <form th:action="@{/buyer/orders/place}" method="post" class="order-section">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="productId" th:value="${product.id}" />
+
+                <label>Quantity</label>
+                <div class="qty-row">
+                    <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+                    <input type="number" id="quantity" name="quantity"
+                           value="1" min="1" th:max="${product.quantity}"
+                           th:disabled="${product.quantity == 0}"
+                           class="qty-input" />
+                    <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                    <span style="font-size:0.8rem; color:#9ca3af;">
+                        max <th:block th:text="${product.quantity}">0</th:block>
+                    </span>
+                </div>
+
+                <button type="submit" class="btn-order" th:disabled="${product.quantity == 0}">
+                    🛒 Place Order
+                </button>
+            </form>
+
+            <div class="trust-row">
+                <span class="trust-item">🔒 Secure checkout</span>
+                <span class="trust-item">📦 Order tracking</span>
+                <span class="trust-item">↩️ Cancel if PENDING</span>
+            </div>
         </div>
 
-        <hr class="divider" />
-
-        <form th:action="@{/buyer/orders/place}" method="post" class="order-form">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <input type="hidden" name="productId" th:value="${product.id}" />
-
-            <label for="quantity">Quantity</label>
-            <input type="number" id="quantity" name="quantity"
-                   value="1" min="1" th:max="${product.quantity}"
-                   th:disabled="${product.quantity == 0}" />
-
-            <br/>
-            <button type="submit" class="btn-order"
-                    th:disabled="${product.quantity == 0}">
-                🛒 Place Order
-            </button>
-        </form>
     </div>
 </div>
+
+<script>
+    function changeQty(delta) {
+        const input = document.getElementById('quantity');
+        if (!input) return;
+        let v = parseInt(input.value) || 1;
+        const max = parseInt(input.max) || 999;
+        v = Math.max(1, Math.min(max, v + delta));
+        input.value = v;
+    }
+</script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package com.example.mini_marketplace.service;
 
 import com.example.mini_marketplace.dto.BuyerOrderView;
+import com.example.mini_marketplace.entity.AuditLog.ActionType;
+import com.example.mini_marketplace.entity.AuditLog.EntityType;
 import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.OrderItem;
 import com.example.mini_marketplace.entity.Product;
@@ -29,6 +31,7 @@ public class BuyerService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     private User getUser(String username) {
         return userRepository.findByUsername(username)
@@ -147,7 +150,10 @@ public class BuyerService {
         item.setUnitPrice(unitPrice);
 
         order.getItems().add(item);
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+        auditService.log(username, ActionType.PLACE_ORDER, EntityType.ORDER,
+                saved.getId(), "Bought " + quantity + "x " + product.getName());
+        return saved;
     }
 
     // ─── 4. Cancel order (only if PENDING) ────────────────────────────────────
@@ -179,6 +185,8 @@ public class BuyerService {
 
         order.setStatus(Order.Status.CANCELLED);
         orderRepository.save(order);
+        auditService.log(username, ActionType.CANCEL_ORDER, EntityType.ORDER,
+                orderId, "Cancelled by buyer — stock restored");
     }
 
     // ─── 5. View buyer's own orders ────────────────────────────────────────────

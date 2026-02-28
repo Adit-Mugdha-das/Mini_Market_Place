@@ -66,28 +66,80 @@
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 20px; margin-bottom: 32px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px; margin-bottom: 32px;
         }
+        /* ── Product card ── */
         .product-card {
-            background: #fff; border-radius: 12px;
+            background: #fff; border-radius: 16px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            padding: 24px; display: flex; flex-direction: column; gap: 10px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.22s, box-shadow 0.22s;
         }
-        .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-        .product-card .product-name { font-size: 1rem; font-weight: 700; color: #1f2937; }
-        .product-card .product-desc { font-size: 0.85rem; color: #6b7280; flex-grow: 1; }
-        .product-card .product-seller { font-size: 0.8rem; color: #9ca3af; }
-        .product-card .product-price { font-size: 1.25rem; font-weight: 700; color: #059669; }
-        .product-card .product-stock { font-size: 0.8rem; color: #6b7280; }
-        .stock-low { color: #dc2626; font-weight: 600; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+
+        /* image area */
+        .card-img-wrap {
+            position: relative; width: 100%; height: 190px;
+            background: #f3f4f6; overflow: hidden; flex-shrink: 0;
+        }
+        .card-img-wrap img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .product-card:hover .card-img-wrap img { transform: scale(1.04); }
+        .card-img-placeholder {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #d1d5db; gap: 6px;
+        }
+        .card-img-placeholder .ph-icon { font-size: 2.8rem; }
+        .card-img-placeholder .ph-text { font-size: 0.72rem; color: #e5e7eb; }
+
+        /* stock badge */
+        .stock-badge {
+            position: absolute; top: 10px; left: 10px;
+            font-size: 0.65rem; font-weight: 700; padding: 3px 10px;
+            border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .stock-badge.in-stock  { background: #dcfce7; color: #166534; }
+        .stock-badge.low-stock { background: #fef3c7; color: #92400e; }
+        .stock-badge.out-stock { background: #fee2e2; color: #991b1b; }
+
+        /* card body */
+        .card-body {
+            padding: 16px 18px 18px; display: flex;
+            flex-direction: column; gap: 6px; flex-grow: 1;
+        }
+        .product-name {
+            font-size: 0.97rem; font-weight: 700; color: #1f2937;
+            line-height: 1.3; display: -webkit-box;
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .product-desc {
+            font-size: 0.8rem; color: #6b7280; line-height: 1.5; flex-grow: 1;
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden; min-height: 36px;
+        }
+        .product-seller {
+            font-size: 0.72rem; color: #9ca3af;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .card-footer {
+            padding: 0 18px 18px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 10px;
+        }
+        .product-price { font-size: 1.3rem; font-weight: 800; color: #059669; }
         .btn-detail {
-            display: block; text-align: center; background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff; padding: 10px; border-radius: 8px; text-decoration: none;
-            font-size: 0.875rem; font-weight: 600; margin-top: 8px; transition: opacity 0.2s;
+            display: inline-block; text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff; padding: 9px 18px; border-radius: 10px; text-decoration: none;
+            font-size: 0.82rem; font-weight: 700; transition: opacity 0.2s, transform 0.1s;
+            white-space: nowrap;
         }
-        .btn-detail:hover { opacity: 0.9; }
+        .btn-detail:hover { opacity: 0.9; transform: translateY(-1px); }
 
         /* ── Pagination ── */
         .pagination {
@@ -213,16 +265,51 @@
 
     <div class="product-grid">
         <div th:each="product : ${products}" class="product-card">
-            <div class="product-name" th:text="${product.name}">Product Name</div>
-            <div class="product-desc" th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">Description</div>
-            <div class="product-seller">🏪 Sold by: <strong th:text="${product.seller.username}">seller</strong></div>
-            <div class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</div>
-            <div class="product-stock">
-                <span th:if="${product.quantity > 5}">In stock: <strong th:text="${product.quantity}">0</strong></span>
-                <span th:if="${product.quantity > 0 and product.quantity <= 5}" class="stock-low">⚠️ Only <strong th:text="${product.quantity}">0</strong> left!</span>
-                <span th:if="${product.quantity == 0}" class="stock-low">❌ Out of stock</span>
+
+            <!-- Image -->
+            <div class="card-img-wrap">
+                <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                     th:src="${product.imageUrl}" th:alt="${product.name}"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div th:if="${product.imageUrl == null or product.imageUrl.isEmpty()}"
+                     class="card-img-placeholder">
+                    <span class="ph-icon">🛒</span>
+                    <span class="ph-text">No image</span>
+                </div>
+                <!-- Fallback placeholder shown by JS onerror -->
+                <div class="card-img-placeholder" style="display:none;">
+                    <span class="ph-icon">🛒</span>
+                    <span class="ph-text">Image unavailable</span>
+                </div>
+
+                <!-- Stock badge -->
+                <span th:if="${product.quantity > 5}"
+                      class="stock-badge in-stock">In Stock</span>
+                <span th:if="${product.quantity > 0 and product.quantity <= 5}"
+                      class="stock-badge low-stock">⚠️ Only <th:block th:text="${product.quantity}"/>  left</span>
+                <span th:if="${product.quantity == 0}"
+                      class="stock-badge out-stock">Out of Stock</span>
             </div>
-            <a th:href="@{/buyer/products/{id}(id=${product.id})}" class="btn-detail">View &amp; Order</a>
+
+            <!-- Body -->
+            <div class="card-body">
+                <div class="product-name" th:text="${product.name}">Product Name</div>
+                <div class="product-desc"
+                     th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">
+                    Description
+                </div>
+                <div class="product-seller">
+                    🏪 <span th:text="${product.seller.username}">seller</span>
+                </div>
+            </div>
+
+            <!-- Footer: price + CTA -->
+            <div class="card-footer">
+                <span class="product-price"
+                      th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</span>
+                <a th:href="@{/buyer/products/{id}(id=${product.id})}"
+                   class="btn-detail">View &amp; Order</a>
+            </div>
         </div>
     </div>
 

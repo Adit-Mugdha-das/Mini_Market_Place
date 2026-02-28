@@ -3,6 +3,8 @@ package com.example.mini_marketplace.service;
 import com.example.mini_marketplace.dto.ProductRequest;
 import com.example.mini_marketplace.dto.SellerDashboardMetrics;
 import com.example.mini_marketplace.dto.SellerOrderView;
+import com.example.mini_marketplace.entity.AuditLog.ActionType;
+import com.example.mini_marketplace.entity.AuditLog.EntityType;
 import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.OrderItem;
 import com.example.mini_marketplace.entity.Product;
@@ -28,6 +30,7 @@ public class SellerService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     // ─── helpers ───────────────────────────────────────────────────────────────
 
@@ -53,10 +56,13 @@ public class SellerService {
         Product p = new Product();
         p.setName(req.getName());
         p.setDescription(req.getDescription());
+        p.setImageUrl(req.getImageUrl());
         p.setPrice(req.getPrice());
         p.setQuantity(req.getQuantity());
         p.setSeller(seller);
         productRepository.save(p);
+        auditService.log(username, ActionType.CREATE_PRODUCT, EntityType.PRODUCT,
+                p.getId(), "Created: " + p.getName());
     }
 
     public Product getProductForEdit(Long productId, String username) {
@@ -68,16 +74,21 @@ public class SellerService {
         Product p = getOwnedProduct(productId, getUser(username));
         p.setName(req.getName());
         p.setDescription(req.getDescription());
+        p.setImageUrl(req.getImageUrl());
         p.setPrice(req.getPrice());
         p.setQuantity(req.getQuantity());
         productRepository.save(p);
+        auditService.log(username, ActionType.UPDATE_PRODUCT, EntityType.PRODUCT,
+                productId, "Updated: " + p.getName());
     }
 
     @Transactional
     public void deleteProduct(Long productId, String username) {
         Product p = getOwnedProduct(productId, getUser(username));
-        p.setActive(false);          // soft-delete so existing orders stay intact
+        p.setActive(false);
         productRepository.save(p);
+        auditService.log(username, ActionType.DELETE_PRODUCT, EntityType.PRODUCT,
+                productId, "Soft-deleted: " + p.getName());
     }
 
     // ─── seller orders view ────────────────────────────────────────────────────
@@ -114,23 +125,19 @@ public class SellerService {
 
     public SellerDashboardMetrics getDashboardMetrics(String username) {
         User seller = getUser(username);
-
         long totalProducts  = productRepository.findBySellerOrderByCreatedAtDesc(seller).size();
         long activeProducts = productRepository.countBySellerAndActiveTrue(seller);
         long totalOrders    = orderRepository.countOrdersBySellerId(seller.getId());
         BigDecimal revenue  = orderRepository.getRevenueForSeller(seller.getId());
-
         return new SellerDashboardMetrics(totalProducts, activeProducts, totalOrders, revenue);
     }
 
     // ─── seller order status advancement ──────────────────────────────────────
-    // PENDING → CONFIRMED → SHIPPED → DELIVERED
 
     @Transactional
     public void advanceOrderStatus(Long orderId, String username) {
         User seller = getUser(username);
 
-        // Verify this seller has items in this order
         List<OrderItem> myItems =
                 orderItemRepository.findByOrderIdAndSellerId(orderId, seller.getId());
         if (myItems.isEmpty()) {
@@ -152,5 +159,11 @@ public class SellerService {
 
         order.setStatus(next);
         orderRepository.save(order);
+        auditService.log(username, ActionType.ADVANCE_ORDER_STATUS, EntityType.ORDER,
+                orderId, "Status changed to " + next);
     }
 }
+
+
+
+

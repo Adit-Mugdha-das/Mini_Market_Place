@@ -2,6 +2,7 @@ package com.example.mini_marketplace.controller;
 
 import com.example.mini_marketplace.dto.ProductRequest;
 import com.example.mini_marketplace.entity.Product;
+import com.example.mini_marketplace.service.ImageUploadService;
 import com.example.mini_marketplace.service.SellerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SellerController {
 
     private final SellerService sellerService;
+    private final ImageUploadService imageUploadService;
 
     // ─── Dashboard ─────────────────────────────────────────────────────────────
 
@@ -39,8 +42,7 @@ public class SellerController {
 
     @GetMapping("/products")
     public String listProducts(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("products",
-                sellerService.getMyProducts(userDetails.getUsername()));
+        model.addAttribute("products", sellerService.getMyProducts(userDetails.getUsername()));
         model.addAttribute("username", userDetails.getUsername());
         return "seller/products";
     }
@@ -54,12 +56,22 @@ public class SellerController {
     @PostMapping("/products/add")
     public String addProduct(@Valid @ModelAttribute("productRequest") ProductRequest req,
                              BindingResult bindingResult,
+                             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                              @AuthenticationPrincipal UserDetails userDetails,
                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) return "seller/product-form";
-
-        sellerService.addProduct(req, userDetails.getUsername());
-        redirectAttributes.addFlashAttribute("successMessage", "Product added successfully!");
+        try {
+            // File upload takes priority over URL if provided
+            if (imageFile != null && !imageFile.isEmpty()) {
+                req.setImageUrl(imageUploadService.save(imageFile));
+            }
+            sellerService.addProduct(req, userDetails.getUsername());
+            redirectAttributes.addFlashAttribute("successMessage", "Product listed successfully!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload image: " + e.getMessage());
+        }
         return "redirect:/seller/products";
     }
 
@@ -73,6 +85,7 @@ public class SellerController {
             ProductRequest req = new ProductRequest();
             req.setName(product.getName());
             req.setDescription(product.getDescription());
+            req.setImageUrl(product.getImageUrl());
             req.setPrice(product.getPrice());
             req.setQuantity(product.getQuantity());
             model.addAttribute("productRequest", req);
@@ -88,6 +101,7 @@ public class SellerController {
     public String updateProduct(@PathVariable Long id,
                                 @Valid @ModelAttribute("productRequest") ProductRequest req,
                                 BindingResult bindingResult,
+                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
@@ -96,10 +110,17 @@ public class SellerController {
             return "seller/product-form";
         }
         try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                req.setImageUrl(imageUploadService.save(imageFile));
+            }
             sellerService.updateProduct(id, req, userDetails.getUsername());
             redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload image: " + e.getMessage());
         }
         return "redirect:/seller/products";
     }
@@ -121,8 +142,7 @@ public class SellerController {
 
     @GetMapping("/orders")
     public String viewOrders(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("orders",
-                sellerService.getMyOrders(userDetails.getUsername()));
+        model.addAttribute("orders", sellerService.getMyOrders(userDetails.getUsername()));
         model.addAttribute("username", userDetails.getUsername());
         return "seller/orders";
     }
