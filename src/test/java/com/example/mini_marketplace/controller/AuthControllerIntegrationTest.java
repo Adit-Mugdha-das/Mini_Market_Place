@@ -23,7 +23,7 @@ class AuthControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    // ─── GET /auth/login ──────────────────────────────────────────────────────
+    // ─── GETauth/login ──────────────────────────────────────────────────────
 
     @Test
     @DisplayName("GET /auth/login — returns 200 and renders login view")
