@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Orders – Admin</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        nav {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            padding: 0 32px; display: flex; align-items: center;
+            justify-content: space-between; height: 60px; color: #fff;
+        }
+        nav .brand { font-size: 1.1rem; font-weight: 700; }
+        nav .nav-links { display: flex; gap: 8px; }
+        nav .nav-links a {
+            color: rgba(255,255,255,0.9); text-decoration: none;
+            padding: 6px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.15); font-size: 0.875rem; transition: background 0.2s;
+        }
+        nav .nav-links a:hover, nav .nav-links a.active { background: rgba(255,255,255,0.3); }
+        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
+
+        .container { max-width: 1200px; margin: 36px auto; padding: 0 20px; }
+        h2 { font-size: 1.4rem; color: #1f2937; margin-bottom: 24px; }
+
+        .order-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px; overflow: hidden;
+        }
+        .order-header {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px;
+            padding: 14px 20px; border-bottom: 1px solid #f3f4f6;
+            background: #fef2f2;
+        }
+        .order-meta { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .order-id { font-weight: 700; color: #1f2937; font-size: 0.95rem; }
+        .order-date { color: #9ca3af; font-size: 0.8rem; }
+        .order-parties { font-size: 0.85rem; color: #4b5563; }
+        .order-parties strong { color: #1f2937; }
+        .order-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        .status-badge {
+            padding: 4px 14px; border-radius: 20px; font-size: 0.775rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .status-PENDING   { background: #fef3c7; color: #92400e; }
+        .status-CONFIRMED { background: #dbeafe; color: #1e40af; }
+        .status-SHIPPED   { background: #e0e7ff; color: #3730a3; }
+        .status-DELIVERED { background: #dcfce7; color: #166534; }
+        .status-CANCELLED { background: #fee2e2; color: #991b1b; }
+
+        .override-form { display: flex; gap: 6px; align-items: center; }
+        .override-form select {
+            padding: 5px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+            font-size: 0.78rem; background: #fff; cursor: pointer;
+        }
+        .btn-override {
+            background: #dc2626; color: #fff; border: none; cursor: pointer;
+            padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-override:hover { background: #b91c1c; }
+
+        .alert-success { background: #d1fae5; color: #065f46; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
+        .alert-error   { background: #fee2e2; color: #991b1b; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            padding: 10px 18px; text-align: left;
+            font-size: 0.77rem; font-weight: 700; color: #6b7280;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            border-bottom: 1px solid #f3f4f6; background: #fafafa;
+        }
+        td { padding: 11px 18px; font-size: 0.875rem; color: #374151; border-bottom: 1px solid #f9fafb; }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .order-footer {
+            display: flex; justify-content: flex-end;
+            padding: 12px 20px; background: #f9fafb;
+            border-top: 1px solid #f3f4f6;
+        }
+        .order-total { font-size: 0.9rem; color: #1f2937; }
+        .order-total strong { color: #059669; font-size: 1rem; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+
+        .buyer-tag  { display:inline-block; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
+        .seller-tag { display:inline-block; background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
+    </style>
+</head>
+<body>
+<nav>
+    <span class="brand">⚙️ Mini Marketplace – Admin</span>
+    <div class="nav-links">
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <a th:href="@{/admin/users}">Users</a>
+        <a th:href="@{/admin/products}">Products</a>
+        <a th:href="@{/admin/orders}" class="active">Orders</a>
+    </div>
+    <div class="user-area">
+        <span>👤 <strong th:text="${username}">Admin</strong></span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>🧾 All Orders</h2>
+
+    <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}"   class="alert-error"   th:text="${errorMessage}"></div>
+
+    <div th:if="${orders == null or orders.isEmpty()}" class="empty-state">
+        <div class="icon">📭</div>
+        <p>No orders have been placed yet.</p>
+    </div>
+
+    <div th:each="order : ${orders}" class="order-card">
+        <div class="order-header">
+            <div class="order-meta">
+                <span class="order-id" th:text="'Order #' + ${order.id}">Order #1</span>
+                <span class="order-date"
+                      th:text="${#temporals.format(order.createdAt,'dd MMM yyyy, HH:mm')}">01 Jan 2025</span>
+                <span class="order-parties">
+                    🛒 Buyer: <strong th:text="${order.buyer.username}" class="buyer-tag">buyer</strong>
+                </span>
+            </div>
+            <div class="order-actions">
+                <span class="status-badge"
+                      th:classappend="'status-' + ${order.status}"
+                      th:text="${order.status}">PENDING</span>
+
+                <!-- Admin override: force any status -->
+                <form th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                      method="post" class="override-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <select name="status">
+                        <option th:each="s : ${allStatuses}"
+                                th:value="${s.name()}"
+                                th:selected="${s == order.status}"
+                                th:text="${s.name()}">STATUS</option>
+                    </select>
+                    <button type="submit" class="btn-override">Override</button>
+                </form>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Seller</th>
+                    <th>Unit Price</th>
+                    <th>Qty</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${order.items}">
+                    <td th:text="${item.product.name}">Product</td>
+                    <td>
+                        <span class="seller-tag" th:text="${item.product.seller.username}">seller</span>
+                    </td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(item.unitPrice,1,2)}">$0.00</td>
+                    <td th:text="${item.quantity}">1</td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(item.unitPrice * item.quantity,1,2)}">$0.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="order-footer">
+            <span class="order-total">
+                Order Total: <strong th:text="'$' + ${#numbers.formatDecimal(order.totalAmount,1,2)}">$0.00</strong>
+            </span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

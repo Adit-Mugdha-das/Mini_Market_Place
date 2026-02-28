@@ -23,4 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // Find all orders placed by a specific buyer
     List<Order> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
+
+    // Admin: all orders newest first
+    List<Order> findAllByOrderByCreatedAtDesc();
 }

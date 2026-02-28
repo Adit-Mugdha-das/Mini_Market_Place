@@ -123,4 +123,18 @@ public class SellerController {
         model.addAttribute("username", userDetails.getUsername());
         return "seller/orders";
     }
+
+    @PostMapping("/orders/{id}/advance")
+    public String advanceOrder(@PathVariable Long id,
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            sellerService.advanceOrderStatus(id, userDetails.getUsername());
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Order #" + id + " status updated successfully.");
+        } catch (IllegalStateException | IllegalArgumentException | SecurityException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/seller/orders";
+    }
 }

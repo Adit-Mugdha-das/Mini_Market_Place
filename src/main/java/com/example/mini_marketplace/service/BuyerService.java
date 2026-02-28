@@ -5,10 +5,15 @@ import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.OrderItem;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.entity.User;
+import com.example.mini_marketplace.exception.InsufficientStockException;
 import com.example.mini_marketplace.repository.OrderRepository;
 import com.example.mini_marketplace.repository.ProductRepository;
 import com.example.mini_marketplace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +35,30 @@ public class BuyerService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
-    // ─── 1. View all active products ───────────────────────────────────────────
+    // ─── 1. View all active products (paginated + sortable) ────────────────────
 
     public List<Product> getAllActiveProducts() {
         return productRepository.findByActiveTrue();
+    }
+
+    /**
+     * Paginated product listing.
+     *
+     * @param page    0-based page index
+     * @param size    items per page
+     * @param sortBy  field name: "price", "name", or "createdAt"
+     * @param dir     "asc" or "desc"
+     */
+    public Page<Product> getActiveProductsPaged(int page, int size, String sortBy, String dir) {
+        String field = switch (sortBy) {
+            case "price" -> "price";
+            case "name"  -> "name";
+            default      -> "createdAt";
+        };
+        Sort sort = "asc".equalsIgnoreCase(dir) ? Sort.by(field).ascending()
+                                                 : Sort.by(field).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productRepository.findByActiveTrue(pageable);
     }
 
     // ─── 2. View a single product ──────────────────────────────────────────────
@@ -47,10 +72,14 @@ public class BuyerService {
         return p;
     }
 
-    // ─── 3. Place order directly ───────────────────────────────────────────────
+    // ─── 3. Place order with stock validation ──────────────────────────────────
 
     @Transactional
     public Order placeOrder(String username, Long productId, int quantity) {
+        if (quantity < 1) {
+            throw new IllegalArgumentException("Quantity must be at least 1.");
+        }
+
         User buyer = getUser(username);
 
         Product product = productRepository.findById(productId)
@@ -59,11 +88,13 @@ public class BuyerService {
         if (!product.isActive()) {
             throw new IllegalStateException("Product is no longer available.");
         }
-        if (product.getQuantity() < quantity) {
-            throw new IllegalStateException("Not enough stock. Available: " + product.getQuantity());
+
+        // ── Stock validation with custom exception ──────────────────────────
+        if (product.getQuantity() <= 0) {
+            throw new InsufficientStockException(product.getName(), quantity, 0);
         }
-        if (quantity < 1) {
-            throw new IllegalArgumentException("Quantity must be at least 1.");
+        if (product.getQuantity() < quantity) {
+            throw new InsufficientStockException(product.getName(), quantity, product.getQuantity());
         }
 
         // Deduct stock
@@ -89,7 +120,38 @@ public class BuyerService {
         return orderRepository.save(order);
     }
 
-    // ─── 4. View buyer's own orders ────────────────────────────────────────────
+    // ─── 4. Cancel order (only if PENDING) ────────────────────────────────────
+
+    @Transactional
+    public void cancelOrder(Long orderId, String username) {
+        User buyer = getUser(username);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+
+        // Ownership check
+        if (!order.getBuyer().getId().equals(buyer.getId())) {
+            throw new SecurityException("You do not own this order.");
+        }
+
+        // State transition: only PENDING can be cancelled by buyer
+        if (order.getStatus() != Order.Status.PENDING) {
+            throw new IllegalStateException(
+                    "Order #" + orderId + " cannot be cancelled — current status is " + order.getStatus() + ". Only PENDING orders can be cancelled.");
+        }
+
+        // Restore stock for each item
+        for (OrderItem item : order.getItems()) {
+            Product product = item.getProduct();
+            product.setQuantity(product.getQuantity() + item.getQuantity());
+            productRepository.save(product);
+        }
+
+        order.setStatus(Order.Status.CANCELLED);
+        orderRepository.save(order);
+    }
+
+    // ─── 5. View buyer's own orders ────────────────────────────────────────────
 
     public List<BuyerOrderView> getMyOrders(String username) {
         User buyer = getUser(username);

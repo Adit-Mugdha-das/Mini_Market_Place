@@ -13,10 +13,4 @@ public class DashboardController {
         model.addAttribute("username", authentication.getName());
         return "dashboard/buyer";
     }
-
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard(Authentication authentication, Model model) {
-        model.addAttribute("username", authentication.getName());
-        return "dashboard/admin";
-    }
 }

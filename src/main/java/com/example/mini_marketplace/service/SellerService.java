@@ -108,4 +108,35 @@ public class SellerService {
             return view;
         }).collect(Collectors.toList());
     }
+
+    // ─── seller order status advancement ──────────────────────────────────────
+    // PENDING → CONFIRMED → SHIPPED → DELIVERED
+
+    @Transactional
+    public void advanceOrderStatus(Long orderId, String username) {
+        User seller = getUser(username);
+
+        // Verify this seller has items in this order
+        List<OrderItem> myItems =
+                orderItemRepository.findByOrderIdAndSellerId(orderId, seller.getId());
+        if (myItems.isEmpty()) {
+            throw new SecurityException("Order not found or access denied.");
+        }
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+
+        Order.Status next = switch (order.getStatus()) {
+            case PENDING   -> Order.Status.CONFIRMED;
+            case CONFIRMED -> Order.Status.SHIPPED;
+            case SHIPPED   -> Order.Status.DELIVERED;
+            case DELIVERED -> throw new IllegalStateException(
+                    "Order #" + orderId + " is already DELIVERED.");
+            case CANCELLED -> throw new IllegalStateException(
+                    "Order #" + orderId + " is CANCELLED and cannot be advanced.");
+        };
+
+        order.setStatus(next);
+        orderRepository.save(order);
+    }
 }
