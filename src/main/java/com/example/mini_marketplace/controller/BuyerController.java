@@ -13,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+
 @Controller
 @RequestMapping("/buyer")
 @PreAuthorize("hasAnyRole('BUYER','ADMIN')")
@@ -21,23 +23,30 @@ public class BuyerController {
 
     private final BuyerService buyerService;
 
-    // ─── 1. Product list (paginated + sortable) ────────────────────────────────
+    // ─── 1. Product list (search + price filter + pagination + sort) ───────────
 
     @GetMapping("/products")
-    public String listProducts(@RequestParam(defaultValue = "0")    int page,
+    public String listProducts(@RequestParam(defaultValue = "")     String keyword,
+                               @RequestParam(required = false)      BigDecimal minPrice,
+                               @RequestParam(required = false)      BigDecimal maxPrice,
+                               @RequestParam(defaultValue = "0")    int page,
                                @RequestParam(defaultValue = "9")    int size,
                                @RequestParam(defaultValue = "createdAt") String sortBy,
                                @RequestParam(defaultValue = "desc") String dir,
                                @AuthenticationPrincipal UserDetails userDetails,
                                Model model) {
-        Page<Product> productPage = buyerService.getActiveProductsPaged(page, size, sortBy, dir);
-        model.addAttribute("productPage", productPage);
-        model.addAttribute("products",    productPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages",  productPage.getTotalPages());
-        model.addAttribute("sortBy",      sortBy);
-        model.addAttribute("dir",         dir);
-        model.addAttribute("username",    userDetails.getUsername());
+        Page<Product> productPage = buyerService.searchProducts(
+                keyword, minPrice, maxPrice, page, size, sortBy, dir);
+        model.addAttribute("productPage",  productPage);
+        model.addAttribute("products",     productPage.getContent());
+        model.addAttribute("currentPage",  page);
+        model.addAttribute("totalPages",   productPage.getTotalPages());
+        model.addAttribute("sortBy",       sortBy);
+        model.addAttribute("dir",          dir);
+        model.addAttribute("keyword",      keyword);
+        model.addAttribute("minPrice",     minPrice);
+        model.addAttribute("maxPrice",     maxPrice);
+        model.addAttribute("username",     userDetails.getUsername());
         return "buyer/products";
     }
 
@@ -104,5 +113,6 @@ public class BuyerController {
         return "buyer/orders";
     }
 }
+
 
 

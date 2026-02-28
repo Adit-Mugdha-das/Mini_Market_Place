@@ -19,17 +19,49 @@
             background: rgba(255,255,255,0.15); font-size: 0.875rem; transition: background 0.2s;
         }
         nav .nav-links a:hover, nav .nav-links a.active { background: rgba(255,255,255,0.3); }
-        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
-        .container { max-width: 1000px; margin: 36px auto; padding: 0 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 28px; }
-        .stat-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; }
-        .stat-card .icon { font-size: 2rem; margin-bottom: 8px; }
-        .stat-card .value { font-size: 2rem; font-weight: 700; color: #1f2937; }
-        .stat-card .label { font-size: 0.8rem; color: #6b7280; margin-top: 4px; }
-        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-        .badge { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+        nav .user-area { display: flex; align-items: center; gap: 10px; font-size: 0.875rem; }
+        .badge { display: inline-block; background: rgba(255,255,255,0.25); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
         .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
         .btn-logout:hover { background: rgba(255,255,255,0.3); }
+
+        .container { max-width: 1000px; margin: 36px auto; padding: 0 20px; }
+
+        .welcome {
+            background: #fff; border-radius: 12px; padding: 24px 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 24px;
+        }
+        .welcome h2 { font-size: 1.3rem; color: #1f2937; margin-bottom: 4px; }
+        .welcome p  { color: #6b7280; font-size: 0.875rem; }
+
+        /* ── Metric cards ── */
+        .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card {
+            background: #fff; border-radius: 12px; padding: 22px 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center;
+            border-top: 4px solid transparent; transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-card.products { border-top-color: #f59e0b; }
+        .stat-card.active   { border-top-color: #059669; }
+        .stat-card.orders   { border-top-color: #6366f1; }
+        .stat-card.revenue  { border-top-color: #dc2626; }
+        .stat-card .icon   { font-size: 2rem; margin-bottom: 8px; }
+        .stat-card .value  { font-size: 1.7rem; font-weight: 800; color: #1f2937; }
+        .stat-card .label  { font-size: 0.75rem; color: #9ca3af; font-weight: 600;
+                             text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+        .stat-card.revenue .value { color: #059669; }
+
+        /* ── Action cards ── */
+        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; }
+        .action-card {
+            background: #fff; border-radius: 12px; padding: 24px 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center;
+            text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .action-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .action-card .icon { font-size: 2.2rem; margin-bottom: 10px; }
+        .action-card h3 { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
+        .action-card p  { color: #6b7280; font-size: 0.82rem; }
     </style>
 </head>
 <body>
@@ -49,27 +81,54 @@
         </form>
     </div>
 </nav>
+
 <div class="container">
+    <div class="welcome">
+        <h2>👋 Welcome back, <span th:text="${username}">Seller</span>!</h2>
+        <p>Here's a snapshot of your store performance.</p>
+    </div>
+
+    <!-- Metric cards -->
     <div class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card products">
             <div class="icon">📦</div>
-            <div class="value" th:text="${products != null ? products.size() : 0}">0</div>
-            <div class="label">My Products</div>
+            <div class="value" th:text="${totalProducts}">0</div>
+            <div class="label">Total Products</div>
         </div>
-        <div class="stat-card">
-            <div class="icon">🛒</div>
-            <div class="value">—</div>
-            <div class="label">Total Orders</div>
-        </div>
-        <div class="stat-card">
+        <div class="stat-card active">
             <div class="icon">✅</div>
-            <div class="value">—</div>
+            <div class="value" th:text="${activeProducts}">0</div>
             <div class="label">Active Listings</div>
         </div>
+        <div class="stat-card orders">
+            <div class="icon">🛒</div>
+            <div class="value" th:text="${totalOrders}">0</div>
+            <div class="label">Total Orders</div>
+        </div>
+        <div class="stat-card revenue">
+            <div class="icon">💰</div>
+            <div class="value" th:text="'$' + ${#numbers.formatDecimal(totalRevenue,1,2)}">$0.00</div>
+            <div class="label">Revenue Earned</div>
+        </div>
     </div>
-    <div class="card">
-        <h3>Welcome back, <span th:text="${username}">Seller</span>! 👋</h3>
-        <p style="color:#6b7280;font-size:0.9rem;margin-top:8px;">Use the navigation above to manage your products and view incoming orders.</p>
+
+    <!-- Quick-action cards -->
+    <div class="action-grid">
+        <a th:href="@{/seller/products/add}" class="action-card">
+            <div class="icon">➕</div>
+            <h3>Add Product</h3>
+            <p>List a new product for buyers to purchase.</p>
+        </a>
+        <a th:href="@{/seller/products}" class="action-card">
+            <div class="icon">🛍️</div>
+            <h3>Manage Products</h3>
+            <p>Edit, remove or review your product listings.</p>
+        </a>
+        <a th:href="@{/seller/orders}" class="action-card">
+            <div class="icon">🧾</div>
+            <h3>View Orders</h3>
+            <p>Confirm, ship and deliver incoming orders.</p>
+        </a>
     </div>
 </div>
 </body>

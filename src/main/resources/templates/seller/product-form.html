@@ -53,6 +53,7 @@
         textarea { resize: vertical; min-height: 100px; }
 
         .field-error { color: #dc2626; font-size: 0.78rem; margin-top: 4px; }
+        .field-hint  { color: #9ca3af; font-size: 0.73rem; margin-top: 3px; }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
@@ -104,12 +105,14 @@
                            th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
                            placeholder="e.g. Wireless Earbuds" />
                     <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    <div class="field-hint" th:unless="${#fields.hasErrors('name')}">2–100 characters</div>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description</label>
                     <textarea id="description" th:field="*{description}"
-                              placeholder="Describe your product..."></textarea>
+                              placeholder="Describe your product... (max 1000 chars)"></textarea>
+                    <div class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                 </div>
 
                 <div class="form-row">
@@ -119,6 +122,7 @@
                                th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'"
                                placeholder="0.00" />
                         <div class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                        <div class="field-hint" th:unless="${#fields.hasErrors('price')}">$0.01 – $999,999.99</div>
                     </div>
                     <div class="form-group">
                         <label for="quantity">Quantity</label>
@@ -126,6 +130,7 @@
                                th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid'"
                                placeholder="0" />
                         <div class="field-error" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+                        <div class="field-hint" th:unless="${#fields.hasErrors('quantity')}">0 – 99,999 units</div>
                     </div>
                 </div>
 
@@ -147,12 +152,14 @@
                            th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
                            placeholder="e.g. Wireless Earbuds" />
                     <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    <div class="field-hint" th:unless="${#fields.hasErrors('name')}">2–100 characters</div>
                 </div>
 
                 <div class="form-group">
                     <label for="edescription">Description</label>
                     <textarea id="edescription" th:field="*{description}"
-                              placeholder="Describe your product..."></textarea>
+                              placeholder="Describe your product... (max 1000 chars)"></textarea>
+                    <div class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                 </div>
 
                 <div class="form-row">
@@ -162,6 +169,7 @@
                                th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'"
                                placeholder="0.00" />
                         <div class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                        <div class="field-hint" th:unless="${#fields.hasErrors('price')}">$0.01 – $999,999.99</div>
                     </div>
                     <div class="form-group">
                         <label for="equantity">Quantity</label>
@@ -169,6 +177,7 @@
                                th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid'"
                                placeholder="0" />
                         <div class="field-error" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+                        <div class="field-hint" th:unless="${#fields.hasErrors('quantity')}">0 – 99,999 units</div>
                     </div>
                 </div>
 

@@ -81,6 +81,12 @@
 
         input.is-invalid { border-color: #dc2626; }
 
+        .field-hint {
+            color: #9ca3af;
+            font-size: 0.73rem;
+            margin-top: 3px;
+        }
+
         .field-error {
             color: #dc2626;
             font-size: 0.78rem;
@@ -188,6 +194,9 @@
                        placeholder="Choose a username" />
                 <div class="field-error" th:if="${#fields.hasErrors('username')}"
                      th:errors="*{username}"></div>
+                <div class="field-hint" th:unless="${#fields.hasErrors('username')}">
+                    3–30 characters · letters, digits and underscores only
+                </div>
             </div>
 
             <!-- Email -->
@@ -208,6 +217,9 @@
                        placeholder="At least 6 characters" />
                 <div class="field-error" th:if="${#fields.hasErrors('password')}"
                      th:errors="*{password}"></div>
+                <div class="field-hint" th:unless="${#fields.hasErrors('password')}">
+                    Minimum 6 characters
+                </div>
             </div>
 
             <!-- Confirm Password -->

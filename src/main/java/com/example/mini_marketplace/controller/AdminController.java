@@ -22,10 +22,13 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("username", userDetails.getUsername());
-        model.addAttribute("totalUsers",    adminService.getAllUsers().size());
-        model.addAttribute("totalProducts", adminService.getAllProducts().size());
-        model.addAttribute("totalOrders",   adminService.getAllOrders().size());
+        var metrics = adminService.getDashboardMetrics();
+        model.addAttribute("username",      userDetails.getUsername());
+        model.addAttribute("totalUsers",    metrics.getTotalUsers());
+        model.addAttribute("totalProducts", metrics.getTotalProducts());
+        model.addAttribute("activeProducts",metrics.getActiveProducts());
+        model.addAttribute("totalOrders",   metrics.getTotalOrders());
+        model.addAttribute("totalRevenue",  metrics.getTotalRevenue());
         return "dashboard/admin";
     }
 

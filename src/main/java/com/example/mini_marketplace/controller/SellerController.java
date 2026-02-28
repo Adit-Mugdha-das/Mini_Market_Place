@@ -26,9 +26,12 @@ public class SellerController {
 
     @GetMapping("/dashboard")
     public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("username", userDetails.getUsername());
-        model.addAttribute("products",
-                sellerService.getMyProducts(userDetails.getUsername()));
+        var metrics = sellerService.getDashboardMetrics(userDetails.getUsername());
+        model.addAttribute("username",       userDetails.getUsername());
+        model.addAttribute("totalProducts",  metrics.getTotalProducts());
+        model.addAttribute("activeProducts", metrics.getActiveProducts());
+        model.addAttribute("totalOrders",    metrics.getTotalOrders());
+        model.addAttribute("totalRevenue",   metrics.getTotalRevenue());
         return "dashboard/seller";
     }
 

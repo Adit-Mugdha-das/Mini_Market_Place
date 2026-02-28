@@ -61,6 +61,36 @@ public class BuyerService {
         return productRepository.findByActiveTrue(pageable);
     }
 
+    // ─── 1b. Search products (keyword + price range + pagination) ─────────────
+
+    /**
+     * @param keyword   product name substring — null/blank means match all
+     * @param minPrice  null = no lower bound
+     * @param maxPrice  null = no upper bound
+     */
+    public Page<Product> searchProducts(String keyword, BigDecimal minPrice, BigDecimal maxPrice,
+                                        int page, int size, String sortBy, String dir) {
+        String field = switch (sortBy) {
+            case "price" -> "price";
+            case "name"  -> "name";
+            default      -> "createdAt";
+        };
+        Sort sort = "asc".equalsIgnoreCase(dir) ? Sort.by(field).ascending()
+                                                 : Sort.by(field).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Build a LIKE pattern — "%%" matches everything when no keyword given
+        String likePattern = (keyword != null && !keyword.isBlank())
+                ? "%" + keyword.trim() + "%"
+                : "%";
+
+        // Replace null price bounds with open-ended sentinel values
+        BigDecimal min = (minPrice != null) ? minPrice : BigDecimal.ZERO;
+        BigDecimal max = (maxPrice != null) ? maxPrice : new BigDecimal("999999999");
+
+        return productRepository.searchActive(likePattern, min, max, pageable);
+    }
+
     // ─── 2. View a single product ──────────────────────────────────────────────
 
     public Product getProductById(Long id) {

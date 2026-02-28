@@ -29,19 +29,40 @@
         .alert-success { background: #d1fae5; color: #065f46; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
         .alert-error   { background: #fee2e2; color: #991b1b; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
 
-        /* ── Sort/Filter bar ── */
-        .sort-bar {
-            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            background: #fff; border-radius: 10px; padding: 10px 16px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.06); margin-bottom: 24px;
+        /* ── Search / Filter / Sort bar ── */
+        .filter-bar {
+            background: #fff; border-radius: 12px; padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 24px;
+            display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
         }
-        .sort-bar label { font-size: 0.8rem; font-weight: 600; color: #6b7280; }
-        .sort-bar select, .sort-bar button {
-            padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px;
-            font-size: 0.82rem; background: #fff; cursor: pointer;
+        .filter-group { display: flex; flex-direction: column; gap: 4px; }
+        .filter-group label { font-size: 0.72rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
+        .filter-group input[type="text"],
+        .filter-group input[type="number"],
+        .filter-group select {
+            padding: 7px 11px; border: 1px solid #e5e7eb; border-radius: 8px;
+            font-size: 0.875rem; background: #f9fafb; outline: none; min-width: 130px;
+            transition: border-color 0.2s;
         }
-        .sort-bar button { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; font-weight: 600; }
-        .sort-bar button:hover { opacity: 0.9; }
+        .filter-group input:focus, .filter-group select:focus { border-color: #667eea; background: #fff; }
+        .filter-actions { display: flex; gap: 8px; align-items: flex-end; margin-left: auto; }
+        .btn-search {
+            padding: 8px 20px; background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff; border: none; border-radius: 8px; font-size: 0.875rem;
+            font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-search:hover { opacity: 0.88; }
+        .btn-clear {
+            padding: 8px 14px; background: #f3f4f6; color: #6b7280;
+            border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.875rem;
+            font-weight: 600; cursor: pointer; text-decoration: none;
+        }
+        .btn-clear:hover { background: #e5e7eb; }
+        .search-summary {
+            font-size: 0.82rem; color: #6b7280; margin-bottom: 16px;
+            padding: 8px 14px; background: #ede9fe; border-radius: 8px; display: inline-block;
+        }
+        .search-summary strong { color: #5b21b6; }
 
         .product-grid {
             display: grid;
@@ -115,26 +136,75 @@
     <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
     <div th:if="${errorMessage}"   class="alert-error"   th:text="${errorMessage}"></div>
 
-    <!-- Sort & Filter bar -->
-    <form th:action="@{/buyer/products}" method="get" class="sort-bar">
-        <label>Sort by:</label>
-        <select name="sortBy">
-            <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Newest First</option>
-            <option value="price"     th:selected="${sortBy == 'price'}">Price</option>
-            <option value="name"      th:selected="${sortBy == 'name'}">Name</option>
-        </select>
-        <select name="dir">
-            <option value="desc" th:selected="${dir == 'desc'}">↓ Descending</option>
-            <option value="asc"  th:selected="${dir == 'asc'}">↑ Ascending</option>
-        </select>
-        <select name="size">
-            <option value="6"  th:selected="${productPage.size == 6}">6 per page</option>
-            <option value="9"  th:selected="${productPage.size == 9}">9 per page</option>
-            <option value="12" th:selected="${productPage.size == 12}">12 per page</option>
-        </select>
-        <input type="hidden" name="page" value="0"/>
-        <button type="submit">Apply</button>
+    <!-- Search, Filter & Sort bar -->
+    <form th:action="@{/buyer/products}" method="get" class="filter-bar">
+        <!-- Keyword search -->
+        <div class="filter-group">
+            <label>🔍 Search</label>
+            <input type="text" name="keyword" placeholder="Product name…"
+                   th:value="${keyword}" />
+        </div>
+
+        <!-- Price range -->
+        <div class="filter-group">
+            <label>Min Price ($)</label>
+            <input type="number" name="minPrice" placeholder="0.00" min="0" step="0.01"
+                   th:value="${minPrice}" style="min-width:100px;" />
+        </div>
+        <div class="filter-group">
+            <label>Max Price ($)</label>
+            <input type="number" name="maxPrice" placeholder="Any" min="0" step="0.01"
+                   th:value="${maxPrice}" style="min-width:100px;" />
+        </div>
+
+        <!-- Sort -->
+        <div class="filter-group">
+            <label>Sort By</label>
+            <select name="sortBy">
+                <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Newest</option>
+                <option value="price"     th:selected="${sortBy == 'price'}">Price</option>
+                <option value="name"      th:selected="${sortBy == 'name'}">Name A–Z</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Direction</label>
+            <select name="dir">
+                <option value="desc" th:selected="${dir == 'desc'}">↓ Desc</option>
+                <option value="asc"  th:selected="${dir == 'asc'}">↑ Asc</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Per Page</label>
+            <select name="size" style="min-width:80px;">
+                <option value="6"  th:selected="${productPage.size == 6}">6</option>
+                <option value="9"  th:selected="${productPage.size == 9}">9</option>
+                <option value="12" th:selected="${productPage.size == 12}">12</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="page" value="0" />
+
+        <div class="filter-actions">
+            <button type="submit" class="btn-search">Search</button>
+            <a th:href="@{/buyer/products}" class="btn-clear">Clear</a>
+        </div>
     </form>
+
+    <!-- Active search summary -->
+    <div th:if="${keyword != null and !keyword.isEmpty() or minPrice != null or maxPrice != null}"
+         class="search-summary">
+        Showing results
+        <th:block th:if="${keyword != null and !keyword.isEmpty()}">
+            for <strong th:text="'&quot;' + ${keyword} + '&quot;'">"keyword"</strong>
+        </th:block>
+        <th:block th:if="${minPrice != null}">
+            · min <strong th:text="'$' + ${minPrice}">$0</strong>
+        </th:block>
+        <th:block th:if="${maxPrice != null}">
+            · max <strong th:text="'$' + ${maxPrice}">$0</strong>
+        </th:block>
+        — <strong th:text="${productPage.totalElements}">0</strong> product(s) found
+    </div>
 
     <div th:if="${products == null or products.isEmpty()}" class="empty-state">
         <div class="icon">🏪</div>
@@ -159,22 +229,19 @@
     <!-- Pagination controls -->
     <div th:if="${totalPages > 1}">
         <div class="pagination">
-            <!-- Previous -->
             <a th:if="${currentPage > 0}"
-               th:href="@{/buyer/products(page=${currentPage - 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir})}">← Prev</a>
+               th:href="@{/buyer/products(page=${currentPage - 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}">← Prev</a>
             <span th:unless="${currentPage > 0}" class="disabled">← Prev</span>
 
-            <!-- Page numbers -->
             <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
                 <a th:if="${i != currentPage}"
-                   th:href="@{/buyer/products(page=${i}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir})}"
+                   th:href="@{/buyer/products(page=${i}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
                    th:text="${i + 1}">1</a>
                 <span th:if="${i == currentPage}" class="active" th:text="${i + 1}">1</span>
             </th:block>
 
-            <!-- Next -->
             <a th:if="${currentPage < totalPages - 1}"
-               th:href="@{/buyer/products(page=${currentPage + 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir})}">Next →</a>
+               th:href="@{/buyer/products(page=${currentPage + 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}">Next →</a>
             <span th:unless="${currentPage < totalPages - 1}" class="disabled">Next →</span>
         </div>
         <p class="page-info"
@@ -183,5 +250,8 @@
 </div>
 </body>
 </html>
+
+
+
 
 

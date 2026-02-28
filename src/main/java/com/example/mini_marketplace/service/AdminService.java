@@ -1,5 +1,6 @@
 package com.example.mini_marketplace.service;
 
+import com.example.mini_marketplace.dto.AdminDashboardMetrics;
 import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.entity.Role;
@@ -103,6 +104,15 @@ public class AdminService {
 
     public List<Order> getAllOrders() {
         return orderRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public AdminDashboardMetrics getDashboardMetrics() {
+        long totalUsers    = userRepository.count();
+        long totalProducts = productRepository.count();
+        long activeProducts = productRepository.countAllActive();
+        long totalOrders   = orderRepository.count();
+        var  revenue       = orderRepository.getTotalRevenue();
+        return new AdminDashboardMetrics(totalUsers, totalProducts, activeProducts, totalOrders, revenue);
     }
 
     /**

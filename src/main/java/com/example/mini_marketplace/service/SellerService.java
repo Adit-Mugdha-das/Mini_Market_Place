@@ -1,6 +1,7 @@
 package com.example.mini_marketplace.service;
 
 import com.example.mini_marketplace.dto.ProductRequest;
+import com.example.mini_marketplace.dto.SellerDashboardMetrics;
 import com.example.mini_marketplace.dto.SellerOrderView;
 import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.OrderItem;
@@ -107,6 +108,19 @@ public class SellerService {
 
             return view;
         }).collect(Collectors.toList());
+    }
+
+    // ─── seller dashboard metrics ──────────────────────────────────────────────
+
+    public SellerDashboardMetrics getDashboardMetrics(String username) {
+        User seller = getUser(username);
+
+        long totalProducts  = productRepository.findBySellerOrderByCreatedAtDesc(seller).size();
+        long activeProducts = productRepository.countBySellerAndActiveTrue(seller);
+        long totalOrders    = orderRepository.countOrdersBySellerId(seller.getId());
+        BigDecimal revenue  = orderRepository.getRevenueForSeller(seller.getId());
+
+        return new SellerDashboardMetrics(totalProducts, activeProducts, totalOrders, revenue);
     }
 
     // ─── seller order status advancement ──────────────────────────────────────
