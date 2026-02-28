@@ -70,7 +70,6 @@ class SellerServiceTest {
     @DisplayName("addProduct — saves product with all fields from request")
     void addProduct_savesProductCorrectly() {
         when(userRepository.findByUsername("seller1")).thenReturn(Optional.of(seller));
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         ProductRequest req = new ProductRequest();
         req.setName("New Widget");
