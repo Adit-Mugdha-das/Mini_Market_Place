@@ -9,6 +9,7 @@ import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.OrderItem;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.entity.User;
+import com.example.mini_marketplace.repository.CategoryRepository;
 import com.example.mini_marketplace.repository.OrderItemRepository;
 import com.example.mini_marketplace.repository.OrderRepository;
 import com.example.mini_marketplace.repository.ProductRepository;
@@ -30,6 +31,7 @@ public class SellerService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final AuditService auditService;
 
     // ─── helpers ───────────────────────────────────────────────────────────────
@@ -60,6 +62,9 @@ public class SellerService {
         p.setPrice(req.getPrice());
         p.setQuantity(req.getQuantity());
         p.setSeller(seller);
+        if (req.getCategoryId() != null) {
+            categoryRepository.findById(req.getCategoryId()).ifPresent(p::setCategory);
+        }
         productRepository.save(p);
         auditService.log(username, ActionType.CREATE_PRODUCT, EntityType.PRODUCT,
                 p.getId(), "Created: " + p.getName());
@@ -77,6 +82,11 @@ public class SellerService {
         p.setImageUrl(req.getImageUrl());
         p.setPrice(req.getPrice());
         p.setQuantity(req.getQuantity());
+        if (req.getCategoryId() != null) {
+            categoryRepository.findById(req.getCategoryId()).ifPresent(p::setCategory);
+        } else {
+            p.setCategory(null);
+        }
         productRepository.save(p);
         auditService.log(username, ActionType.UPDATE_PRODUCT, EntityType.PRODUCT,
                 productId, "Updated: " + p.getName());

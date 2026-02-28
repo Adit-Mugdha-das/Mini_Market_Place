@@ -2,6 +2,7 @@ package com.example.mini_marketplace.controller;
 
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.exception.InsufficientStockException;
+import com.example.mini_marketplace.repository.CategoryRepository;
 import com.example.mini_marketplace.service.BuyerService;
 import com.example.mini_marketplace.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class BuyerController {
 
     private final BuyerService buyerService;
     private final ReviewService reviewService;
+    private final CategoryRepository categoryRepository;
 
     // ─── 1. Product list ───────────────────────────────────────────────────────
 
@@ -31,6 +33,7 @@ public class BuyerController {
     public String listProducts(@RequestParam(defaultValue = "")     String keyword,
                                @RequestParam(required = false)      BigDecimal minPrice,
                                @RequestParam(required = false)      BigDecimal maxPrice,
+                               @RequestParam(required = false)      Long categoryId,
                                @RequestParam(defaultValue = "0")    int page,
                                @RequestParam(defaultValue = "9")    int size,
                                @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -38,9 +41,8 @@ public class BuyerController {
                                @AuthenticationPrincipal UserDetails userDetails,
                                Model model) {
         Page<Product> productPage = buyerService.searchProducts(
-                keyword, minPrice, maxPrice, page, size, sortBy, dir);
+                keyword, minPrice, maxPrice, categoryId, page, size, sortBy, dir);
 
-        // Build rating map: productId → summary (avg + count)
         java.util.Map<Long, com.example.mini_marketplace.dto.ProductReviewSummary> ratingMap =
                 new java.util.HashMap<>();
         for (Product p : productPage.getContent()) {
@@ -50,6 +52,7 @@ public class BuyerController {
         model.addAttribute("productPage",  productPage);
         model.addAttribute("products",     productPage.getContent());
         model.addAttribute("ratingMap",    ratingMap);
+        model.addAttribute("categories",   categoryRepository.findAllByOrderByNameAsc());
         model.addAttribute("currentPage",  page);
         model.addAttribute("totalPages",   productPage.getTotalPages());
         model.addAttribute("sortBy",       sortBy);
@@ -57,6 +60,7 @@ public class BuyerController {
         model.addAttribute("keyword",      keyword);
         model.addAttribute("minPrice",     minPrice);
         model.addAttribute("maxPrice",     maxPrice);
+        model.addAttribute("categoryId",   categoryId);
         model.addAttribute("username",     userDetails.getUsername());
         return "buyer/products";
     }

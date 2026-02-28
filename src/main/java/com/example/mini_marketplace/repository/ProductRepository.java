@@ -22,24 +22,23 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByActiveTrue();
 
-    // Paginated + sortable: used in buyer product browsing
     Page<Product> findByActiveTrue(Pageable pageable);
 
     List<Product> findAllByOrderByCreatedAtDesc();
 
-    // ── Search: name keyword + optional price range ──────────────────────────
-    // keyword should be passed as "%%" to match all, or "%term%" to filter.
-    // minPrice / maxPrice use BigDecimal.ZERO and a huge sentinel when not provided.
+    // ── Search: keyword + price range + optional category ────────────────────
     @Query("""
             SELECT p FROM Product p
             WHERE p.active = true
               AND LOWER(p.name) LIKE LOWER(:keyword)
               AND p.price >= :minPrice
               AND p.price <= :maxPrice
+              AND (:categoryId IS NULL OR p.category.id = :categoryId)
             """)
-    Page<Product> searchActive(@Param("keyword")  String keyword,
-                               @Param("minPrice") BigDecimal minPrice,
-                               @Param("maxPrice") BigDecimal maxPrice,
+    Page<Product> searchActive(@Param("keyword")    String keyword,
+                               @Param("minPrice")   BigDecimal minPrice,
+                               @Param("maxPrice")   BigDecimal maxPrice,
+                               @Param("categoryId") Long categoryId,
                                Pageable pageable);
 
     // ── Metrics ──────────────────────────────────────────────────────────────
@@ -48,6 +47,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT COUNT(DISTINCT p) FROM Product p WHERE p.active = true")
     long countAllActive();
 }
+
+
 
 
 

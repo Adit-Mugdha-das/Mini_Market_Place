@@ -2,6 +2,7 @@ package com.example.mini_marketplace.controller;
 
 import com.example.mini_marketplace.dto.ProductRequest;
 import com.example.mini_marketplace.entity.Product;
+import com.example.mini_marketplace.repository.CategoryRepository;
 import com.example.mini_marketplace.service.ImageUploadService;
 import com.example.mini_marketplace.service.ReviewService;
 import com.example.mini_marketplace.service.SellerService;
@@ -26,6 +27,7 @@ public class SellerController {
     private final SellerService sellerService;
     private final ImageUploadService imageUploadService;
     private final ReviewService reviewService;
+    private final CategoryRepository categoryRepository;
 
     // ─── Dashboard ─────────────────────────────────────────────────────────────
 
@@ -52,6 +54,7 @@ public class SellerController {
     @GetMapping("/products/add")
     public String showAddForm(Model model) {
         model.addAttribute("productRequest", new ProductRequest());
+        model.addAttribute("categories", categoryRepository.findAllByOrderByNameAsc());
         return "seller/product-form";
     }
 
@@ -90,8 +93,10 @@ public class SellerController {
             req.setImageUrl(product.getImageUrl());
             req.setPrice(product.getPrice());
             req.setQuantity(product.getQuantity());
+            if (product.getCategory() != null) req.setCategoryId(product.getCategory().getId());
             model.addAttribute("productRequest", req);
             model.addAttribute("productId", id);
+            model.addAttribute("categories", categoryRepository.findAllByOrderByNameAsc());
             return "seller/product-form";
         } catch (SecurityException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -109,6 +114,7 @@ public class SellerController {
                                 RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("productId", id);
+            model.addAttribute("categories", categoryRepository.findAllByOrderByNameAsc());
             return "seller/product-form";
         }
         try {

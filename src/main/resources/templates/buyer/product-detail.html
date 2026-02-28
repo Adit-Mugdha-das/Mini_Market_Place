@@ -239,8 +239,14 @@
         <!-- ── Right: Details + Order ── -->
         <div class="info-panel">
             <div class="product-name" th:text="${product.name}">Product Name</div>
-            <div class="product-seller">
-                🏪 Sold by: <strong th:text="${product.seller.username}">seller</strong>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
+                <div class="product-seller">
+                    🏪 Sold by: <strong th:text="${product.seller.username}">seller</strong>
+                </div>
+                <span th:if="${product.category != null}"
+                      style="background:#ede9fe;color:#5b21b6;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;">
+                    🏷️ <span th:text="${product.category.name}">Category</span>
+                </span>
             </div>
 
             <div class="product-desc"
@@ -282,6 +288,7 @@
                 <span class="trust-item">📦 Order tracking</span>
                 <span class="trust-item">↩️ Cancel if PENDING</span>
             </div>
+        </div><!-- /info-panel -->
     </div><!-- /detail-layout -->
 
     <!-- ══════════════════════════════════════════════════════════
@@ -313,9 +320,9 @@
                     <span class="star-label" th:text="${star} + ' ★'">5 ★</span>
                     <div class="bar-track">
                         <div class="bar-fill"
-                             th:style="'width:' + (${reviewSummary.totalReviews > 0} ? ${reviewSummary.starCounts[star-1] * 100 / reviewSummary.totalReviews} : 0) + '%'"></div>
+                             th:style="'width:' + (${reviewSummary.totalReviews > 0} ? ${reviewSummary.starCounts[star - 1] * 100 / reviewSummary.totalReviews} : 0) + '%'"></div>
                     </div>
-                    <span class="bar-count" th:text="${reviewSummary.starCounts[star-1]}">0</span>
+                    <span class="bar-count" th:text="${reviewSummary.starCounts[star - 1]}">0</span>
                 </div>
             </div>
         </div>

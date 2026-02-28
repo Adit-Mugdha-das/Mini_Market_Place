@@ -107,6 +107,7 @@
                     <tr>
                         <th>#</th>
                         <th>Product</th>
+                        <th>Category</th>
                         <th>Price</th>
                         <th>Qty</th>
                         <th>Added</th>
@@ -119,6 +120,13 @@
                         <td>
                             <div class="product-name" th:text="${p.name}">Product</div>
                             <div class="product-desc" th:text="${p.description}">Desc</div>
+                        </td>
+                        <td>
+                            <span th:if="${p.category != null}"
+                                  style="background:#ede9fe;color:#5b21b6;font-size:0.72rem;font-weight:700;padding:2px 10px;border-radius:20px;white-space:nowrap;">
+                                🏷️ <span th:text="${p.category.name}">Cat</span>
+                            </span>
+                            <span th:if="${p.category == null}" style="color:#d1d5db;font-size:0.78rem;">—</span>
                         </td>
                         <td class="price" th:text="'$' + ${#numbers.formatDecimal(p.price,1,2)}">$0.00</td>
                         <td>

@@ -216,6 +216,19 @@
                    th:value="${maxPrice}" style="min-width:100px;" />
         </div>
 
+        <!-- Category -->
+        <div class="filter-group">
+            <label>🏷️ Category</label>
+            <select name="categoryId">
+                <option value="">All Categories</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.id}"
+                        th:text="${cat.name}"
+                        th:selected="${categoryId != null and categoryId == cat.id}">
+                </option>
+            </select>
+        </div>
+
         <!-- Sort -->
         <div class="filter-group">
             <label>Sort By</label>
@@ -250,11 +263,14 @@
     </form>
 
     <!-- Active search summary -->
-    <div th:if="${keyword != null and !keyword.isEmpty() or minPrice != null or maxPrice != null}"
+    <div th:if="${(keyword != null and !keyword.isEmpty()) or minPrice != null or maxPrice != null or categoryId != null}"
          class="search-summary">
         Showing results
         <th:block th:if="${keyword != null and !keyword.isEmpty()}">
             for <strong th:text="'&quot;' + ${keyword} + '&quot;'">"keyword"</strong>
+        </th:block>
+        <th:block th:if="${categoryId != null}">
+            · category <strong th:each="cat : ${categories}" th:if="${cat.id == categoryId}" th:text="${cat.name}">Cat</strong>
         </th:block>
         <th:block th:if="${minPrice != null}">
             · min <strong th:text="'$' + ${minPrice}">$0</strong>
@@ -305,6 +321,11 @@
                      th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">
                     Description
                 </div>
+                <!-- Category badge -->
+                <div th:if="${product.category != null}"
+                     style="display:inline-block;background:#ede9fe;color:#5b21b6;font-size:0.68rem;font-weight:700;padding:2px 10px;border-radius:20px;">
+                    🏷️ <span th:text="${product.category.name}">Category</span>
+                </div>
                 <!-- Star rating -->
                 <div class="card-rating" th:with="rs=${ratingMap[product.id]}">
                     <span class="stars" th:if="${rs != null and rs.totalReviews > 0}">
@@ -338,18 +359,18 @@
     <div th:if="${totalPages > 1}">
         <div class="pagination">
             <a th:if="${currentPage > 0}"
-               th:href="@{/buyer/products(page=${currentPage - 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}">← Prev</a>
+               th:href="@{/buyer/products(page=${currentPage - 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, categoryId=${categoryId})}">← Prev</a>
             <span th:unless="${currentPage > 0}" class="disabled">← Prev</span>
 
             <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
                 <a th:if="${i != currentPage}"
-                   th:href="@{/buyer/products(page=${i}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                   th:href="@{/buyer/products(page=${i}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, categoryId=${categoryId})}"
                    th:text="${i + 1}">1</a>
                 <span th:if="${i == currentPage}" class="active" th:text="${i + 1}">1</span>
             </th:block>
 
             <a th:if="${currentPage < totalPages - 1}"
-               th:href="@{/buyer/products(page=${currentPage + 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}">Next →</a>
+               th:href="@{/buyer/products(page=${currentPage + 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, categoryId=${categoryId})}">Next →</a>
             <span th:unless="${currentPage < totalPages - 1}" class="disabled">Next →</span>
         </div>
         <p class="page-info"
