@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Buyer Dashboard – Mini Marketplace</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            color: #fff;
+        }
+        nav .brand { font-size: 1.2rem; font-weight: 700; }
+        nav .nav-links { display: flex; gap: 8px; }
+        nav .nav-links a {
+            color: rgba(255,255,255,0.9); text-decoration: none;
+            padding: 6px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.15); font-size: 0.875rem; transition: background 0.2s;
+        }
+        nav .nav-links a:hover, nav .nav-links a.active { background: rgba(255,255,255,0.3); }
+        nav .user-info { display: flex; align-items: center; gap: 16px; font-size: 0.9rem; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .welcome {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            margin-bottom: 24px;
+        }
+        .welcome h2 { font-size: 1.5rem; color: #1f2937; margin-bottom: 8px; }
+        .welcome p { color: #6b7280; margin-top: 8px; }
+        .badge {
+            display: inline-block;
+            background: #ddd6fe;
+            color: #5b21b6;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .card {
+            background: #fff; border-radius: 12px; padding: 28px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07); text-align: center;
+            text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
+        .card .icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .card h3 { font-size: 1rem; color: #1f2937; margin-bottom: 6px; }
+        .card p { color: #6b7280; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+<nav>
+    <span class="brand">🛒 Mini Marketplace</span>
+    <div class="nav-links">
+        <a th:href="@{/dashboard}" class="active">Dashboard</a>
+        <a th:href="@{/buyer/products}">Browse Products</a>
+        <a th:href="@{/buyer/orders}">My Orders</a>
+    </div>
+    <div class="user-info">
+        <span>Welcome, <strong th:text="${username}">User</strong></span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+<div class="container">
+    <div class="welcome">
+        <h2>👋 Hello, <span th:text="${username}">User</span>!</h2>
+        <p>Welcome to Mini Marketplace. Browse products and place orders easily.</p>
+        <span class="badge">BUYER</span>
+    </div>
+    <div class="cards">
+        <a th:href="@{/buyer/products}" class="card">
+            <div class="icon">🛍️</div>
+            <h3>Browse Products</h3>
+            <p>Explore all available products from our sellers.</p>
+        </a>
+        <a th:href="@{/buyer/orders}" class="card">
+            <div class="icon">📦</div>
+            <h3>My Orders</h3>
+            <p>Track your orders and view order history.</p>
+        </a>
+    </div>
+</div>
+</body>
+</html>

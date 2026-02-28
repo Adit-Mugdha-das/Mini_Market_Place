@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${productId != null ? 'Edit Product' : 'Add Product'} + ' – Mini Marketplace'">Product Form</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        nav {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 0 32px; display: flex; align-items: center;
+            justify-content: space-between; height: 60px; color: #fff;
+        }
+        nav .brand { font-size: 1.1rem; font-weight: 700; }
+        nav .nav-links { display: flex; gap: 8px; }
+        nav .nav-links a {
+            color: rgba(255,255,255,0.9); text-decoration: none;
+            padding: 6px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.15); font-size: 0.875rem; transition: background 0.2s;
+        }
+        nav .nav-links a:hover, nav .nav-links a.active { background: rgba(255,255,255,0.3); }
+        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
+
+        .container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+
+        .card {
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 24px 32px; color: #fff;
+        }
+        .card-header h2 { font-size: 1.3rem; font-weight: 700; }
+        .card-header p { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
+        .card-body { padding: 32px; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%; padding: 10px 14px; border: 1.5px solid #d1d5db;
+            border-radius: 8px; font-size: 0.95rem; color: #111827;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+        }
+        input.is-invalid, textarea.is-invalid { border-color: #dc2626; }
+        textarea { resize: vertical; min-height: 100px; }
+
+        .field-error { color: #dc2626; font-size: 0.78rem; margin-top: 4px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .btn-group { display: flex; gap: 12px; margin-top: 8px; }
+        .btn {
+            flex: 1; padding: 11px; border: none; border-radius: 8px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            text-align: center; text-decoration: none; display: inline-block;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.88; }
+        .btn-primary { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+        .btn-secondary { background: #e5e7eb; color: #374151; }
+    </style>
+</head>
+<body>
+<nav>
+    <span class="brand">🏪 Mini Marketplace</span>
+    <div class="nav-links">
+        <a th:href="@{/seller/dashboard}">Dashboard</a>
+        <a th:href="@{/seller/products}" class="active">My Products</a>
+        <a th:href="@{/seller/orders}">Orders</a>
+    </div>
+    <div class="user-area">
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2 th:text="${productId != null ? '✏️ Edit Product' : '➕ Add New Product'}">Product Form</h2>
+            <p th:text="${productId != null ? 'Update your product details below.' : 'Fill in the details to list a new product.'}"></p>
+        </div>
+        <div class="card-body">
+
+            <!-- Add form -->
+            <form th:if="${productId == null}"
+                  th:action="@{/seller/products/add}"
+                  th:object="${productRequest}" method="post" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="form-group">
+                    <label for="name">Product Name</label>
+                    <input type="text" id="name" th:field="*{name}"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                           placeholder="e.g. Wireless Earbuds" />
+                    <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" th:field="*{description}"
+                              placeholder="Describe your product..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="price">Price ($)</label>
+                        <input type="number" id="price" th:field="*{price}" step="0.01" min="0.01"
+                               th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'"
+                               placeholder="0.00" />
+                        <div class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" th:field="*{quantity}" min="0"
+                               th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid'"
+                               placeholder="0" />
+                        <div class="field-error" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <a th:href="@{/seller/products}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </div>
+            </form>
+
+            <!-- Edit form -->
+            <form th:if="${productId != null}"
+                  th:action="@{/seller/products/edit/{id}(id=${productId})}"
+                  th:object="${productRequest}" method="post" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="form-group">
+                    <label for="ename">Product Name</label>
+                    <input type="text" id="ename" th:field="*{name}"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                           placeholder="e.g. Wireless Earbuds" />
+                    <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edescription">Description</label>
+                    <textarea id="edescription" th:field="*{description}"
+                              placeholder="Describe your product..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eprice">Price ($)</label>
+                        <input type="number" id="eprice" th:field="*{price}" step="0.01" min="0.01"
+                               th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'"
+                               placeholder="0.00" />
+                        <div class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="equantity">Quantity</label>
+                        <input type="number" id="equantity" th:field="*{quantity}" min="0"
+                               th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid'"
+                               placeholder="0" />
+                        <div class="field-error" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <a th:href="@{/seller/products}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

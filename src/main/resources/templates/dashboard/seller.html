@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Dashboard – Mini Marketplace</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        nav {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 0 32px; display: flex; align-items: center;
+            justify-content: space-between; height: 60px; color: #fff;
+        }
+        nav .brand { font-size: 1.1rem; font-weight: 700; }
+        nav .nav-links { display: flex; gap: 8px; }
+        nav .nav-links a {
+            color: rgba(255,255,255,0.9); text-decoration: none;
+            padding: 6px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.15); font-size: 0.875rem; transition: background 0.2s;
+        }
+        nav .nav-links a:hover, nav .nav-links a.active { background: rgba(255,255,255,0.3); }
+        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
+        .container { max-width: 1000px; margin: 36px auto; padding: 0 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; }
+        .stat-card .icon { font-size: 2rem; margin-bottom: 8px; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #1f2937; }
+        .stat-card .label { font-size: 0.8rem; color: #6b7280; margin-top: 4px; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .badge { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+    </style>
+</head>
+<body>
+<nav>
+    <span class="brand">🏪 Mini Marketplace</span>
+    <div class="nav-links">
+        <a th:href="@{/seller/dashboard}" class="active">Dashboard</a>
+        <a th:href="@{/seller/products}">My Products</a>
+        <a th:href="@{/seller/orders}">Orders</a>
+    </div>
+    <div class="user-area">
+        <span>👤 <strong th:text="${username}">Seller</strong></span>
+        <span class="badge">SELLER</span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+<div class="container">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="icon">📦</div>
+            <div class="value" th:text="${products != null ? products.size() : 0}">0</div>
+            <div class="label">My Products</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">🛒</div>
+            <div class="value">—</div>
+            <div class="label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">✅</div>
+            <div class="value">—</div>
+            <div class="label">Active Listings</div>
+        </div>
+    </div>
+    <div class="card">
+        <h3>Welcome back, <span th:text="${username}">Seller</span>! 👋</h3>
+        <p style="color:#6b7280;font-size:0.9rem;margin-top:8px;">Use the navigation above to manage your products and view incoming orders.</p>
+    </div>
+</div>
+</body>
+</html>

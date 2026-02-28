@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Browse Products – Mini Marketplace</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 32px; display: flex; align-items: center;
+            justify-content: space-between; height: 60px; color: #fff;
+        }
+        nav .brand { font-size: 1.1rem; font-weight: 700; }
+        nav .nav-links { display: flex; gap: 8px; }
+        nav .nav-links a {
+            color: rgba(255,255,255,0.9); text-decoration: none;
+            padding: 6px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.15); font-size: 0.875rem; transition: background 0.2s;
+        }
+        nav .nav-links a:hover, nav .nav-links a.active { background: rgba(255,255,255,0.3); }
+        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
+
+        .container { max-width: 1100px; margin: 36px auto; padding: 0 20px; }
+        h2 { font-size: 1.4rem; color: #1f2937; margin-bottom: 24px; }
+
+        .alert-success {
+            background: #d1fae5; color: #065f46; border-radius: 8px;
+            padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem;
+        }
+        .alert-error {
+            background: #fee2e2; color: #991b1b; border-radius: 8px;
+            padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 24px; display: flex; flex-direction: column; gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .product-card .product-name { font-size: 1rem; font-weight: 700; color: #1f2937; }
+        .product-card .product-desc { font-size: 0.85rem; color: #6b7280; flex-grow: 1; }
+        .product-card .product-seller { font-size: 0.8rem; color: #9ca3af; }
+        .product-card .product-price { font-size: 1.25rem; font-weight: 700; color: #059669; }
+        .product-card .product-stock { font-size: 0.8rem; color: #6b7280; }
+        .product-card .stock-low { color: #dc2626; font-weight: 600; }
+        .btn-detail {
+            display: block; text-align: center; background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff; padding: 10px; border-radius: 8px; text-decoration: none;
+            font-size: 0.875rem; font-weight: 600; margin-top: 8px; transition: opacity 0.2s;
+        }
+        .btn-detail:hover { opacity: 0.9; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+<nav>
+    <span class="brand">🛒 Mini Marketplace</span>
+    <div class="nav-links">
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/buyer/products}" class="active">Browse Products</a>
+        <a th:href="@{/buyer/orders}">My Orders</a>
+    </div>
+    <div class="user-area">
+        <span>👤 <strong th:text="${username}">Buyer</strong></span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>🛍️ Browse Products</h2>
+
+    <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert-error" th:text="${errorMessage}"></div>
+
+    <div th:if="${products == null or products.isEmpty()}" class="empty-state">
+        <div class="icon">🏪</div>
+        <p>No products available yet. Check back soon!</p>
+    </div>
+
+    <div class="product-grid">
+        <div th:each="product : ${products}" class="product-card">
+            <div class="product-name" th:text="${product.name}">Product Name</div>
+            <div class="product-desc" th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">Description</div>
+            <div class="product-seller">🏪 Sold by: <strong th:text="${product.seller.username}">seller</strong></div>
+            <div class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</div>
+            <div class="product-stock">
+                <span th:if="${product.quantity > 5}">In stock: <strong th:text="${product.quantity}">0</strong></span>
+                <span th:if="${product.quantity > 0 and product.quantity <= 5}" class="stock-low">⚠️ Only <strong th:text="${product.quantity}">0</strong> left!</span>
+                <span th:if="${product.quantity == 0}" class="stock-low">❌ Out of stock</span>
+            </div>
+            <a th:href="@{/buyer/products/{id}(id=${product.id})}" class="btn-detail">View &amp; Order</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
