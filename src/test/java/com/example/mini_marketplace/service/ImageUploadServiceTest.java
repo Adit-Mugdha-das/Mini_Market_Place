@@ -12,6 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -20,24 +21,22 @@ import static org.assertj.core.api.Assertions.*;
 class ImageUploadServiceTest {
 
     @TempDir
-    Path tempDir;                       // JUnit 5 creates and cleans up a temp folder
+    Path tempDir;
 
     private ImageUploadService imageUploadService;
 
     @BeforeEach
     void setUp() {
         imageUploadService = new ImageUploadService();
-        // Inject the temp directory as the upload dir via reflection
         ReflectionTestUtils.setField(imageUploadService, "uploadDir", tempDir.toString());
     }
 
-    // ─── save: null / empty file ──────────────────────────────────────────────
+    // ─── null / empty ─────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("save — returns null for null file")
     void save_returnsNull_forNullFile() throws IOException {
-        String result = imageUploadService.save(null);
-        assertThat(result).isNull();
+        assertThat(imageUploadService.save(null)).isNull();
     }
 
     @Test
@@ -45,23 +44,18 @@ class ImageUploadServiceTest {
     void save_returnsNull_forEmptyFile() throws IOException {
         MockMultipartFile empty = new MockMultipartFile(
                 "file", "empty.jpg", "image/jpeg", new byte[0]);
-
-        String result = imageUploadService.save(empty);
-        assertThat(result).isNull();
+        assertThat(imageUploadService.save(empty)).isNull();
     }
 
-    // ─── save: allowed types ──────────────────────────────────────────────────
+    // ─── allowed types ────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("save — accepts JPEG and returns /uploads/products/ URL")
     void save_acceptsJpeg_returnsUrl() throws IOException {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "photo.jpg", "image/jpeg", "fake-jpeg-bytes".getBytes());
-
         String url = imageUploadService.save(file);
-
-        assertThat(url).startsWith("/uploads/products/");
-        assertThat(url).endsWith(".jpg");
+        assertThat(url).startsWith("/uploads/products/").endsWith(".jpg");
     }
 
     @Test
@@ -69,11 +63,8 @@ class ImageUploadServiceTest {
     void save_acceptsPng_returnsUrl() throws IOException {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "image.png", "image/png", "fake-png-bytes".getBytes());
-
         String url = imageUploadService.save(file);
-
-        assertThat(url).startsWith("/uploads/products/");
-        assertThat(url).endsWith(".png");
+        assertThat(url).startsWith("/uploads/products/").endsWith(".png");
     }
 
     @Test
@@ -81,11 +72,8 @@ class ImageUploadServiceTest {
     void save_acceptsWebp_returnsUrl() throws IOException {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "image.webp", "image/webp", "fake-webp-bytes".getBytes());
-
         String url = imageUploadService.save(file);
-
-        assertThat(url).startsWith("/uploads/products/");
-        assertThat(url).endsWith(".webp");
+        assertThat(url).startsWith("/uploads/products/").endsWith(".webp");
     }
 
     @Test
@@ -93,21 +81,17 @@ class ImageUploadServiceTest {
     void save_acceptsGif_returnsUrl() throws IOException {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "anim.gif", "image/gif", "fake-gif-bytes".getBytes());
-
         String url = imageUploadService.save(file);
-
-        assertThat(url).startsWith("/uploads/products/");
-        assertThat(url).endsWith(".gif");
+        assertThat(url).startsWith("/uploads/products/").endsWith(".gif");
     }
 
-    // ─── save: rejected types ─────────────────────────────────────────────────
+    // ─── rejected types ───────────────────────────────────────────────────────
 
     @Test
     @DisplayName("save — rejects PDF content type")
     void save_rejects_pdf() {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "doc.pdf", "application/pdf", "fake-pdf".getBytes());
-
         assertThatThrownBy(() -> imageUploadService.save(file))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Invalid file type");
@@ -118,7 +102,6 @@ class ImageUploadServiceTest {
     void save_rejects_textPlain() {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "script.txt", "text/plain", "hello".getBytes());
-
         assertThatThrownBy(() -> imageUploadService.save(file))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Invalid file type");
@@ -129,13 +112,23 @@ class ImageUploadServiceTest {
     void save_rejects_nullContentType() {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "unknown", null, "bytes".getBytes());
-
         assertThatThrownBy(() -> imageUploadService.save(file))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Invalid file type");
     }
 
-    // ─── save: file actually written to disk ─────────────────────────────────
+    @Test
+    @DisplayName("save — rejects application/octet-stream (binary disguise)")
+    void save_rejects_octetStream() {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "malware.exe", "application/octet-stream",
+                "MZ-fake-exe".getBytes());
+        assertThatThrownBy(() -> imageUploadService.save(file))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("JPG, PNG, WebP and GIF");
+    }
+
+    // ─── file written to disk ─────────────────────────────────────────────────
 
     @Test
     @DisplayName("save — file is physically written to the upload directory")
@@ -143,28 +136,20 @@ class ImageUploadServiceTest {
         byte[] content = "real-image-data".getBytes();
         MockMultipartFile file = new MockMultipartFile(
                 "file", "product.jpg", "image/jpeg", content);
-
         String url = imageUploadService.save(file);
-
-        // Extract filename from URL and verify the file exists with correct content
-        String filename = url.substring("/uploads/products/".length());
-        Path saved = tempDir.resolve(filename);
-        assertThat(saved).exists();
-        assertThat(Files.readAllBytes(saved)).isEqualTo(content);
+        String filename = url.replace("/uploads/products/", "");
+        assertThat(tempDir.resolve(filename)).exists().isRegularFile();
+        assertThat(Files.readAllBytes(tempDir.resolve(filename))).isEqualTo(content);
     }
 
     @Test
-    @DisplayName("save — each call generates a unique filename (UUID-based)")
+    @DisplayName("save — each call generates a unique filename")
     void save_generatesUniqueFilename_eachCall() throws IOException {
         byte[] content = "image-data".getBytes();
-        MockMultipartFile file1 = new MockMultipartFile(
-                "file", "img.jpg", "image/jpeg", content);
-        MockMultipartFile file2 = new MockMultipartFile(
-                "file", "img.jpg", "image/jpeg", content);
-
-        String url1 = imageUploadService.save(file1);
-        String url2 = imageUploadService.save(file2);
-
+        String url1 = imageUploadService.save(new MockMultipartFile(
+                "file", "img.jpg", "image/jpeg", content));
+        String url2 = imageUploadService.save(new MockMultipartFile(
+                "file", "img.jpg", "image/jpeg", content));
         assertThat(url1).isNotEqualTo(url2);
     }
 
@@ -173,24 +158,29 @@ class ImageUploadServiceTest {
     void save_fallsBackToJpg_whenNoExtension() throws IOException {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "noextension", "image/jpeg", "bytes".getBytes());
-
-        String url = imageUploadService.save(file);
-
-        assertThat(url).endsWith(".jpg");
+        assertThat(imageUploadService.save(file)).endsWith(".jpg");
     }
 
     @Test
     @DisplayName("save — creates upload directory automatically if it does not exist")
     void save_createsUploadDir_ifNotExists() throws IOException {
-        // Point to a non-existent sub-directory inside the temp folder
         Path newSubDir = tempDir.resolve("new/nested/dir");
         ReflectionTestUtils.setField(imageUploadService, "uploadDir", newSubDir.toString());
-
         MockMultipartFile file = new MockMultipartFile(
                 "file", "img.jpg", "image/jpeg", "bytes".getBytes());
-
         imageUploadService.save(file);
-
         assertThat(newSubDir).isDirectory();
+    }
+
+    @Test
+    @DisplayName("save — saved file size on disk matches original byte content length")
+    void save_fileSizeOnDisk_matchesOriginalContentLength() throws IOException {
+        byte[] content = new byte[1024];
+        Arrays.fill(content, (byte) 0xAB);
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "sized.jpg", "image/jpeg", content);
+        String url = imageUploadService.save(file);
+        String filename = url.replace("/uploads/products/", "");
+        assertThat(Files.size(tempDir.resolve(filename))).isEqualTo(content.length);
     }
 }
