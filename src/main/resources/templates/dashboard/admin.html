@@ -69,6 +69,8 @@
         <a th:href="@{/admin/users}">Users</a>
         <a th:href="@{/admin/products}">Products</a>
         <a th:href="@{/admin/orders}">Orders</a>
+        <a th:href="@{/admin/reviews}">Reviews</a>
+        <a th:href="@{/admin/audit}">Audit Log</a>
     </div>
     <div class="user-area">
         <span>👤 <strong th:text="${username}">Admin</strong></span>
@@ -130,6 +132,11 @@
             <div class="icon">🔍</div>
             <h3>Audit Log</h3>
             <p>Track every action: who created, deleted or changed what.</p>
+        </a>
+        <a th:href="@{/admin/reviews}" class="action-card" style="border-top-color:#f59e0b;">
+            <div class="icon">⭐</div>
+            <h3>Reviews</h3>
+            <p>View all product reviews and delete inappropriate content.</p>
         </a>
     </div>
 </div>

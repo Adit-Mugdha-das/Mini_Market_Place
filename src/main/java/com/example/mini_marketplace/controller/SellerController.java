@@ -3,6 +3,7 @@ package com.example.mini_marketplace.controller;
 import com.example.mini_marketplace.dto.ProductRequest;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.service.ImageUploadService;
+import com.example.mini_marketplace.service.ReviewService;
 import com.example.mini_marketplace.service.SellerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class SellerController {
 
     private final SellerService sellerService;
     private final ImageUploadService imageUploadService;
+    private final ReviewService reviewService;
 
     // ─── Dashboard ─────────────────────────────────────────────────────────────
 
@@ -159,5 +161,14 @@ public class SellerController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/seller/orders";
+    }
+
+    // ─── Reviews ───────────────────────────────────────────────────────────────
+
+    @GetMapping("/reviews")
+    public String viewReviews(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("reviews", reviewService.getReviewsForSeller(userDetails.getUsername()));
+        model.addAttribute("username", userDetails.getUsername());
+        return "seller/reviews";
     }
 }

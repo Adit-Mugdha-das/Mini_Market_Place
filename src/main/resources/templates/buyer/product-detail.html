@@ -106,6 +106,85 @@
             display: flex; gap: 14px; margin-top: 14px; flex-wrap: wrap;
         }
         .trust-item { font-size: 0.75rem; color: #9ca3af; display: flex; align-items: center; gap: 4px; }
+
+        /* ── Reviews section ── */
+        .reviews-section { margin-top: 32px; }
+        .reviews-section h3 { font-size: 1.1rem; font-weight: 800; color: #1f2937; margin-bottom: 20px; display:flex; align-items:center; gap:8px; }
+
+        /* Rating summary card */
+        .rating-summary {
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06); padding: 24px;
+            display: flex; gap: 32px; align-items: center; flex-wrap: wrap;
+            margin-bottom: 20px; border: 1px solid #f3f4f6;
+        }
+        .rating-big { text-align: center; }
+        .rating-big .num { font-size: 3.5rem; font-weight: 900; color: #1f2937; line-height: 1; }
+        .rating-big .stars { font-size: 1.3rem; margin: 4px 0; }
+        .rating-big .count { font-size: 0.78rem; color: #9ca3af; }
+        .rating-bars { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px; }
+        .bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; }
+        .bar-row .star-label { color: #6b7280; width: 36px; flex-shrink: 0; }
+        .bar-track { flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+        .bar-row .bar-count { color: #9ca3af; width: 24px; text-align: right; flex-shrink: 0; }
+
+        /* Write review form */
+        .review-form-card {
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06); padding: 24px;
+            margin-bottom: 20px; border: 1px solid #f3f4f6;
+        }
+        .review-form-card h4 { font-size: 0.9rem; font-weight: 800; color: #1f2937; margin-bottom: 16px; }
+        /* Interactive star picker */
+        .star-picker { display: flex; gap: 6px; margin-bottom: 16px; flex-direction: row-reverse; justify-content: flex-end; }
+        .star-picker input { display: none; }
+        .star-picker label {
+            font-size: 2rem; cursor: pointer; color: #e5e7eb;
+            transition: color 0.15s; line-height: 1;
+        }
+        .star-picker label:hover,
+        .star-picker label:hover ~ label,
+        .star-picker input:checked ~ label { color: #f59e0b; }
+        .review-textarea {
+            width: 100%; padding: 10px 13px; border: 1.5px solid #e5e7eb;
+            border-radius: 10px; font-size: 0.88rem; font-family: inherit;
+            resize: vertical; min-height: 80px; outline: none;
+            transition: border-color 0.2s; background: #f9fafb;
+        }
+        .review-textarea:focus { border-color: #667eea; background: #fff; box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
+        .btn-review {
+            margin-top: 12px; padding: 10px 24px; border: none; border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+            font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-review:hover { opacity: 0.88; }
+        .review-locked {
+            background: #f9fafb; border: 1px dashed #e5e7eb; border-radius: 12px;
+            padding: 16px 20px; font-size: 0.82rem; color: #9ca3af; text-align: center;
+        }
+
+        /* Individual review cards */
+        .review-list { display: flex; flex-direction: column; gap: 14px; }
+        .review-card {
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.05); padding: 18px 20px;
+            border: 1px solid #f3f4f6;
+        }
+        .review-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+        .reviewer-info { display: flex; align-items: center; gap: 10px; }
+        .reviewer-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 0.85rem; font-weight: 800; flex-shrink: 0;
+        }
+        .reviewer-name { font-size: 0.88rem; font-weight: 700; color: #1f2937; }
+        .review-date   { font-size: 0.72rem; color: #9ca3af; }
+        .review-stars  { font-size: 1rem; letter-spacing: 1px; }
+        .review-comment { font-size: 0.85rem; color: #4b5563; line-height: 1.6; margin-top: 8px; }
+        .no-reviews { text-align: center; padding: 32px; color: #9ca3af; font-size: 0.88rem; background: #fafafa; border-radius: 12px; border: 1px dashed #e5e7eb; }
+        .own-review { border-color: #ede9fe; background: #faf8ff; }
     </style>
 </head>
 <body>
@@ -129,6 +208,9 @@
     <a th:href="@{/buyer/products}" class="back-link">← Back to Products</a>
 
     <div th:if="${errorMessage}" class="alert-error" th:text="${errorMessage}"></div>
+    <div th:if="${successMessage}"
+         style="background:#d1fae5;color:#065f46;border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:0.88rem;border-left:4px solid #059669;"
+         th:text="${successMessage}"></div>
 
     <div class="detail-layout">
 
@@ -200,10 +282,153 @@
                 <span class="trust-item">📦 Order tracking</span>
                 <span class="trust-item">↩️ Cancel if PENDING</span>
             </div>
+    </div><!-- /detail-layout -->
+
+    <!-- ══════════════════════════════════════════════════════════
+         REVIEWS & RATINGS
+    ══════════════════════════════════════════════════════════ -->
+    <div class="reviews-section" id="reviews">
+        <h3>⭐ Customer Reviews
+            <span style="font-size:0.82rem;font-weight:500;color:#9ca3af;"
+                  th:if="${reviewSummary.totalReviews > 0}"
+                  th:text="'(' + ${reviewSummary.totalReviews} + ' reviews)'"></span>
+        </h3>
+
+        <!-- Rating summary -->
+        <div class="rating-summary" th:if="${reviewSummary.totalReviews > 0}">
+            <!-- Big average number -->
+            <div class="rating-big">
+                <div class="num" th:text="${#numbers.formatDecimal(reviewSummary.averageRating,1,1)}">0.0</div>
+                <div class="stars">
+                    <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                        <span th:if="${i <= reviewSummary.averageRating}">⭐</span>
+                        <span th:if="${i > reviewSummary.averageRating}" style="filter:grayscale(1);opacity:0.3;">⭐</span>
+                    </th:block>
+                </div>
+                <div class="count" th:text="${reviewSummary.totalReviews} + ' ratings'"></div>
+            </div>
+            <!-- Per-star bar chart (5 → 1) -->
+            <div class="rating-bars">
+                <div class="bar-row" th:each="star : ${#numbers.sequence(5,1,-1)}">
+                    <span class="star-label" th:text="${star} + ' ★'">5 ★</span>
+                    <div class="bar-track">
+                        <div class="bar-fill"
+                             th:style="'width:' + (${reviewSummary.totalReviews > 0} ? ${reviewSummary.starCounts[star-1] * 100 / reviewSummary.totalReviews} : 0) + '%'"></div>
+                    </div>
+                    <span class="bar-count" th:text="${reviewSummary.starCounts[star-1]}">0</span>
+                </div>
+            </div>
         </div>
 
-    </div>
-</div>
+        <!-- Write a review -->
+        <div class="review-form-card" th:if="${canReview}">
+            <h4>✍️ Write Your Review</h4>
+            <form th:action="@{/buyer/products/{id}/review(id=${product.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="star-picker">
+                    <input type="radio" id="s5" name="rating" value="5" required />
+                    <label for="s5" title="5 stars">★</label>
+                    <input type="radio" id="s4" name="rating" value="4" />
+                    <label for="s4" title="4 stars">★</label>
+                    <input type="radio" id="s3" name="rating" value="3" />
+                    <label for="s3" title="3 stars">★</label>
+                    <input type="radio" id="s2" name="rating" value="2" />
+                    <label for="s2" title="2 stars">★</label>
+                    <input type="radio" id="s1" name="rating" value="1" />
+                    <label for="s1" title="1 star">★</label>
+                </div>
+                <textarea name="comment" class="review-textarea"
+                          placeholder="Share your experience with this product… (optional)"
+                          maxlength="1000"></textarea>
+                <button type="submit" class="btn-review">Submit Review ⭐</button>
+            </form>
+        </div>
+
+        <!-- Already reviewed — show edit + delete -->
+        <div class="review-form-card" th:if="${hasReviewed and myReview != null}">
+            <h4 style="display:flex;align-items:center;justify-content:space-between;">
+                <span>✏️ Your Review</span>
+                <!-- Delete -->
+                <form th:action="@{/buyer/reviews/{rid}/delete(rid=${myReview.id})}" method="post"
+                      onsubmit="return confirm('Delete your review?');" style="margin:0;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <input type="hidden" name="productId" th:value="${product.id}" />
+                    <button type="submit"
+                            style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;padding:5px 14px;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;">
+                        🗑 Delete
+                    </button>
+                </form>
+            </h4>
+            <!-- Edit form pre-filled -->
+            <form th:action="@{/buyer/reviews/{rid}/edit(rid=${myReview.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="productId" th:value="${product.id}" />
+                <div class="star-picker">
+                    <input type="radio" id="e5" name="rating" value="5" th:checked="${myReview.rating == 5}" required />
+                    <label for="e5" title="5 stars">★</label>
+                    <input type="radio" id="e4" name="rating" value="4" th:checked="${myReview.rating == 4}" />
+                    <label for="e4" title="4 stars">★</label>
+                    <input type="radio" id="e3" name="rating" value="3" th:checked="${myReview.rating == 3}" />
+                    <label for="e3" title="3 stars">★</label>
+                    <input type="radio" id="e2" name="rating" value="2" th:checked="${myReview.rating == 2}" />
+                    <label for="e2" title="2 stars">★</label>
+                    <input type="radio" id="e1" name="rating" value="1" th:checked="${myReview.rating == 1}" />
+                    <label for="e1" title="1 star">★</label>
+                </div>
+                <textarea name="comment" class="review-textarea" maxlength="1000"
+                          th:text="${myReview.comment}"
+                          placeholder="Update your comment… (optional)"></textarea>
+                <button type="submit" class="btn-review">💾 Update Review</button>
+            </form>
+        </div>
+
+        <!-- Not eligible (no delivered order) -->
+        <div class="review-locked" th:if="${!canReview and !hasReviewed}">
+            🔒 Only buyers with a <strong>DELIVERED</strong> order for this product can leave a review.
+        </div>
+
+        <!-- Review list -->
+        <div class="review-list" th:if="${reviewSummary.totalReviews > 0}">
+            <div th:each="r : ${reviewSummary.reviews}" class="review-card"
+                 th:classappend="${r.buyerUsername == username} ? 'own-review'">
+                <div class="review-card-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar"
+                             th:text="${#strings.substring(r.buyerUsername,0,1).toUpperCase()}">U</div>
+                        <div>
+                            <div class="reviewer-name">
+                                <span th:text="${r.buyerUsername}">User</span>
+                                <span th:if="${r.buyerUsername == username}"
+                                      style="background:#ede9fe;color:#5b21b6;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;">You</span>
+                            </div>
+                            <div class="review-date"
+                                 th:text="${#temporals.format(r.createdAt,'dd MMM yyyy')}">01 Jan 2025</div>
+                        </div>
+                    </div>
+                    <div class="review-stars">
+                        <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                            <span th:if="${i <= r.rating}">⭐</span>
+                            <span th:if="${i > r.rating}" style="filter:grayscale(1);opacity:0.25;">⭐</span>
+                        </th:block>
+                    </div>
+                </div>
+                <div class="review-comment"
+                     th:if="${r.comment != null and !r.comment.isEmpty()}"
+                     th:text="${r.comment}"></div>
+                <div th:unless="${r.comment != null and !r.comment.isEmpty()}"
+                     style="font-size:0.8rem;color:#d1d5db;font-style:italic;margin-top:6px;">No comment left.</div>
+            </div>
+        </div>
+
+        <!-- No reviews yet -->
+        <div class="no-reviews" th:if="${reviewSummary.totalReviews == 0}">
+            <div style="font-size:2rem;margin-bottom:8px;">💬</div>
+            No reviews yet. Be the first to review this product!
+        </div>
+
+    </div><!-- /reviews-section -->
+
+</div><!-- /container -->
 
 <script>
     function changeQty(delta) {

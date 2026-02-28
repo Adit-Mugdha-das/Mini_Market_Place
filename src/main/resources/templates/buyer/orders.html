@@ -326,9 +326,9 @@
             </div>
         </div>
 
-        <!-- Footer: cancel + total -->
+        <!-- Footer: actions + total -->
         <div class="order-footer">
-            <div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                 <form th:if="${order.status.name() == 'PENDING'}"
                       th:action="@{/buyer/orders/{id}/cancel(id=${order.orderId})}"
                       method="post" class="cancel-form"
@@ -336,10 +336,20 @@
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <button type="submit">✕ Cancel Order</button>
                 </form>
-                <span th:if="${order.status.name() != 'PENDING'}"
+                <span th:if="${order.status.name() != 'PENDING' and order.status.name() != 'DELIVERED'}"
                       style="font-size:0.75rem; color:#d1d5db;">
                     Can only cancel PENDING orders
                 </span>
+                <!-- Write a review shortcut for delivered orders -->
+                <a th:if="${order.status.name() == 'DELIVERED'}"
+                   th:href="@{/buyer/products/{id}(id=${order.items[0].productId})}#reviews"
+                   style="display:inline-flex;align-items:center;gap:5px;padding:7px 16px;
+                          background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;
+                          border-radius:8px;font-size:0.8rem;font-weight:700;text-decoration:none;
+                          transition:opacity 0.2s;"
+                   onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    ⭐ Write a Review
+                </a>
             </div>
             <div class="order-total-wrap">
                 <div class="order-total-label">Order Total</div>

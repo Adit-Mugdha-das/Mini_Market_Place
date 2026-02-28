@@ -3,6 +3,7 @@ package com.example.mini_marketplace.controller;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.exception.InsufficientStockException;
 import com.example.mini_marketplace.service.BuyerService;
+import com.example.mini_marketplace.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +23,9 @@ import java.math.BigDecimal;
 public class BuyerController {
 
     private final BuyerService buyerService;
+    private final ReviewService reviewService;
 
-    // ─── 1. Product list (search + price filter + pagination + sort) ───────────
+    // ─── 1. Product list ───────────────────────────────────────────────────────
 
     @GetMapping("/products")
     public String listProducts(@RequestParam(defaultValue = "")     String keyword,
@@ -37,8 +39,17 @@ public class BuyerController {
                                Model model) {
         Page<Product> productPage = buyerService.searchProducts(
                 keyword, minPrice, maxPrice, page, size, sortBy, dir);
+
+        // Build rating map: productId → summary (avg + count)
+        java.util.Map<Long, com.example.mini_marketplace.dto.ProductReviewSummary> ratingMap =
+                new java.util.HashMap<>();
+        for (Product p : productPage.getContent()) {
+            ratingMap.put(p.getId(), reviewService.getSummary(p.getId()));
+        }
+
         model.addAttribute("productPage",  productPage);
         model.addAttribute("products",     productPage.getContent());
+        model.addAttribute("ratingMap",    ratingMap);
         model.addAttribute("currentPage",  page);
         model.addAttribute("totalPages",   productPage.getTotalPages());
         model.addAttribute("sortBy",       sortBy);
@@ -50,7 +61,7 @@ public class BuyerController {
         return "buyer/products";
     }
 
-    // ─── 2. Product detail ─────────────────────────────────────────────────────
+    // ─── 2. Product detail (includes reviews) ─────────────────────────────────
 
     @GetMapping("/products/{id}")
     public String viewProduct(@PathVariable Long id,
@@ -59,8 +70,13 @@ public class BuyerController {
                               RedirectAttributes redirectAttributes) {
         try {
             Product product = buyerService.getProductById(id);
-            model.addAttribute("product",  product);
-            model.addAttribute("username", userDetails.getUsername());
+            String username = userDetails.getUsername();
+            model.addAttribute("product",     product);
+            model.addAttribute("username",    username);
+            model.addAttribute("reviewSummary", reviewService.getSummary(id));
+            model.addAttribute("canReview",   reviewService.canReview(username, id));
+            model.addAttribute("hasReviewed", reviewService.hasReviewed(username, id));
+            model.addAttribute("myReview",    reviewService.getMyReview(username, id));
             return "buyer/product-detail";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -79,7 +95,6 @@ public class BuyerController {
             buyerService.placeOrder(userDetails.getUsername(), productId, quantity);
             redirectAttributes.addFlashAttribute("successMessage", "Order placed successfully! 🎉");
         } catch (InsufficientStockException e) {
-            // Let the GlobalExceptionHandler render the stock-error page
             throw e;
         } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -88,7 +103,7 @@ public class BuyerController {
         return "redirect:/buyer/orders";
     }
 
-    // ─── 4. Cancel order (only PENDING) ────────────────────────────────────────
+    // ─── 4. Cancel order ───────────────────────────────────────────────────────
 
     @PostMapping("/orders/{id}/cancel")
     public String cancelOrder(@PathVariable Long id,
@@ -112,7 +127,60 @@ public class BuyerController {
         model.addAttribute("username", userDetails.getUsername());
         return "buyer/orders";
     }
+
+    // ─── 6. Submit review ──────────────────────────────────────────────────────
+
+    @PostMapping("/products/{id}/review")
+    public String submitReview(@PathVariable Long id,
+                               @RequestParam int rating,
+                               @RequestParam(required = false) String comment,
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            reviewService.submitReview(userDetails.getUsername(), id, rating, comment);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Thank you! Your review has been submitted. ⭐");
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/buyer/products/" + id + "#reviews";
+    }
+
+    // ─── 7. Edit review ────────────────────────────────────────────────────────
+
+    @PostMapping("/reviews/{reviewId}/edit")
+    public String editReview(@PathVariable Long reviewId,
+                             @RequestParam Long productId,
+                             @RequestParam int rating,
+                             @RequestParam(required = false) String comment,
+                             @AuthenticationPrincipal UserDetails userDetails,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            reviewService.editReview(userDetails.getUsername(), reviewId, rating, comment);
+            redirectAttributes.addFlashAttribute("successMessage", "Review updated successfully. ⭐");
+        } catch (IllegalArgumentException | SecurityException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/buyer/products/" + productId + "#reviews";
+    }
+
+    // ─── 8. Delete review ──────────────────────────────────────────────────────
+
+    @PostMapping("/reviews/{reviewId}/delete")
+    public String deleteReview(@PathVariable Long reviewId,
+                               @RequestParam Long productId,
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            reviewService.deleteReview(userDetails.getUsername(), reviewId);
+            redirectAttributes.addFlashAttribute("successMessage", "Review deleted.");
+        } catch (IllegalArgumentException | SecurityException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/buyer/products/" + productId + "#reviews";
+    }
 }
+
 
 
 

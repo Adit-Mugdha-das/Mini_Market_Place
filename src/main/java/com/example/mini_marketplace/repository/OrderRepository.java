@@ -25,6 +25,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Find all orders placed by a specific buyer
     List<Order> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
 
+    // Check if a buyer has a DELIVERED order containing a specific product
+    @Query("""
+            SELECT COUNT(o) > 0 FROM Order o
+            JOIN o.items i
+            WHERE o.buyer.id = :buyerId
+            AND i.product.id = :productId
+            AND o.status = com.example.mini_marketplace.entity.Order.Status.DELIVERED
+            """)
+    boolean hasBuyerDeliveredProduct(@Param("buyerId") Long buyerId,
+                                     @Param("productId") Long productId);
+
     // Admin: all orders newest first
     List<Order> findAllByOrderByCreatedAtDesc();
 

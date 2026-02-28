@@ -2,6 +2,7 @@ package com.example.mini_marketplace.controller;
 
 import com.example.mini_marketplace.service.AdminService;
 import com.example.mini_marketplace.service.AuditService;
+import com.example.mini_marketplace.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final AuditService auditService;
+    private final ReviewService reviewService;
 
     // ─── Dashboard ─────────────────────────────────────────────────────────────
 
@@ -144,6 +146,26 @@ public class AdminController {
         model.addAttribute("totalPages",  logPage.getTotalPages());
         model.addAttribute("username",    userDetails.getUsername());
         return "admin/audit";
+    }
+
+    // ─── 5. Reviews Management ─────────────────────────────────────────────────
+
+    @GetMapping("/reviews")
+    public String listReviews(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("reviews",  reviewService.getAllReviews());
+        model.addAttribute("username", userDetails.getUsername());
+        return "admin/reviews";
+    }
+
+    @PostMapping("/reviews/{id}/delete")
+    public String deleteReview(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            reviewService.adminDeleteReview(id);
+            ra.addFlashAttribute("successMessage", "Review deleted.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/reviews";
     }
 }
 

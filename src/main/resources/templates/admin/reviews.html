@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Reviews – Admin – Mini Marketplace</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
+        nav {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            padding: 0 32px; display: flex; align-items: center;
+            justify-content: space-between; height: 60px; color: #fff;
+            position: sticky; top: 0; z-index: 100;
+        }
+        nav .brand { font-size: 1.1rem; font-weight: 700; }
+        nav .nav-links { display: flex; gap: 6px; }
+        nav .nav-links a {
+            color: rgba(255,255,255,0.9); text-decoration: none; padding: 6px 14px;
+            border-radius: 20px; background: rgba(255,255,255,0.15); font-size: 0.8rem; transition: background 0.2s;
+        }
+        nav .nav-links a:hover, nav .nav-links a.active { background: rgba(255,255,255,0.3); }
+        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); cursor: pointer; color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 0.82rem; }
+
+        .container { max-width: 920px; margin: 36px auto; padding: 0 20px 60px; }
+        .page-header { margin-bottom: 28px; }
+        .page-header h2 { font-size: 1.5rem; font-weight: 800; color: #1f2937; }
+        .page-header p  { color: #9ca3af; font-size: 0.85rem; margin-top: 4px; }
+        .alert-success { background: #d1fae5; color: #065f46; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.88rem; border-left: 4px solid #059669; }
+        .alert-error   { background: #fee2e2; color: #991b1b; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.88rem; border-left: 4px solid #dc2626; }
+
+        .review-card {
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 18px 22px;
+            margin-bottom: 14px; border: 1px solid #f3f4f6;
+            display: flex; align-items: flex-start; gap: 16px; transition: box-shadow 0.2s;
+        }
+        .review-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.09); }
+        .avatar {
+            width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 0.9rem; font-weight: 800;
+        }
+        .review-body { flex: 1; min-width: 0; }
+        .review-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+        .reviewer-name { font-size: 0.88rem; font-weight: 700; color: #1f2937; }
+        .review-date   { font-size: 0.72rem; color: #9ca3af; margin-left: 8px; }
+        .product-tag {
+            display: inline-block; background: #fef3c7; color: #92400e;
+            font-size: 0.68rem; font-weight: 700; padding: 2px 9px; border-radius: 20px;
+        }
+        .review-comment { font-size: 0.84rem; color: #4b5563; line-height: 1.6; margin-top: 8px; }
+        .no-comment { font-size: 0.78rem; color: #d1d5db; font-style: italic; margin-top: 6px; }
+        .btn-delete {
+            background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;
+            padding: 6px 14px; border-radius: 8px; font-size: 0.78rem; font-weight: 700;
+            cursor: pointer; transition: background 0.15s; white-space: nowrap; flex-shrink: 0;
+        }
+        .btn-delete:hover { background: #fecaca; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+<nav>
+    <span class="brand">🛡️ Admin Panel</span>
+    <div class="nav-links">
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <a th:href="@{/admin/users}">Users</a>
+        <a th:href="@{/admin/products}">Products</a>
+        <a th:href="@{/admin/orders}">Orders</a>
+        <a th:href="@{/admin/reviews}" class="active">Reviews</a>
+        <a th:href="@{/admin/audit}">Audit Log</a>
+    </div>
+    <div class="user-area">
+        <span>👤 <strong th:text="${username}">Admin</strong></span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h2>⭐ All Reviews</h2>
+        <p th:text="${reviews.size()} + ' total review(s) across all products'">0 reviews</p>
+    </div>
+
+    <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}"   class="alert-error"   th:text="${errorMessage}"></div>
+
+    <div th:if="${reviews.isEmpty()}" class="empty-state">
+        <div class="icon">💬</div>
+        <p>No reviews have been submitted yet.</p>
+    </div>
+
+    <div th:each="r : ${reviews}" class="review-card">
+        <div class="avatar" th:text="${#strings.substring(r.buyerUsername,0,1).toUpperCase()}">U</div>
+        <div class="review-body">
+            <div class="review-top">
+                <div>
+                    <span class="reviewer-name" th:text="${r.buyerUsername}">buyer</span>
+                    <span class="review-date"
+                          th:text="${#temporals.format(r.createdAt,'dd MMM yyyy · HH:mm')}">01 Jan 2025</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                        <span th:if="${i <= r.rating}">⭐</span>
+                        <span th:if="${i > r.rating}" style="filter:grayscale(1);opacity:0.3;">⭐</span>
+                    </th:block>
+                    <span style="font-weight:800;color:#f59e0b;font-size:0.85rem;"
+                          th:text="${r.rating} + '/5'">5/5</span>
+                </div>
+            </div>
+            <span class="product-tag" th:text="'📦 ' + ${r.productName}">Product</span>
+            <div th:if="${r.comment != null and !r.comment.isEmpty()}"
+                 class="review-comment" th:text="${r.comment}"></div>
+            <div th:unless="${r.comment != null and !r.comment.isEmpty()}"
+                 class="no-comment">No written comment.</div>
+        </div>
+        <form th:action="@{/admin/reviews/{id}/delete(id=${r.id})}" method="post"
+              onsubmit="return confirm('Delete this review permanently?');">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-delete">🗑 Delete</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

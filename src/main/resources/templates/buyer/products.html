@@ -126,6 +126,13 @@
             font-size: 0.72rem; color: #9ca3af;
             display: flex; align-items: center; gap: 4px;
         }
+        /* star mini row */
+        .card-rating {
+            display: flex; align-items: center; gap: 5px; font-size: 0.78rem;
+        }
+        .card-rating .stars { color: #f59e0b; letter-spacing: 1px; font-size: 0.8rem; }
+        .card-rating .avg   { font-weight: 700; color: #1f2937; }
+        .card-rating .cnt   { color: #9ca3af; }
         .card-footer {
             padding: 0 18px 18px;
             display: flex; align-items: center; justify-content: space-between;
@@ -297,6 +304,20 @@
                 <div class="product-desc"
                      th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">
                     Description
+                </div>
+                <!-- Star rating -->
+                <div class="card-rating" th:with="rs=${ratingMap[product.id]}">
+                    <span class="stars" th:if="${rs != null and rs.totalReviews > 0}">
+                        <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                            <span th:if="${i <= rs.averageRating}">★</span>
+                            <span th:if="${i > rs.averageRating}" style="color:#e5e7eb;">★</span>
+                        </th:block>
+                    </span>
+                    <span class="avg" th:if="${rs != null and rs.totalReviews > 0}"
+                          th:text="${#numbers.formatDecimal(rs.averageRating,1,1)}">0.0</span>
+                    <span class="cnt" th:if="${rs != null and rs.totalReviews > 0}"
+                          th:text="'(' + ${rs.totalReviews} + ')'"></span>
+                    <span class="cnt" th:if="${rs == null or rs.totalReviews == 0}">No reviews yet</span>
                 </div>
                 <div class="product-seller">
                     🏪 <span th:text="${product.seller.username}">seller</span>
