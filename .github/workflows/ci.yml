@@ -11,21 +11,6 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: marketplace_db
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -42,10 +27,6 @@ jobs:
 
       - name: Run tests
         run: ./mvnw test
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/marketplace_db
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
 
       - name: Build JAR (skip tests, already ran above)
         run: ./mvnw package -DskipTests
