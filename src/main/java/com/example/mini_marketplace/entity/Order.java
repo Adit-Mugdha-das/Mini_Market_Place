@@ -23,6 +23,10 @@ public class Order {
         PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
     }
 
+    public enum PaymentMethod {
+        CREDIT_CARD, DEBIT_CARD, PAYPAL, BKASH, NAGAD, CASH_ON_DELIVERY
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,6 +41,14 @@ public class Order {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private PaymentMethod paymentMethod;
+
+    /** Simulated transaction reference e.g. "TXN-20260228-A1B2C3" */
+    @Column(length = 50)
+    private String paymentReference;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${profile.username} + ' – Seller Profile'">Seller Profile</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
+
+        nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 32px; display: flex; align-items: center;
+            justify-content: space-between; height: 60px; color: #fff;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 12px rgba(102,126,234,0.3);
+        }
+        nav .brand { font-size: 1.1rem; font-weight: 700; }
+        nav .nav-links { display: flex; gap: 6px; }
+        nav .nav-links a {
+            color: rgba(255,255,255,0.9); text-decoration: none;
+            padding: 6px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.15); font-size: 0.875rem; transition: background 0.2s;
+        }
+        nav .nav-links a:hover { background: rgba(255,255,255,0.3); }
+        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); cursor: pointer; color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 0.82rem; }
+
+        /* ── Hero banner ── */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 48px 32px 80px;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -60px; right: -60px;
+            width: 300px; height: 300px; border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+        }
+        .hero::after {
+            content: ''; position: absolute; bottom: -80px; left: 10%;
+            width: 400px; height: 200px; border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+        }
+        .hero-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 28px; position: relative; z-index: 1; }
+        .seller-avatar-big {
+            width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0;
+            background: rgba(255,255,255,0.2); border: 3px solid rgba(255,255,255,0.5);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.4rem; font-weight: 900; color: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .hero-info { flex: 1; }
+        .hero-info .seller-name { font-size: 1.9rem; font-weight: 900; color: #fff; line-height: 1.2; }
+        .hero-info .seller-handle { font-size: 0.95rem; color: rgba(255,255,255,0.75); margin-top: 2px; }
+        .hero-info .seller-joined { font-size: 0.78rem; color: rgba(255,255,255,0.6); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
+        .seller-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3);
+            padding: 4px 14px; border-radius: 20px; font-size: 0.75rem;
+            font-weight: 700; color: #fff; margin-top: 10px;
+        }
+
+        /* ── Stats ribbon (overlapping hero) ── */
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+        .stats-ribbon {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+            margin-top: -44px; margin-bottom: 28px; position: relative; z-index: 10;
+        }
+        @media(max-width:700px){ .stats-ribbon { grid-template-columns: repeat(2,1fr); } }
+        .stat-card {
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 18px 14px;
+            text-align: center; transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .stat-num { font-size: 1.6rem; font-weight: 900; color: #1f2937; line-height: 1; }
+        .stat-sub { font-size: 0.62rem; color: #059669; font-weight: 700; margin-top: 1px; }
+        .stat-label { font-size: 0.65rem; color: #9ca3af; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+        /* ── Star rating display ── */
+        .star-display { color: #f59e0b; font-size: 1rem; letter-spacing: 1px; }
+        .star-grey    { color: #e5e7eb; }
+
+        /* ── Section headings ── */
+        .section-title {
+            font-size: 1rem; font-weight: 800; color: #1f2937;
+            margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+            padding-bottom: 10px; border-bottom: 2px solid #f3f4f6;
+        }
+
+        /* ── Product showcase grid ── */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 18px; margin-bottom: 32px; }
+        .product-card {
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none; color: inherit; display: flex; flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .card-img {
+            width: 100%; height: 160px; object-fit: cover;
+            background: #f3f4f6; display: block;
+        }
+        .card-no-img {
+            width: 100%; height: 160px; background: linear-gradient(135deg,#f3f4f6,#e5e7eb);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; color: #d1d5db;
+        }
+        .card-body { padding: 14px 16px 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .card-name { font-size: 0.9rem; font-weight: 700; color: #1f2937; line-height: 1.3;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-cat { font-size: 0.68rem; font-weight: 700; background: #ede9fe; color: #5b21b6; padding: 2px 9px; border-radius: 20px; display: inline-block; }
+        .card-footer-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 8px; }
+        .card-price { font-size: 1.1rem; font-weight: 800; color: #059669; }
+        .card-stock-ok  { font-size: 0.7rem; color: #166534; background: #dcfce7; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+        .card-stock-low { font-size: 0.7rem; color: #92400e; background: #fef3c7; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+        .card-stock-out { font-size: 0.7rem; color: #991b1b; background: #fee2e2; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+
+        /* ── Empty state ── */
+        .empty-state { text-align: center; padding: 40px 20px; color: #9ca3af; background: #fafafa; border-radius: 12px; border: 1px dashed #e5e7eb; }
+        .empty-state .icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+        /* ── Back link ── */
+        .back-link { display: inline-flex; align-items: center; gap: 5px; color: #667eea; text-decoration: none; font-size: 0.85rem; font-weight: 600; margin-bottom: 20px; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <span class="brand">🛒 Mini Marketplace</span>
+    <div class="nav-links">
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/buyer/products}">Browse Products</a>
+        <a th:href="@{/buyer/orders}">My Orders</a>
+    </div>
+    <div class="user-area">
+        <span>👤 <strong th:text="${username}">User</strong></span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<!-- Hero Banner -->
+<div class="hero">
+    <div class="hero-inner">
+        <!-- Avatar (first letter of username) -->
+        <div class="seller-avatar-big"
+             th:text="${#strings.substring(profile.username,0,1).toUpperCase()}">S</div>
+        <div class="hero-info">
+            <div class="seller-name" th:text="${profile.fullName}">Full Name</div>
+            <div class="seller-handle" th:text="'@' + ${profile.username}">@username</div>
+            <div class="seller-joined">
+                📅 Member since
+                <span th:text="${#temporals.format(profile.joinDate,'MMMM yyyy')}">Jan 2024</span>
+            </div>
+            <div class="seller-badge">🏪 Verified Seller</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats ribbon -->
+<div class="container">
+    <div class="stats-ribbon">
+        <!-- Active Products -->
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-num" th:text="${profile.activeProducts}">0</div>
+            <div class="stat-sub" th:text="${profile.totalProducts} + ' total'">0 total</div>
+            <div class="stat-label">Products</div>
+        </div>
+        <!-- Total Sales -->
+        <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-num" th:text="${profile.totalSales}">0</div>
+            <div class="stat-label">Sales</div>
+        </div>
+        <!-- Revenue -->
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-num" th:text="'$' + ${#numbers.formatDecimal(profile.totalRevenue,1,0)}">$0</div>
+            <div class="stat-label">Revenue</div>
+        </div>
+        <!-- Average Rating -->
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-num" th:text="${#numbers.formatDecimal(profile.averageRating,1,1)}">0.0</div>
+            <div class="stat-sub" th:text="${profile.totalReviews} + ' reviews'">0 reviews</div>
+            <div class="stat-label">Avg Rating</div>
+        </div>
+        <!-- Star visual -->
+        <div class="stat-card">
+            <div style="font-size:1.1rem;margin-bottom:4px;">
+                <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                    <span th:if="${i <= profile.averageRating}" style="color:#f59e0b;">★</span>
+                    <span th:if="${i > profile.averageRating}"  style="color:#e5e7eb;">★</span>
+                </th:block>
+            </div>
+            <div class="stat-num" th:text="${profile.averageRating > 0} ? ${#numbers.formatDecimal(profile.averageRating,1,1)} + '/5' : 'N/A'">N/A</div>
+            <div class="stat-label">Reputation</div>
+        </div>
+    </div>
+
+    <!-- Back link -->
+    <a th:href="@{/buyer/products}" class="back-link">← Back to Products</a>
+
+    <!-- Product showcase -->
+    <div class="section-title">🛍️ Products by this Seller
+        <span style="font-size:0.78rem;font-weight:500;color:#9ca3af;"
+              th:if="${!profile.recentProducts.isEmpty()}"
+              th:text="'Showing ' + ${profile.recentProducts.size()} + ' of ' + ${profile.activeProducts}"></span>
+    </div>
+
+    <div th:if="${profile.recentProducts.isEmpty()}" class="empty-state">
+        <div class="icon">📭</div>
+        <p>This seller has no active products right now.</p>
+    </div>
+
+    <div class="product-grid" th:if="${!profile.recentProducts.isEmpty()}">
+        <a th:each="p : ${profile.recentProducts}"
+           th:href="@{/buyer/products/{id}(id=${p.id})}"
+           class="product-card">
+            <!-- Image -->
+            <img th:if="${p.imageUrl != null and !p.imageUrl.isEmpty()}"
+                 th:src="${p.imageUrl}" th:alt="${p.name}" class="card-img"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div th:if="${p.imageUrl == null or p.imageUrl.isEmpty()}" class="card-no-img">🛒</div>
+            <div class="card-no-img" style="display:none;">🛒</div>
+
+            <div class="card-body">
+                <div class="card-name" th:text="${p.name}">Product</div>
+                <span th:if="${p.categoryName != null}" class="card-cat"
+                      th:text="'🏷️ ' + ${p.categoryName}">Category</span>
+                <div class="card-footer-row">
+                    <span class="card-price" th:text="'$' + ${#numbers.formatDecimal(p.price,1,2)}">$0.00</span>
+                    <span th:if="${p.quantity > 5}"    class="card-stock-ok">In Stock</span>
+                    <span th:if="${p.quantity > 0 and p.quantity <= 5}" class="card-stock-low" th:text="'⚠️ ' + ${p.quantity} + ' left'">Low</span>
+                    <span th:if="${p.quantity == 0}"   class="card-stock-out">Out of Stock</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Browse all products by seller (link to filtered listing) -->
+    <div th:if="${profile.activeProducts > 6}" style="text-align:center;margin-top:8px;">
+        <a th:href="@{/buyer/products(keyword='', categoryId='')}"
+           style="display:inline-block;padding:10px 28px;border-radius:10px;
+                  background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
+                  font-weight:700;font-size:0.88rem;text-decoration:none;">
+            View All Products →
+        </a>
+    </div>
+
+</div>
+</body>
+</html>

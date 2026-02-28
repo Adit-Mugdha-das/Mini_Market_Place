@@ -342,7 +342,8 @@
                 </span>
                 <!-- Write a review shortcut for delivered orders -->
                 <a th:if="${order.status.name() == 'DELIVERED'}"
-                   th:href="@{/buyer/products/{id}(id=${order.items[0].productId})}#reviews"
+                   th:href="@{/buyer/products/{id}(id=${order.items[0].productId})}"
+                   th:onclick="|window.location.href='/buyer/products/' + ${order.items[0].productId} + '#reviews'; return false;|"
                    style="display:inline-flex;align-items:center;gap:5px;padding:7px 16px;
                           background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;
                           border-radius:8px;font-size:0.8rem;font-weight:700;text-decoration:none;
@@ -355,6 +356,24 @@
                 <div class="order-total-label">Order Total</div>
                 <div class="order-total-amount"
                      th:text="'$' + ${#numbers.formatDecimal(order.totalAmount,1,2)}">$0.00</div>
+                <!-- Payment info -->
+                <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+                    <span th:if="${order.paymentMethod != null}"
+                          style="font-size:0.72rem;font-weight:700;background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:20px;border:1px solid #bfdbfe;">
+                        <th:block th:switch="${order.paymentMethod.name()}">
+                            <span th:case="'CREDIT_CARD'">💳 Credit Card</span>
+                            <span th:case="'DEBIT_CARD'">🏦 Debit Card</span>
+                            <span th:case="'PAYPAL'">🅿️ PayPal</span>
+                            <span th:case="'BKASH'">📱 bKash</span>
+                            <span th:case="'NAGAD'">📲 Nagad</span>
+                            <span th:case="'CASH_ON_DELIVERY'">💵 Cash on Delivery</span>
+                            <span th:case="*" th:text="${order.paymentMethod}">—</span>
+                        </th:block>
+                    </span>
+                    <span th:if="${order.paymentReference != null}"
+                          style="font-size:0.65rem;color:#9ca3af;font-family:'Courier New',monospace;"
+                          th:text="${order.paymentReference}">TXN-—</span>
+                </div>
             </div>
         </div>
 

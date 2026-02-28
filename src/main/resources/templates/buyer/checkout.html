@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout – Mini Marketplace</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
+
+        nav {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            padding: 0 32px; display: flex; align-items: center;
+            justify-content: space-between; height: 60px; color: #fff;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 12px rgba(5,150,105,0.3);
+        }
+        nav .brand { font-size: 1.1rem; font-weight: 700; }
+        nav .user-area { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); cursor: pointer; color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 0.82rem; }
+
+        /* ── Progress steps ── */
+        .progress-bar {
+            background: #fff; border-bottom: 1px solid #e5e7eb;
+            padding: 14px 32px; display: flex; justify-content: center;
+        }
+        .steps { display: flex; align-items: center; gap: 0; }
+        .step { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; color: #9ca3af; }
+        .step.active { color: #059669; }
+        .step.done   { color: #d1fae5; }
+        .step-circle {
+            width: 28px; height: 28px; border-radius: 50%; border: 2px solid #e5e7eb;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 800; background: #fff; color: #9ca3af;
+        }
+        .step.active .step-circle { border-color: #059669; background: #059669; color: #fff; }
+        .step.done   .step-circle { border-color: #059669; background: #d1fae5; color: #059669; }
+        .step-line { width: 60px; height: 2px; background: #e5e7eb; margin: 0 4px; }
+        .step-line.done { background: #059669; }
+
+        .container { max-width: 980px; margin: 32px auto; padding: 0 20px 60px; display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+        @media(max-width:760px){ .container { grid-template-columns: 1fr; } }
+
+        /* ── Cards ── */
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 28px; }
+        .card-title { font-size: 1rem; font-weight: 800; color: #1f2937; margin-bottom: 22px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #f3f4f6; padding-bottom: 12px; }
+
+        /* ── Payment method tabs ── */
+        .pm-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
+        .pm-option { display: none; }
+        .pm-label {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 5px; padding: 14px 8px; border: 2px solid #e5e7eb; border-radius: 12px;
+            cursor: pointer; transition: all 0.18s; font-size: 0.75rem; font-weight: 700;
+            color: #6b7280; text-align: center; background: #fafafa;
+        }
+        .pm-label .pm-icon { font-size: 1.6rem; }
+        .pm-option:checked + .pm-label {
+            border-color: #059669; background: #f0fdf4; color: #065f46;
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
+        }
+        .pm-label:hover { border-color: #6ee7b7; background: #f0fdf4; }
+
+        /* ── Card fields ── */
+        .field-group { margin-bottom: 16px; }
+        .field-group label { display: block; font-size: 0.75rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+        .field-group input {
+            width: 100%; padding: 11px 14px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+            font-size: 0.9rem; background: #fafafa; outline: none; transition: border-color 0.2s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .field-group input:focus { border-color: #059669; background: #fff; box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card-icons { display: flex; gap: 6px; margin-bottom: 14px; }
+        .card-icon-badge {
+            padding: 3px 10px; border-radius: 6px; font-size: 0.68rem; font-weight: 800;
+            border: 1px solid #e5e7eb;
+        }
+        .visa   { background: #1a1f71; color: #fff; }
+        .mc     { background: #eb001b; color: #fff; }
+        .amex   { background: #007bc1; color: #fff; }
+        .pp     { background: #003087; color: #fff; }
+
+        /* ── Panel sections shown/hidden per method ── */
+        .method-panel { display: none; animation: fadeIn 0.2s ease; }
+        .method-panel.show { display: block; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(4px); } to { opacity:1; transform: none; } }
+
+        .cod-info {
+            background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
+            padding: 16px 18px; font-size: 0.85rem; color: #065f46; line-height: 1.7;
+        }
+        .cod-info .cod-icon { font-size: 2rem; margin-bottom: 8px; }
+
+        /* ── Order summary ── */
+        .summary-img {
+            width: 64px; height: 64px; object-fit: cover; border-radius: 10px;
+            border: 1px solid #e5e7eb; flex-shrink: 0;
+        }
+        .summary-no-img {
+            width: 64px; height: 64px; border-radius: 10px; background: #f3f4f6;
+            display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0;
+        }
+        .summary-product { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; }
+        .summary-product-info .name { font-size: 0.9rem; font-weight: 700; color: #1f2937; }
+        .summary-product-info .seller { font-size: 0.75rem; color: #9ca3af; margin-top: 2px; }
+        .summary-product-info .qty-badge {
+            display: inline-block; background: #ede9fe; color: #5b21b6;
+            font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-top: 4px;
+        }
+        .summary-line { display: flex; justify-content: space-between; font-size: 0.85rem; color: #6b7280; padding: 7px 0; border-bottom: 1px solid #f9fafb; }
+        .summary-line.total { font-size: 1rem; font-weight: 800; color: #1f2937; border-bottom: none; padding-top: 12px; }
+        .summary-line .val { font-weight: 600; }
+        .summary-line.total .val { color: #059669; font-size: 1.2rem; }
+        .secure-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+        .secure-badge { display: flex; align-items: center; gap: 4px; font-size: 0.68rem; color: #6b7280; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 20px; padding: 3px 10px; }
+
+        /* ── Pay button ── */
+        .btn-pay {
+            width: 100%; padding: 14px; font-size: 1rem; font-weight: 800;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff; border: none; border-radius: 12px; cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s; margin-top: 20px;
+            box-shadow: 0 4px 14px rgba(5,150,105,0.35);
+        }
+        .btn-pay:hover { opacity: 0.92; transform: translateY(-1px); }
+        .btn-pay:active { transform: translateY(0); }
+
+        /* ── Processing overlay ── */
+        #processingOverlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+            z-index: 999; align-items: center; justify-content: center;
+        }
+        #processingOverlay.show { display: flex; }
+        .processing-box {
+            background: #fff; border-radius: 20px; padding: 40px 48px;
+            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .spinner {
+            width: 56px; height: 56px; border: 5px solid #e5e7eb;
+            border-top-color: #059669; border-radius: 50%;
+            animation: spin 0.9s linear infinite; margin: 0 auto 18px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .processing-box h3 { font-size: 1.1rem; font-weight: 800; color: #1f2937; margin-bottom: 6px; }
+        .processing-box p  { font-size: 0.82rem; color: #9ca3af; }
+
+        .back-link { display: inline-flex; align-items: center; gap: 4px; color: #059669; text-decoration: none; font-size: 0.82rem; font-weight: 600; margin-bottom: 18px; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <span class="brand">🔒 Secure Checkout – Mini Marketplace</span>
+    <div class="user-area">
+        <span>👤 <strong th:text="${username}">Buyer</strong></span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<!-- Progress steps -->
+<div class="progress-bar">
+    <div class="steps">
+        <div class="step done">
+            <div class="step-circle">✓</div>
+            <span>Product</span>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step active">
+            <div class="step-circle">2</div>
+            <span>Payment</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+            <div class="step-circle">3</div>
+            <span>Confirmation</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ── LEFT: Payment Form ── -->
+    <div>
+        <a th:href="@{/buyer/products/{id}(id=${product.id})}" class="back-link">← Back to Product</a>
+
+        <form id="paymentForm" th:action="@{/buyer/checkout/pay}" method="post" class="card" onsubmit="handlePayment(event)">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" name="productId" th:value="${product.id}" />
+            <input type="hidden" name="quantity"  th:value="${quantity}" />
+            <input type="hidden" name="paymentMethod" id="selectedPaymentMethod" value="CREDIT_CARD" />
+
+            <div class="card-title">💳 Choose Payment Method</div>
+
+            <!-- Payment method selector -->
+            <div class="pm-grid">
+                <!-- Credit Card -->
+                <input type="radio" name="pm" id="pm_cc" class="pm-option" value="CREDIT_CARD" checked onchange="switchPanel('panel-card','CREDIT_CARD')" />
+                <label for="pm_cc" class="pm-label"><span class="pm-icon">💳</span>Credit Card</label>
+
+                <!-- Debit Card -->
+                <input type="radio" name="pm" id="pm_dc" class="pm-option" value="DEBIT_CARD" onchange="switchPanel('panel-card','DEBIT_CARD')" />
+                <label for="pm_dc" class="pm-label"><span class="pm-icon">🏦</span>Debit Card</label>
+
+                <!-- PayPal -->
+                <input type="radio" name="pm" id="pm_pp" class="pm-option" value="PAYPAL" onchange="switchPanel('panel-paypal','PAYPAL')" />
+                <label for="pm_pp" class="pm-label"><span class="pm-icon">🅿️</span>PayPal</label>
+
+                <!-- bKash -->
+                <input type="radio" name="pm" id="pm_bk" class="pm-option" value="BKASH" onchange="switchPanel('panel-mobile','BKASH')" />
+                <label for="pm_bk" class="pm-label"><span class="pm-icon">📱</span>bKash</label>
+
+                <!-- Nagad -->
+                <input type="radio" name="pm" id="pm_ng" class="pm-option" value="NAGAD" onchange="switchPanel('panel-mobile','NAGAD')" />
+                <label for="pm_ng" class="pm-label"><span class="pm-icon">📲</span>Nagad</label>
+
+                <!-- Cash on Delivery -->
+                <input type="radio" name="pm" id="pm_cod" class="pm-option" value="CASH_ON_DELIVERY" onchange="switchPanel('panel-cod','CASH_ON_DELIVERY')" />
+                <label for="pm_cod" class="pm-label"><span class="pm-icon">💵</span>Cash on Delivery</label>
+            </div>
+
+            <!-- ── Credit / Debit Card Panel ── -->
+            <div id="panel-card" class="method-panel show">
+                <div class="card-icons">
+                    <span class="card-icon-badge visa">VISA</span>
+                    <span class="card-icon-badge mc">MC</span>
+                    <span class="card-icon-badge amex">AMEX</span>
+                </div>
+                <div class="field-group">
+                    <label>Cardholder Name</label>
+                    <input type="text" placeholder="John Doe" autocomplete="cc-name" />
+                </div>
+                <div class="field-group">
+                    <label>Card Number</label>
+                    <input type="text" placeholder="1234  5678  9012  3456" maxlength="19"
+                           oninput="formatCard(this)" autocomplete="cc-number" />
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Expiry Date</label>
+                        <input type="text" placeholder="MM / YY" maxlength="7"
+                               oninput="formatExpiry(this)" autocomplete="cc-exp" />
+                    </div>
+                    <div class="field-group">
+                        <label>CVV</label>
+                        <input type="password" placeholder="•••" maxlength="4" autocomplete="cc-csc" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PayPal Panel ── -->
+            <div id="panel-paypal" class="method-panel">
+                <div style="background:#003087;border-radius:12px;padding:20px 22px;color:#fff;margin-bottom:16px;">
+                    <div style="font-size:1.5rem;font-weight:900;letter-spacing:-1px;margin-bottom:6px;">
+                        <span style="color:#009cde;">Pay</span><span style="color:#012169;">Pal</span>
+                    </div>
+                    <div style="font-size:0.8rem;opacity:0.8;">You'll be redirected to PayPal to complete your payment securely.</div>
+                </div>
+                <div class="field-group">
+                    <label>PayPal Email</label>
+                    <input type="email" placeholder="your@paypal.com" />
+                </div>
+                <div class="field-group">
+                    <label>PayPal Password</label>
+                    <input type="password" placeholder="••••••••" />
+                </div>
+            </div>
+
+            <!-- ── Mobile Banking Panel (bKash / Nagad) ── -->
+            <div id="panel-mobile" class="method-panel">
+                <div style="background:linear-gradient(135deg,#e2136e,#c5005c);border-radius:12px;padding:18px 20px;color:#fff;margin-bottom:16px;" id="mobile-header">
+                    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">📱 Mobile Banking</div>
+                    <div style="font-size:0.78rem;opacity:0.85;">Enter your registered mobile number to proceed.</div>
+                </div>
+                <div class="field-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" placeholder="01XXXXXXXXX" maxlength="11" />
+                </div>
+                <div class="field-group">
+                    <label>PIN</label>
+                    <input type="password" placeholder="••••••" maxlength="6" />
+                </div>
+                <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#92400e;">
+                    📨 An OTP will be sent to your registered number for verification.
+                </div>
+            </div>
+
+            <!-- ── Cash on Delivery Panel ── -->
+            <div id="panel-cod" class="method-panel">
+                <div class="cod-info">
+                    <div class="cod-icon">💵</div>
+                    <strong>Cash on Delivery</strong><br/>
+                    Pay when your order arrives at your doorstep. No online payment required.<br/><br/>
+                    <strong>Note:</strong> Please keep the exact amount ready at the time of delivery.
+                </div>
+            </div>
+
+            <!-- Pay button -->
+            <button type="submit" class="btn-pay" id="payBtn">
+                🔒 Pay Now &amp; Place Order
+            </button>
+            <div style="text-align:center;font-size:0.72rem;color:#9ca3af;margin-top:10px;">
+                🔐 256-bit SSL encrypted · Your data is safe
+            </div>
+        </form>
+    </div>
+
+    <!-- ── RIGHT: Order Summary ── -->
+    <div>
+        <div class="card">
+            <div class="card-title">🧾 Order Summary</div>
+
+            <!-- Product info -->
+            <div class="summary-product">
+                <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                     th:src="${product.imageUrl}" th:alt="${product.name}" class="summary-img"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div th:if="${product.imageUrl == null or product.imageUrl.isEmpty()}" class="summary-no-img">🛒</div>
+                <div class="summary-no-img" style="display:none;">🛒</div>
+                <div class="summary-product-info">
+                    <div class="name" th:text="${product.name}">Product</div>
+                    <div class="seller" th:text="'by ' + ${product.seller.username}">by seller</div>
+                    <span class="qty-badge" th:text="'Qty: ' + ${quantity}">Qty: 1</span>
+                </div>
+            </div>
+
+            <!-- Price lines -->
+            <div class="summary-line">
+                <span>Unit Price</span>
+                <span class="val" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</span>
+            </div>
+            <div class="summary-line">
+                <span>Quantity</span>
+                <span class="val" th:text="${quantity}">1</span>
+            </div>
+            <div class="summary-line">
+                <span>Subtotal</span>
+                <span class="val" th:text="'$' + ${#numbers.formatDecimal(subtotal,1,2)}">$0.00</span>
+            </div>
+            <div class="summary-line">
+                <span>Shipping</span>
+                <span class="val" style="color:#059669;">FREE</span>
+            </div>
+            <div class="summary-line">
+                <span>Tax (0%)</span>
+                <span class="val">$0.00</span>
+            </div>
+            <div class="summary-line total">
+                <span>Total</span>
+                <span class="val" th:text="'$' + ${#numbers.formatDecimal(subtotal,1,2)}">$0.00</span>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="secure-badges">
+                <span class="secure-badge">🔒 SSL Secured</span>
+                <span class="secure-badge">📦 Fast Delivery</span>
+                <span class="secure-badge">↩️ Easy Cancel</span>
+                <span class="secure-badge">💯 Buyer Protection</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Processing overlay -->
+<div id="processingOverlay">
+    <div class="processing-box">
+        <div class="spinner"></div>
+        <h3>Processing your payment…</h3>
+        <p>Please do not close this window</p>
+    </div>
+</div>
+
+<script>
+    // Show correct panel and track selected method
+    function switchPanel(panelId, method) {
+        document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('show'));
+        document.getElementById(panelId).classList.add('show');
+        document.getElementById('selectedPaymentMethod').value = method;
+
+        // Update mobile header colour for bKash vs Nagad
+        if (panelId === 'panel-mobile') {
+            const hdr = document.getElementById('mobile-header');
+            if (method === 'NAGAD') {
+                hdr.style.background = 'linear-gradient(135deg,#f97316,#ea580c)';
+            } else {
+                hdr.style.background = 'linear-gradient(135deg,#e2136e,#c5005c)';
+            }
+        }
+    }
+
+    // Format card number with spaces
+    function formatCard(el) {
+        let v = el.value.replace(/\D/g, '').substring(0, 16);
+        el.value = v.match(/.{1,4}/g)?.join('  ') || v;
+    }
+
+    // Format expiry MM / YY
+    function formatExpiry(el) {
+        let v = el.value.replace(/\D/g, '').substring(0, 4);
+        if (v.length >= 3) v = v.substring(0, 2) + ' / ' + v.substring(2);
+        el.value = v;
+    }
+
+    // Show processing animation then submit
+    function handlePayment(event) {
+        event.preventDefault();
+        const overlay = document.getElementById('processingOverlay');
+        overlay.classList.add('show');
+        // Simulate processing delay (1.8s) then submit
+        setTimeout(() => { document.getElementById('paymentForm').submit(); }, 1800);
+    }
+</script>
+</body>
+</html>

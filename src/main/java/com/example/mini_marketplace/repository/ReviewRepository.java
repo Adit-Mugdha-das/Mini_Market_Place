@@ -30,5 +30,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             ORDER BY r.createdAt DESC
             """)
     List<Review> findBySellerIdOrderByCreatedAtDesc(@Param("sellerId") Long sellerId);
+
+    @Query("SELECT COALESCE(AVG(r.rating), 0.0) FROM Review r JOIN r.product p WHERE p.seller.id = :sellerId")
+    Double getAverageRatingForSeller(@Param("sellerId") Long sellerId);
+
+    @Query("SELECT COUNT(r) FROM Review r JOIN r.product p WHERE p.seller.id = :sellerId")
+    Long countReviewsForSeller(@Param("sellerId") Long sellerId);
 }
 

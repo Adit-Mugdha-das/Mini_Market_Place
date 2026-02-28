@@ -17,6 +17,8 @@ public class BuyerOrderView {
     private Order.Status status;
     private LocalDateTime createdAt;
     private BigDecimal totalAmount;
+    private Order.PaymentMethod paymentMethod;
+    private String paymentReference;
     private List<ItemView> items;
 
     @Getter

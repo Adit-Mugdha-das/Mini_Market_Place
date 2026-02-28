@@ -77,9 +77,9 @@
         tbody tr:last-child td { border-bottom: none; }
 
         .order-footer {
-            display: flex; justify-content: flex-end;
+            display: flex; justify-content: space-between; align-items: center;
             padding: 14px 20px; background: #f9fafb;
-            border-top: 1px solid #f3f4f6;
+            border-top: 1px solid #f3f4f6; flex-wrap: wrap; gap: 10px;
         }
         .order-total { font-size: 0.95rem; color: #1f2937; }
         .order-total strong { color: #059669; font-size: 1.1rem; }
@@ -128,6 +128,19 @@
                 </span>
                 <span class="order-date"
                       th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy, HH:mm')}">01 Jan 2025</span>
+                <!-- Payment badge -->
+                <span th:if="${order.paymentMethod != null}"
+                      style="font-size:0.72rem;font-weight:700;background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:20px;border:1px solid #bfdbfe;">
+                    <th:block th:switch="${order.paymentMethod.name()}">
+                        <span th:case="'CREDIT_CARD'">💳 Credit Card</span>
+                        <span th:case="'DEBIT_CARD'">🏦 Debit Card</span>
+                        <span th:case="'PAYPAL'">🅿️ PayPal</span>
+                        <span th:case="'BKASH'">📱 bKash</span>
+                        <span th:case="'NAGAD'">📲 Nagad</span>
+                        <span th:case="'CASH_ON_DELIVERY'">💵 Cash on Delivery</span>
+                        <span th:case="*" th:text="${order.paymentMethod}">—</span>
+                    </th:block>
+                </span>
             </div>
             <div class="order-actions">
                 <span class="status-badge"
@@ -169,6 +182,24 @@
         </div>
 
         <div class="order-footer">
+            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
+                <!-- Payment method badge -->
+                <span th:if="${order.paymentMethod != null}"
+                      style="font-size:0.72rem;font-weight:700;background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:20px;border:1px solid #bfdbfe;">
+                    <th:block th:switch="${order.paymentMethod.name()}">
+                        <span th:case="'CREDIT_CARD'">💳 Credit Card</span>
+                        <span th:case="'DEBIT_CARD'">🏦 Debit Card</span>
+                        <span th:case="'PAYPAL'">🅿️ PayPal</span>
+                        <span th:case="'BKASH'">📱 bKash</span>
+                        <span th:case="'NAGAD'">📲 Nagad</span>
+                        <span th:case="'CASH_ON_DELIVERY'">💵 Cash on Delivery</span>
+                        <span th:case="*" th:text="${order.paymentMethod}">—</span>
+                    </th:block>
+                </span>
+                <span th:if="${order.paymentReference != null}"
+                      style="font-size:0.65rem;color:#9ca3af;font-family:'Courier New',monospace;"
+                      th:text="${order.paymentReference}">TXN-—</span>
+            </div>
             <span class="order-total">
                 My Total: <strong th:text="'$' + ${#numbers.formatDecimal(order.sellerTotal,1,2)}">$0.00</strong>
             </span>

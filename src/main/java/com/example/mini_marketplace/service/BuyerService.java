@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,51 +110,54 @@ public class BuyerService {
     // ─── 3. Place order with stock validation ──────────────────────────────────
 
     @Transactional
-    public Order placeOrder(String username, Long productId, int quantity) {
-        if (quantity < 1) {
-            throw new IllegalArgumentException("Quantity must be at least 1.");
-        }
+    public Order placeOrder(String username, Long productId, int quantity, String paymentMethodStr) {
+        if (quantity < 1) throw new IllegalArgumentException("Quantity must be at least 1.");
 
         User buyer = getUser(username);
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found."));
 
-        if (!product.isActive()) {
-            throw new IllegalStateException("Product is no longer available.");
-        }
-
-        // ── Stock validation with custom exception ──────────────────────────
-        if (product.getQuantity() <= 0) {
+        if (!product.isActive()) throw new IllegalStateException("Product is no longer available.");
+        if (product.getQuantity() <= 0)
             throw new InsufficientStockException(product.getName(), quantity, 0);
-        }
-        if (product.getQuantity() < quantity) {
+        if (product.getQuantity() < quantity)
             throw new InsufficientStockException(product.getName(), quantity, product.getQuantity());
-        }
 
         // Deduct stock
         product.setQuantity(product.getQuantity() - quantity);
         productRepository.save(product);
 
-        // Build order
         BigDecimal unitPrice = product.getPrice();
-        BigDecimal total = unitPrice.multiply(BigDecimal.valueOf(quantity));
+        BigDecimal total     = unitPrice.multiply(BigDecimal.valueOf(quantity));
+
+        // Generate simulated payment reference
+        String txnDate = LocalDate.now().toString().replace("-", "");
+        String txnRef  = "TXN-" + txnDate + "-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+
+        // Resolve payment method
+        Order.PaymentMethod pm = Order.PaymentMethod.CASH_ON_DELIVERY;
+        if (paymentMethodStr != null && !paymentMethodStr.isBlank()) {
+            try { pm = Order.PaymentMethod.valueOf(paymentMethodStr.toUpperCase()); }
+            catch (IllegalArgumentException ignored) {}
+        }
 
         Order order = new Order();
         order.setBuyer(buyer);
         order.setTotalAmount(total);
         order.setStatus(Order.Status.PENDING);
+        order.setPaymentMethod(pm);
+        order.setPaymentReference(txnRef);
 
         OrderItem item = new OrderItem();
         item.setOrder(order);
         item.setProduct(product);
         item.setQuantity(quantity);
         item.setUnitPrice(unitPrice);
-
         order.getItems().add(item);
+
         Order saved = orderRepository.save(order);
         auditService.log(username, ActionType.PLACE_ORDER, EntityType.ORDER,
-                saved.getId(), "Bought " + quantity + "x " + product.getName());
+                saved.getId(), "Bought " + quantity + "x " + product.getName() + " via " + pm);
         return saved;
     }
 
@@ -201,6 +206,8 @@ public class BuyerService {
             view.setStatus(order.getStatus());
             view.setCreatedAt(order.getCreatedAt());
             view.setTotalAmount(order.getTotalAmount());
+            view.setPaymentMethod(order.getPaymentMethod());
+            view.setPaymentReference(order.getPaymentReference());
 
             List<BuyerOrderView.ItemView> itemViews = order.getItems().stream()
                     .map(BuyerOrderView.ItemView::from)

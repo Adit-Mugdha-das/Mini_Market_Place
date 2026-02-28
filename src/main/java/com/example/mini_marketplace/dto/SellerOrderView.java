@@ -17,9 +17,10 @@ public class SellerOrderView {
     private String buyerUsername;
     private Order.Status status;
     private LocalDateTime createdAt;
-    // only items that belong to this seller
     private List<ItemView> sellerItems;
     private BigDecimal sellerTotal;
+    private Order.PaymentMethod paymentMethod;
+    private String paymentReference;
 
     @Getter
     @Setter

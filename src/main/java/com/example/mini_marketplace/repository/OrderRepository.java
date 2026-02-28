@@ -54,6 +54,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             """)
     long countOrdersBySellerId(@Param("sellerId") Long sellerId);
 
+    // Count only DELIVERED orders for a seller (public profile "total sales")
+    @Query("""
+            SELECT COUNT(DISTINCT o) FROM Order o
+            JOIN o.items i
+            JOIN i.product p
+            WHERE p.seller.id = :sellerId
+              AND o.status = com.example.mini_marketplace.entity.Order.Status.DELIVERED
+            """)
+    long countDeliveredOrdersBySellerId(@Param("sellerId") Long sellerId);
+
     // Seller revenue: sum of (unitPrice * quantity) for items belonging to this seller (exclude CANCELLED)
     @Query("""
             SELECT COALESCE(SUM(oi.unitPrice * oi.quantity), 0)

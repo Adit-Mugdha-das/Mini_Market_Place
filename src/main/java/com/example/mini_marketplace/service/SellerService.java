@@ -3,6 +3,7 @@ package com.example.mini_marketplace.service;
 import com.example.mini_marketplace.dto.ProductRequest;
 import com.example.mini_marketplace.dto.SellerDashboardMetrics;
 import com.example.mini_marketplace.dto.SellerOrderView;
+import com.example.mini_marketplace.dto.SellerProfileDto;
 import com.example.mini_marketplace.entity.AuditLog.ActionType;
 import com.example.mini_marketplace.entity.AuditLog.EntityType;
 import com.example.mini_marketplace.entity.Order;
@@ -13,6 +14,7 @@ import com.example.mini_marketplace.repository.CategoryRepository;
 import com.example.mini_marketplace.repository.OrderItemRepository;
 import com.example.mini_marketplace.repository.OrderRepository;
 import com.example.mini_marketplace.repository.ProductRepository;
+import com.example.mini_marketplace.repository.ReviewRepository;
 import com.example.mini_marketplace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,6 +34,7 @@ public class SellerService {
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ReviewRepository reviewRepository;
     private final AuditService auditService;
 
     // ─── helpers ───────────────────────────────────────────────────────────────
@@ -116,6 +119,8 @@ public class SellerService {
             view.setBuyerUsername(order.getBuyer().getUsername());
             view.setStatus(order.getStatus());
             view.setCreatedAt(order.getCreatedAt());
+            view.setPaymentMethod(order.getPaymentMethod());
+            view.setPaymentReference(order.getPaymentReference());
 
             List<SellerOrderView.ItemView> itemViews = myItems.stream()
                     .map(SellerOrderView.ItemView::from)
@@ -172,7 +177,38 @@ public class SellerService {
         auditService.log(username, ActionType.ADVANCE_ORDER_STATUS, EntityType.ORDER,
                 orderId, "Status changed to " + next);
     }
+
+    // ─── Public seller profile ─────────────────────────────────────────────────
+
+    public SellerProfileDto getSellerProfile(Long sellerId) {
+        User seller = userRepository.findById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("Seller not found: " + sellerId));
+
+        List<Product> allProducts = productRepository.findBySellerOrderByCreatedAtDesc(seller);
+        long totalProducts  = allProducts.size();
+        long activeProducts = productRepository.countBySellerAndActiveTrue(seller);
+        long totalSales     = orderRepository.countDeliveredOrdersBySellerId(sellerId);
+        BigDecimal revenue  = orderRepository.getRevenueForSeller(sellerId);
+
+        double avgRating  = reviewRepository.getAverageRatingForSeller(sellerId);
+        long totalReviews = reviewRepository.countReviewsForSeller(sellerId);
+
+        // Up to 6 recent active products for the showcase grid
+        List<SellerProfileDto.ProductSnippet> recent = allProducts.stream()
+                .filter(Product::isActive)
+                .limit(6)
+                .map(p -> new SellerProfileDto.ProductSnippet(
+                        p.getId(), p.getName(), p.getImageUrl(), p.getPrice(), p.getQuantity(),
+                        p.getCategory() != null ? p.getCategory().getName() : null))
+                .collect(Collectors.toList());
+
+        return new SellerProfileDto(
+                seller.getId(), seller.getUsername(), seller.getFullName(), seller.getCreatedAt(),
+                totalProducts, activeProducts, totalSales, revenue,
+                Math.round(avgRating * 10.0) / 10.0, totalReviews, recent);
+    }
 }
+
 
 
 

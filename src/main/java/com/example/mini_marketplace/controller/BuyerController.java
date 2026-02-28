@@ -88,26 +88,67 @@ public class BuyerController {
         }
     }
 
-    // ─── 3. Place order ────────────────────────────────────────────────────────
+    // ─── 3. Checkout page ──────────────────────────────────────────────────────
 
-    @PostMapping("/orders/place")
-    public String placeOrder(@RequestParam Long productId,
-                             @RequestParam int quantity,
-                             @AuthenticationPrincipal UserDetails userDetails,
-                             RedirectAttributes redirectAttributes) {
+    @GetMapping("/checkout")
+    public String checkoutPage(@RequestParam Long productId,
+                               @RequestParam int quantity,
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
         try {
-            buyerService.placeOrder(userDetails.getUsername(), productId, quantity);
-            redirectAttributes.addFlashAttribute("successMessage", "Order placed successfully! 🎉");
-        } catch (InsufficientStockException e) {
+            Product product = buyerService.getProductById(productId);
+            if (quantity < 1 || quantity > product.getQuantity()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Invalid quantity. Available stock: " + product.getQuantity());
+                return "redirect:/buyer/products/" + productId;
+            }
+            java.math.BigDecimal subtotal = product.getPrice()
+                    .multiply(java.math.BigDecimal.valueOf(quantity));
+            model.addAttribute("product",   product);
+            model.addAttribute("quantity",  quantity);
+            model.addAttribute("subtotal",  subtotal);
+            model.addAttribute("username",  userDetails.getUsername());
+            return "buyer/checkout";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/buyer/products";
+        }
+    }
+
+    // ─── 4. Process payment & place order ─────────────────────────────────────
+
+    @PostMapping("/checkout/pay")
+    public String processPayment(@RequestParam Long productId,
+                                 @RequestParam int quantity,
+                                 @RequestParam String paymentMethod,
+                                 @AuthenticationPrincipal UserDetails userDetails,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            com.example.mini_marketplace.entity.Order order =
+                    buyerService.placeOrder(userDetails.getUsername(), productId, quantity, paymentMethod);
+            redirectAttributes.addFlashAttribute("orderId",          order.getId());
+            redirectAttributes.addFlashAttribute("paymentReference", order.getPaymentReference());
+            redirectAttributes.addFlashAttribute("paymentMethod",    order.getPaymentMethod().name());
+            redirectAttributes.addFlashAttribute("totalAmount",      order.getTotalAmount());
+            return "redirect:/buyer/payment-success";
+        } catch (com.example.mini_marketplace.exception.InsufficientStockException e) {
             throw e;
         } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/buyer/products/" + productId;
         }
-        return "redirect:/buyer/orders";
     }
 
-    // ─── 4. Cancel order ───────────────────────────────────────────────────────
+    // ─── 5. Payment success page ───────────────────────────────────────────────
+
+    @GetMapping("/payment-success")
+    public String paymentSuccess(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("username", userDetails.getUsername());
+        return "buyer/payment-success";
+    }
+
+    // ─── 6. Cancel order ───────────────────────────────────────────────────────
 
     @PostMapping("/orders/{id}/cancel")
     public String cancelOrder(@PathVariable Long id,
@@ -123,7 +164,7 @@ public class BuyerController {
         return "redirect:/buyer/orders";
     }
 
-    // ─── 5. My orders ──────────────────────────────────────────────────────────
+    // ─── 7. My orders ──────────────────────────────────────────────────────────
 
     @GetMapping("/orders")
     public String myOrders(@AuthenticationPrincipal UserDetails userDetails, Model model) {

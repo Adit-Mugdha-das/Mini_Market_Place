@@ -241,7 +241,12 @@
             <div class="product-name" th:text="${product.name}">Product Name</div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
                 <div class="product-seller">
-                    🏪 Sold by: <strong th:text="${product.seller.username}">seller</strong>
+                    🏪 Sold by:
+                    <a th:href="@{/seller/profile/{id}(id=${product.seller.id})}"
+                       style="color:#667eea;font-weight:700;text-decoration:none;"
+                       th:text="${product.seller.username}"
+                       onmouseover="this.style.textDecoration='underline'"
+                       onmouseout="this.style.textDecoration='none'">seller</a>
                 </div>
                 <span th:if="${product.category != null}"
                       style="background:#ede9fe;color:#5b21b6;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;">
@@ -260,9 +265,8 @@
 
             <hr style="border:none; border-top:1px solid #f3f4f6; margin-bottom:20px;" />
 
-            <!-- Order form -->
-            <form th:action="@{/buyer/orders/place}" method="post" class="order-section">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <!-- Order form → goes to checkout page -->
+            <form th:action="@{/buyer/checkout}" method="get" class="order-section">
                 <input type="hidden" name="productId" th:value="${product.id}" />
 
                 <label>Quantity</label>
@@ -278,8 +282,9 @@
                     </span>
                 </div>
 
-                <button type="submit" class="btn-order" th:disabled="${product.quantity == 0}">
-                    🛒 Place Order
+                <button type="submit" class="btn-order" th:disabled="${product.quantity == 0}"
+                        style="background:linear-gradient(135deg,#059669,#047857);">
+                    🔒 Proceed to Checkout
                 </button>
             </form>
 
