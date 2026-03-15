@@ -1,20 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Products - Haat Bazar</title>
-    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+<link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         :root {
             --brand-clay: #b2622f;
             --brand-forest: #165157;
             --brand-white: #ffffff;
-            --brand-black: #0f1214;
-            --muted: #6b7280;
-            --surface: #f7f8f9;
+            --brand-black: #000000;
+            --muted: #000000;
+            --surface: #ffffff;
             --card: #ffffff;
-            --line: #e5e7eb;
+            --line: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,8 +100,8 @@
         .head .note {
             color: var(--muted);
             font-size: 0.85rem;
-            background: #eef7f8;
-            border: 1px solid #d4e9ec;
+            background: #ffffff;
+            border: 1px solid #ffffff;
             padding: 8px 12px;
             border-radius: 8px;
         }
@@ -131,7 +132,7 @@
         .group select {
             border: 1px solid var(--line);
             border-radius: 8px;
-            background: #fafafa;
+            background: #ffffff;
             padding: 8px 10px;
             font-size: 0.84rem;
             min-width: 115px;
@@ -151,8 +152,8 @@
 
         .clear {
             text-decoration: none;
-            background: #f3f4f6;
-            color: #374151;
+            background: #ffffff;
+            color: #000000;
             border: 1px solid var(--line);
             border-radius: 8px;
             padding: 8px 12px;
@@ -178,7 +179,7 @@
         .image-wrap {
             width: 100%;
             height: 180px;
-            background: #f0f2f4;
+            background: #ffffff;
         }
 
         .image-wrap img {
@@ -203,7 +204,7 @@
 
         .desc {
             font-size: 0.82rem;
-            color: #374151;
+            color: #000000;
             line-height: 1.45;
             min-height: 36px;
             display: -webkit-box;
@@ -256,7 +257,7 @@
             padding: 7px 12px;
             font-size: 0.82rem;
             font-weight: 700;
-            color: #374151;
+            color: #000000;
             background: var(--brand-white);
         }
 
@@ -270,6 +271,7 @@
         }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <header class="topbar">
@@ -385,3 +387,9 @@
 </main>
 </body>
 </html>
+
+
+
+
+
+

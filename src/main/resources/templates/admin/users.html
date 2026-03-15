@@ -1,11 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Manage Users – Admin</title>
+    <title>Manage Users – Admin</title>    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ffffff; }
         nav {
             background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
             padding: 0 32px; display: flex; align-items: center;
@@ -23,49 +25,50 @@
         .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
 
         .container { max-width: 1100px; margin: 36px auto; padding: 0 20px; }
-        h2 { font-size: 1.4rem; color: #1f2937; margin-bottom: 24px; }
+        h2 { font-size: 1.4rem; color: #000000; margin-bottom: 24px; }
 
-        .alert-success { background: #d1fae5; color: #065f46; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
-        .alert-error   { background: #fee2e2; color: #991b1b; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
+        .alert-success { background: #ffffff; color: #165157; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
+        .alert-error   { background: #ffffff; color: #991b1b; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
 
         .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         thead th {
-            padding: 12px 16px; text-align: left; background: #fef2f2;
-            font-size: 0.78rem; font-weight: 700; color: #6b7280;
+            padding: 12px 16px; text-align: left; background: #ffffff;
+            font-size: 0.78rem; font-weight: 700; color: #000000;
             text-transform: uppercase; letter-spacing: 0.05em;
-            border-bottom: 1px solid #fecaca;
+            border-bottom: 1px solid #ffffff;
         }
-        td { padding: 12px 16px; font-size: 0.875rem; color: #374151; border-bottom: 1px solid #f9fafb; vertical-align: middle; }
+        td { padding: 12px 16px; font-size: 0.875rem; color: #000000; border-bottom: 1px solid #ffffff; vertical-align: middle; }
         tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover { background: #fafafa; }
+        tbody tr:hover { background: #ffffff; }
 
         .role-badge {
             display: inline-block; padding: 3px 10px; border-radius: 20px;
             font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
         }
-        .role-ADMIN  { background: #fee2e2; color: #991b1b; }
-        .role-SELLER { background: #dbeafe; color: #1e40af; }
-        .role-BUYER  { background: #d1fae5; color: #065f46; }
+        .role-ADMIN  { background: #ffffff; color: #991b1b; }
+        .role-SELLER { background: #ffffff; color: #165157; }
+        .role-BUYER  { background: #ffffff; color: #165157; }
 
-        .status-active   { color: #059669; font-weight: 600; font-size: 0.8rem; }
+        .status-active   { color: #165157; font-weight: 600; font-size: 0.8rem; }
         .status-inactive { color: #dc2626; font-weight: 600; font-size: 0.8rem; }
 
         .actions { display: flex; gap: 6px; flex-wrap: wrap; }
         .btn { border: none; cursor: pointer; padding: 6px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; transition: opacity 0.2s; }
         .btn:hover { opacity: 0.85; }
-        .btn-danger  { background: #fee2e2; color: #991b1b; }
-        .btn-warning { background: #fef3c7; color: #92400e; }
-        .btn-info    { background: #dbeafe; color: #1e40af; }
-        .btn-success { background: #d1fae5; color: #065f46; }
-        .btn-disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
+        .btn-danger  { background: #ffffff; color: #991b1b; }
+        .btn-warning { background: #ffffff; color: #b2622f; }
+        .btn-info    { background: #ffffff; color: #165157; }
+        .btn-success { background: #ffffff; color: #165157; }
+        .btn-disabled { background: #ffffff; color: #000000; cursor: not-allowed; }
 
         select.role-select {
-            padding: 5px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+            padding: 5px 8px; border: 1px solid #ffffff; border-radius: 6px;
             font-size: 0.8rem; background: #fff; cursor: pointer;
         }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <nav>
@@ -165,3 +168,9 @@
 </div>
 </body>
 </html>
+
+
+
+
+
+
