@@ -25,6 +25,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Find all orders placed by a specific buyer
     List<Order> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
 
+        long countByBuyerId(Long buyerId);
+
+        void deleteByBuyerId(Long buyerId);
+
     // Check if a buyer has a DELIVERED order containing a specific product
     @Query("""
             SELECT COUNT(o) > 0 FROM Order o
