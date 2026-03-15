@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
+
 :root {
     --brand-clay: #b2622f;
     --brand-forest: #165157;
@@ -34,17 +36,30 @@ body::before {
 
 nav,
 .topbar {
-    background: linear-gradient(130deg, var(--brand-forest), #1c6670 50%, var(--brand-clay)) !important;
-    color: var(--brand-white) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22);
+    background: transparent !important;
+    color: var(--brand-forest) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
 }
 
 nav .brand,
 .topbar .brand,
 .brand-name,
 .brand span {
-    color: var(--brand-white) !important;
+    color: var(--brand-clay) !important;
+    font-family: 'Caveat', cursive !important;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+nav .nav-links a,
+.topbar .nav-links a,
+.topbar .actions .btn {
+    background: transparent !important;
+    color: var(--brand-forest) !important;
+    border: 1px solid rgba(22, 81, 87, 0.35) !important;
 }
 
 nav .nav-links a,

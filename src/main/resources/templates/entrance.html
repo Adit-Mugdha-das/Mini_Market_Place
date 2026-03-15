@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haat Bazar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         :root {
@@ -59,43 +62,35 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 100%;
+            background: transparent;
         }
 
         .brand-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: reveal 0.8s ease 0.35s forwards;
+            gap: 10px;
         }
 
         .brand-row img {
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.45);
-            background: var(--brand-white);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            border: 2px solid rgba(255,255,255,0.35);
+            background: #fff;
         }
 
-        .brand-name {
-            font-size: clamp(1.2rem, 2.1vw, 1.65rem);
-            line-height: 1;
-            font-weight: 800;
-            color: var(--brand-white);
-            letter-spacing: 0.4px;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.32);
+        .brand-row span {
+            font-family: 'Caveat', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #b2622f;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.35);
         }
 
         .top-actions {
             display: flex;
             gap: 10px;
-            opacity: 0;
-            transform: translateY(8px);
-            animation: reveal 0.8s ease 0.55s forwards;
         }
 
         .hero-center {
@@ -123,19 +118,6 @@
             animation: cardIn 0.95s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
         }
 
-        .orb {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(178, 98, 47, 0.82), rgba(178, 98, 47, 0));
-            top: -70px;
-            right: -75px;
-            filter: blur(2px);
-            animation: floatOrb 5.5s ease-in-out infinite;
-            pointer-events: none;
-        }
-
         h1 {
             font-size: clamp(1.8rem, 4vw, 3rem);
             line-height: 1.05;
@@ -161,8 +143,6 @@
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.28);
         }
-
-        
 
         .bottom-cta {
             display: flex;
@@ -236,9 +216,8 @@
 
         @media (max-width: 840px) {
             .page { padding: 14px 12px 20px; }
-            .topbar { height: auto; gap: 10px; flex-wrap: wrap; }
-            .top-actions { width: 100%; justify-content: flex-end; }
             .hero-center { padding-top: 18px; }
+            .topbar { height: auto; gap: 10px; flex-wrap: wrap; }
         }
     </style>
 </head>
@@ -250,7 +229,7 @@
     <header class="topbar">
         <div class="brand-row">
             <img src="/images/Haat_Bazar-logo.png" alt="Haat Bazar logo">
-            <div class="brand-name">Haat Bazar</div>
+            <span>Haat Bazar</span>
         </div>
         <div class="top-actions">
             <a class="btn btn-primary" th:href="@{/auth/login}">Login</a>
