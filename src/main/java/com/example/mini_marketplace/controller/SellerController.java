@@ -42,6 +42,13 @@ public class SellerController {
         return "dashboard/seller";
     }
 
+    @GetMapping("/profile")
+    public String myProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("username", userDetails.getUsername());
+        model.addAttribute("profile", sellerService.getSellerProfileByUsername(userDetails.getUsername()));
+        return "seller/profile";
+    }
+
     // ─── Products ──────────────────────────────────────────────────────────────
 
     @GetMapping("/products")

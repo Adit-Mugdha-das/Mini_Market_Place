@@ -207,6 +207,11 @@ public class SellerService {
                 totalProducts, activeProducts, totalSales, revenue,
                 Math.round(avgRating * 10.0) / 10.0, totalReviews, recent);
     }
+
+    public SellerProfileDto getSellerProfileByUsername(String username) {
+        User seller = getUser(username);
+        return getSellerProfile(seller.getId());
+    }
 }
 
 
