@@ -1,5 +1,7 @@
 package com.example.mini_marketplace.service;
 
+import com.example.mini_marketplace.dto.BuyerProfileDto;
+import com.example.mini_marketplace.dto.BuyerProfileUpdateRequest;
 import com.example.mini_marketplace.dto.BuyerOrderView;
 import com.example.mini_marketplace.entity.AuditLog.ActionType;
 import com.example.mini_marketplace.entity.AuditLog.EntityType;
@@ -10,6 +12,7 @@ import com.example.mini_marketplace.entity.User;
 import com.example.mini_marketplace.exception.InsufficientStockException;
 import com.example.mini_marketplace.repository.OrderRepository;
 import com.example.mini_marketplace.repository.ProductRepository;
+import com.example.mini_marketplace.repository.ReviewRepository;
 import com.example.mini_marketplace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +36,7 @@ public class BuyerService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
     private final AuditService auditService;
 
     private User getUser(String username) {
@@ -216,5 +220,71 @@ public class BuyerService {
 
             return view;
         }).collect(Collectors.toList());
+    }
+
+    public BuyerProfileDto getBuyerProfile(String username) {
+        User buyer = getUser(username);
+        long totalOrders = orderRepository.countByBuyerId(buyer.getId());
+        return new BuyerProfileDto(
+                buyer.getId(),
+                buyer.getUsername(),
+                buyer.getFullName(),
+                buyer.getEmail(),
+                buyer.getPhoneNumber(),
+                buyer.getAddress(),
+                buyer.getCreatedAt(),
+                totalOrders
+        );
+    }
+
+    public BuyerProfileUpdateRequest getBuyerProfileUpdateRequest(String username) {
+        User buyer = getUser(username);
+        BuyerProfileUpdateRequest request = new BuyerProfileUpdateRequest();
+        request.setFullName(buyer.getFullName());
+        request.setEmail(buyer.getEmail());
+        request.setPhoneNumber(buyer.getPhoneNumber());
+        request.setAddress(buyer.getAddress());
+        return request;
+    }
+
+    @Transactional
+    public void updateProfile(String username, BuyerProfileUpdateRequest request) {
+        User buyer = getUser(username);
+
+        String normalizedEmail = request.getEmail().trim().toLowerCase();
+        if (userRepository.existsByEmailAndIdNot(normalizedEmail, buyer.getId())) {
+            throw new IllegalArgumentException("Email is already used by another account.");
+        }
+
+        buyer.setFullName(request.getFullName().trim());
+        buyer.setEmail(normalizedEmail);
+        buyer.setPhoneNumber(nullIfBlank(request.getPhoneNumber()));
+        buyer.setAddress(nullIfBlank(request.getAddress()));
+
+        userRepository.save(buyer);
+    }
+
+    @Transactional
+    public void deleteAccount(String username) {
+        User buyer = getUser(username);
+
+        reviewRepository.deleteByBuyerId(buyer.getId());
+        List<Order> buyerOrders = orderRepository.findByBuyerIdOrderByCreatedAtDesc(buyer.getId());
+        orderRepository.deleteAll(buyerOrders);
+
+        buyer.getRoles().clear();
+        userRepository.save(buyer);
+
+        auditService.log(username, ActionType.DELETE_USER, EntityType.USER,
+                buyer.getId(), "Buyer deleted own account");
+        userRepository.delete(buyer);
+    }
+
+    private String nullIfBlank(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

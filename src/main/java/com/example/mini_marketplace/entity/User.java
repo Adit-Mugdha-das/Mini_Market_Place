@@ -28,6 +28,12 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(length = 25)
+    private String phoneNumber;
+
+    @Column(length = 500)
+    private String address;
+
     @Column(nullable = false)
     private String password;
 

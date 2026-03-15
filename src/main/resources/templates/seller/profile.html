@@ -135,9 +135,11 @@
 <nav>
     <span class="brand">🛒 HaatBazar</span>
     <div class="nav-links">
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/buyer/products}">Browse Products</a>
-        <a th:href="@{/buyer/orders}">My Orders</a>
+        <a th:href="@{/seller/dashboard}">Dashboard</a>
+        <a th:href="@{/seller/profile}" class="active">My Profile</a>
+        <a th:href="@{/seller/products}">My Products</a>
+        <a th:href="@{/seller/orders}">Orders</a>
+        <a th:href="@{/seller/reviews}">Reviews</a>
     </div>
     <div class="user-area">
         <span>👤 <strong th:text="${username}">User</strong></span>
