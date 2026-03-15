@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - Haat Bazar'">Product - Haat Bazar</title>
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
+    <style>
+        :root {
+            --brand-clay: #b2622f;
+            --brand-forest: #165157;
+            --brand-white: #ffffff;
+            --brand-black: #0f1214;
+            --line: #e5e7eb;
+            --surface: #f6f7f8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            background: var(--surface);
+            color: var(--brand-black);
+        }
+
+        .topbar {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 22px;
+            border-bottom: 1px solid var(--line);
+            background: var(--brand-white);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--brand-forest);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            object-fit: cover;
+        }
+
+        .actions { display: flex; gap: 10px; }
+
+        .btn {
+            border-radius: 9px;
+            padding: 9px 14px;
+            text-decoration: none;
+            font-size: 0.84rem;
+            font-weight: 700;
+            border: none;
+        }
+
+        .btn-login { background: var(--brand-forest); color: var(--brand-white); }
+        .btn-signup { background: var(--brand-clay); color: var(--brand-white); }
+
+        .container {
+            max-width: 1050px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 14px;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--brand-white);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .image {
+            min-height: 320px;
+            background: #eef1f3;
+        }
+
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+
+        .name { font-size: 1.4rem; color: var(--brand-forest); font-weight: 800; }
+        .price { font-size: 1.6rem; color: var(--brand-clay); font-weight: 800; }
+        .meta { font-size: 0.9rem; color: #4b5563; }
+        .desc { font-size: 0.94rem; line-height: 1.6; color: #1f2937; }
+        .read-only {
+            margin-top: 8px;
+            background: #eef7f8;
+            border: 1px solid #d3eaee;
+            color: #164e54;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 860px) {
+            .card { grid-template-columns: 1fr; }
+            .image { min-height: 260px; }
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/}">
+        <img src="/images/Haat_Bazar-logo.png" alt="Haat Bazar logo">
+        <span>Haat Bazar</span>
+    </a>
+    <div class="actions">
+        <a class="btn btn-login" th:href="@{/auth/login}">Login</a>
+        <a class="btn btn-signup" th:href="@{/auth/register}">Sign Up</a>
+    </div>
+</header>
+
+<main class="container">
+    <a class="back" th:href="@{/products}">← Back to products</a>
+
+    <section class="card">
+        <div class="image">
+            <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                 th:src="${product.imageUrl}"
+                 th:alt="${product.name}" />
+        </div>
+
+        <div class="info">
+            <h1 class="name" th:text="${product.name}">Product Name</h1>
+            <div class="price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</div>
+            <div class="meta">Seller: <strong th:text="${product.seller.username}">seller</strong></div>
+            <div class="meta" th:if="${product.category != null}">Category: <strong th:text="${product.category.name}">Category</strong></div>
+            <div class="meta">Stock: <strong th:text="${product.quantity}">0</strong></div>
+            <p class="desc"
+               th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">
+                Description
+            </p>
+            <div class="read-only">View mode only. Login as buyer to place orders and submit reviews.</div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

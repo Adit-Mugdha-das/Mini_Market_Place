@@ -19,7 +19,7 @@ WORKDIR /app
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Copy the built jar from the builder stage
-COPY --from=builder /app/target/Mini_MarketPlace-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=builder /app/target/HaatBazar-0.0.1-SNAPSHOT.jar app.jar
 
 # Volume for uploaded product images so they persist outside the container
 VOLUME /app/uploads

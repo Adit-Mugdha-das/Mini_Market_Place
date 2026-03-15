@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login – Mini Marketplace</title>
+    <title>Login - Haat Bazar</title>
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
+        :root {
+            --brand-clay: #b2622f;
+            --brand-forest: #165157;
+            --brand-white: #ffffff;
+            --brand-black: #111827;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--brand-forest) 0%, var(--brand-clay) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -26,10 +34,10 @@
         }
 
         .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--brand-forest) 0%, var(--brand-clay) 100%);
             padding: 32px 40px 24px;
             text-align: center;
-            color: #fff;
+            color: var(--brand-white);
         }
 
         .card-header .logo {
@@ -99,8 +107,8 @@
 
         input[type="text"]:focus,
         input[type="password"]:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+            border-color: var(--brand-forest);
+            box-shadow: 0 0 0 3px rgba(22,81,87,0.18);
         }
 
         .remember-row {
@@ -113,7 +121,7 @@
         .remember-row input[type="checkbox"] {
             width: 16px;
             height: 16px;
-            accent-color: #667eea;
+            accent-color: var(--brand-forest);
             cursor: pointer;
         }
 
@@ -138,8 +146,8 @@
         .btn:active { transform: scale(0.98); }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
+            background: linear-gradient(135deg, var(--brand-forest) 0%, var(--brand-clay) 100%);
+            color: var(--brand-white);
         }
 
         .btn-primary:hover { opacity: 0.92; }
@@ -171,7 +179,7 @@
         }
 
         .register-link a {
-            color: #667eea;
+            color: var(--brand-forest);
             font-weight: 600;
             text-decoration: none;
         }
@@ -182,8 +190,10 @@
 <body>
 <div class="card">
     <div class="card-header">
-        <div class="logo">🛒</div>
-        <h1>Mini Marketplace</h1>
+        <div class="logo">
+            <img src="/images/Haat_Bazar-logo.png" alt="Haat Bazar logo" style="width:46px;height:46px;border-radius:10px;object-fit:cover;border:2px solid rgba(255,255,255,0.35);background:#fff;">
+        </div>
+        <h1>Haat Bazar</h1>
         <p>Sign in to your account</p>
     </div>
     <div class="card-body">

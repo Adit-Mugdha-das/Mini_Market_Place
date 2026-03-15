@@ -1,0 +1,182 @@
+:root {
+    --brand-clay: #b2622f;
+    --brand-forest: #165157;
+    --brand-white: #ffffff;
+    --brand-black: #0f1214;
+    --brand-muted: #5f6b72;
+    --brand-panel: rgba(255, 255, 255, 0.9);
+    --brand-line: rgba(22, 81, 87, 0.2);
+    --brand-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+}
+
+* {
+    scrollbar-color: var(--brand-clay) #e8ecef;
+}
+
+body {
+    position: relative;
+    background: linear-gradient(145deg, rgba(22, 81, 87, 0.18), rgba(178, 98, 47, 0.12)) !important;
+    color: var(--brand-black) !important;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 8% 8%, rgba(178, 98, 47, 0.24), transparent 42%),
+        radial-gradient(circle at 92% 10%, rgba(22, 81, 87, 0.22), transparent 38%),
+        radial-gradient(circle at 50% 100%, rgba(178, 98, 47, 0.14), transparent 35%);
+    animation: hbFloatBg 16s ease-in-out infinite alternate;
+}
+
+nav,
+.topbar {
+    background: linear-gradient(130deg, var(--brand-forest), #1c6670 50%, var(--brand-clay)) !important;
+    color: var(--brand-white) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22);
+}
+
+nav .brand,
+.topbar .brand,
+.brand-name,
+.brand span {
+    color: var(--brand-white) !important;
+}
+
+nav .nav-links a,
+.btn-logout,
+.user-area form button,
+.user-info form button,
+.actions .btn,
+.btn,
+.btn-search,
+.btn-detail,
+.view,
+.search {
+    border-radius: 12px !important;
+    transition: transform 0.18s ease, box-shadow 0.22s ease, opacity 0.22s ease !important;
+}
+
+.btn:hover,
+.btn-search:hover,
+.btn-detail:hover,
+.view:hover,
+.search:hover,
+.btn-logout:hover,
+nav .nav-links a:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary,
+.btn-login,
+.btn-search,
+.btn-detail,
+.view,
+.search {
+    background: linear-gradient(130deg, var(--brand-forest), #1e6e79) !important;
+    color: var(--brand-white) !important;
+    box-shadow: 0 10px 22px rgba(22, 81, 87, 0.25);
+}
+
+.btn-secondary,
+.btn-signup {
+    background: linear-gradient(130deg, #c26d36, var(--brand-clay)) !important;
+    color: var(--brand-white) !important;
+    box-shadow: 0 10px 22px rgba(178, 98, 47, 0.24);
+}
+
+.btn-tertiary,
+.btn-clear,
+.clear {
+    background: var(--brand-white) !important;
+    color: var(--brand-black) !important;
+    border: 1px solid var(--brand-line) !important;
+}
+
+.container,
+.card,
+.product-card,
+.welcome,
+.filter-bar,
+.empty,
+.empty-state,
+.metric,
+.page-header,
+.hero,
+.stats,
+.stat-card,
+.panel,
+.content-card {
+    animation: hbEnter 0.7s ease both;
+}
+
+.card,
+.product-card,
+.welcome,
+.filter-bar,
+.empty,
+.empty-state,
+.metric,
+.stat-card,
+.panel,
+.content-card {
+    border: 1px solid var(--brand-line) !important;
+    box-shadow: var(--brand-shadow) !important;
+}
+
+h1,
+h2,
+h3,
+.page-title,
+.brand,
+.brand-name {
+    letter-spacing: 0.01em;
+}
+
+h1 span,
+.price,
+.product-price,
+.accent,
+.tag,
+.badge {
+    color: var(--brand-clay) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none !important;
+    border-color: var(--brand-forest) !important;
+    box-shadow: 0 0 0 3px rgba(22, 81, 87, 0.14) !important;
+}
+
+.pager .active,
+.pagination .active {
+    background: var(--brand-clay) !important;
+    color: var(--brand-white) !important;
+    border-color: transparent !important;
+}
+
+@keyframes hbEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes hbFloatBg {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    100% {
+        transform: translate3d(0, -8px, 0) scale(1.03);
+    }
+}

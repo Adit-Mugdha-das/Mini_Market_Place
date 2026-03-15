@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${productId != null ? 'Edit Product' : 'Add Product'} + ' – Mini Marketplace'">Product Form</title>
+    <title th:text="${productId != null ? 'Edit Product' : 'Add Product'} + ' – HaatBazar'">Product Form</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
@@ -170,7 +170,7 @@
 </head>
 <body>
 <nav>
-    <span class="brand">🏪 Mini Marketplace</span>
+    <span class="brand">🏪 HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/seller/dashboard}">Dashboard</a>
         <a th:href="@{/seller/products}" class="active">My Products</a>

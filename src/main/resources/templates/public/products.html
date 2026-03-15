@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Products - Haat Bazar</title>
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
+    <style>
+        :root {
+            --brand-clay: #b2622f;
+            --brand-forest: #165157;
+            --brand-white: #ffffff;
+            --brand-black: #0f1214;
+            --muted: #6b7280;
+            --surface: #f7f8f9;
+            --card: #ffffff;
+            --line: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            background: var(--surface);
+            color: var(--brand-black);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            height: 70px;
+            background: var(--brand-white);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--brand-forest);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .brand img {
+            width: 38px;
+            height: 38px;
+            object-fit: cover;
+            border-radius: 9px;
+            background: var(--brand-white);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .btn:hover { transform: translateY(-1px); opacity: 0.92; }
+
+        .btn-login { background: var(--brand-forest); color: var(--brand-white); }
+        .btn-signup { background: var(--brand-clay); color: var(--brand-white); }
+
+        .container {
+            max-width: 1160px;
+            margin: 30px auto 40px;
+            padding: 0 18px;
+        }
+
+        .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .head h1 {
+            color: var(--brand-forest);
+            font-size: 1.45rem;
+        }
+
+        .head .note {
+            color: var(--muted);
+            font-size: 0.85rem;
+            background: #eef7f8;
+            border: 1px solid #d4e9ec;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .filter-bar {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .group { display: flex; flex-direction: column; gap: 4px; }
+
+        .group label {
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .group input,
+        .group select {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fafafa;
+            padding: 8px 10px;
+            font-size: 0.84rem;
+            min-width: 115px;
+        }
+
+        .search {
+            margin-left: auto;
+            background: var(--brand-forest);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 8px;
+            padding: 9px 16px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .clear {
+            text-decoration: none;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-wrap {
+            width: 100%;
+            height: 180px;
+            background: #f0f2f4;
+        }
+
+        .image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+
+        .name {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--brand-black);
+            line-height: 1.3;
+        }
+
+        .meta {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        .desc {
+            font-size: 0.82rem;
+            color: #374151;
+            line-height: 1.45;
+            min-height: 36px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .price { color: var(--brand-clay); font-weight: 800; font-size: 1.1rem; }
+
+        .view {
+            text-decoration: none;
+            background: var(--brand-forest);
+            color: var(--brand-white);
+            font-size: 0.78rem;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px 16px;
+            color: var(--muted);
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+        }
+
+        .pager {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pager a,
+        .pager span {
+            text-decoration: none;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #374151;
+            background: var(--brand-white);
+        }
+
+        .pager .active { background: var(--brand-clay); color: var(--brand-white); border-color: var(--brand-clay); }
+
+        @media (max-width: 760px) {
+            .topbar { padding: 0 14px; }
+            .actions { gap: 7px; }
+            .btn { padding: 8px 11px; font-size: 0.8rem; }
+            .search { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/}">
+        <img src="/images/Haat_Bazar-logo.png" alt="Haat Bazar logo">
+        <span>Haat Bazar</span>
+    </a>
+    <div class="actions">
+        <a class="btn btn-login" th:href="@{/auth/login}">Login</a>
+        <a class="btn btn-signup" th:href="@{/auth/register}">Sign Up</a>
+    </div>
+</header>
+
+<main class="container">
+    <div class="head">
+        <h1>Browse Products</h1>
+        <span class="note">View mode only. Login required for checkout, orders, and reviews.</span>
+    </div>
+
+    <form th:action="@{/products}" method="get" class="filter-bar">
+        <div class="group">
+            <label>Search</label>
+            <input type="text" name="keyword" placeholder="Product name" th:value="${keyword}" />
+        </div>
+
+        <div class="group">
+            <label>Min Price</label>
+            <input type="number" name="minPrice" min="0" step="0.01" th:value="${minPrice}" />
+        </div>
+
+        <div class="group">
+            <label>Max Price</label>
+            <input type="number" name="maxPrice" min="0" step="0.01" th:value="${maxPrice}" />
+        </div>
+
+        <div class="group">
+            <label>Category</label>
+            <select name="categoryId">
+                <option value="">All</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.id}"
+                        th:text="${cat.name}"
+                        th:selected="${categoryId != null and categoryId == cat.id}">
+                </option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label>Sort</label>
+            <select name="sortBy">
+                <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Newest</option>
+                <option value="price" th:selected="${sortBy == 'price'}">Price</option>
+                <option value="name" th:selected="${sortBy == 'name'}">Name</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label>Dir</label>
+            <select name="dir">
+                <option value="desc" th:selected="${dir == 'desc'}">Desc</option>
+                <option value="asc" th:selected="${dir == 'asc'}">Asc</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="page" value="0" />
+
+        <button class="search" type="submit">Search</button>
+        <a class="clear" th:href="@{/products}">Clear</a>
+    </form>
+
+    <div th:if="${products == null or products.isEmpty()}" class="empty">
+        No products available right now.
+    </div>
+
+    <section class="grid">
+        <article class="card" th:each="product : ${products}">
+            <div class="image-wrap">
+                <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
+                     th:src="${product.imageUrl}"
+                     th:alt="${product.name}" />
+            </div>
+            <div class="body">
+                <div class="name" th:text="${product.name}">Product Name</div>
+                <div class="meta">Seller: <span th:text="${product.seller.username}">seller</span></div>
+                <div class="desc"
+                     th:text="${product.description != null and !product.description.isEmpty() ? product.description : 'No description provided.'}">
+                    Description
+                </div>
+                <div class="bottom">
+                    <span class="price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</span>
+                    <a class="view" th:href="@{/products/{id}(id=${product.id})}">View</a>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <div class="pager" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/products(page=${currentPage - 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, categoryId=${categoryId})}">Prev</a>
+        <span th:unless="${currentPage > 0}">Prev</span>
+
+        <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:if="${i != currentPage}"
+               th:href="@{/products(page=${i}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, categoryId=${categoryId})}"
+               th:text="${i + 1}">1</a>
+            <span th:if="${i == currentPage}" class="active" th:text="${i + 1}">1</span>
+        </th:block>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/products(page=${currentPage + 1}, size=${productPage.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, categoryId=${categoryId})}">Next</a>
+        <span th:unless="${currentPage < totalPages - 1}">Next</span>
+    </div>
+</main>
+</body>
+</html>
