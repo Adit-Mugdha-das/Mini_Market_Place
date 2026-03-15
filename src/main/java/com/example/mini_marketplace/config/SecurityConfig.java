@@ -80,7 +80,7 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
             var authorities = authentication.getAuthorities();
-            String redirectUrl = "/dashboard";
+            String redirectUrl = "/buyer/products";
             for (var authority : authorities) {
                 String role = authority.getAuthority();
                 if ("ROLE_ADMIN".equals(role)) {
@@ -89,6 +89,8 @@ public class SecurityConfig {
                 } else if ("ROLE_SELLER".equals(role)) {
                     redirectUrl = "/seller/dashboard";
                     break;
+                } else if ("ROLE_BUYER".equals(role)) {
+                    redirectUrl = "/buyer/products";
                 }
             }
             response.sendRedirect(redirectUrl);
