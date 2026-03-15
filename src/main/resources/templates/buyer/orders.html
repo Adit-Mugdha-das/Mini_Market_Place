@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Orders – Mini Marketplace</title>
+    <title>My Orders – HaatBazar</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
@@ -183,11 +183,12 @@
         }
         .btn-shop:hover { opacity: 0.9; }
     </style>
+    <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
 </head>
 <body>
 
 <nav>
-    <span class="brand">🛒 Mini Marketplace</span>
+    <span class="brand">🛒 HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/dashboard}">Dashboard</a>
         <a th:href="@{/buyer/products}">Browse Products</a>

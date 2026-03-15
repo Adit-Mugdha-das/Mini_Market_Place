@@ -46,7 +46,7 @@ public class SecurityConfig {
         http
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                .requestMatchers("/", "/auth/**", "/products/**", "/css/**", "/js/**", "/images/**", "/uploads/products/**", "/webjars/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/seller/profile/**").authenticated()
                 .requestMatchers("/seller/**").hasAnyRole("ADMIN", "SELLER")
@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .rememberMe(rememberMe -> rememberMe
-                .key("miniMarketplaceSecretKey")
+                .key("haatBazarSecretKey")
                 .tokenValiditySeconds(7 * 24 * 60 * 60) // 7 days
                 .rememberMeParameter("remember-me")
             );

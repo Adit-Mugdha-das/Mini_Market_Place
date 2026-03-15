@@ -118,7 +118,7 @@ jobs:
         run: ./mvnw package -DskipTests -q
 
       - name: Build Docker image
-        run: docker build -t mini-marketplace:${{ github.sha }} .
+        run: docker build -t haatbazar:${{ github.sha }} .
 
   # ── Job 5: All Checks Passed ────────────────────────────────────────────────
   all-checks:

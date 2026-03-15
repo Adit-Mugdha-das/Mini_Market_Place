@@ -3,60 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register – Mini Marketplace</title>
+    <title>Register - Haat Bazar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
+        :root {
+            --brand-clay: #b2622f;
+            --brand-forest: #165157;
+            --brand-white: #ffffff;
+            --brand-black: #111827;
         }
 
-        .card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
             width: 100%;
-            max-width: 460px;
+            height: 100%;
             overflow: hidden;
         }
 
-        .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 28px 40px 20px;
-            text-align: center;
-            color: #fff;
+        body {
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            background: #0f1214;
+            color: var(--brand-white);
         }
 
-        .card-header .logo { font-size: 1.8rem; margin-bottom: 6px; }
-        .card-header h1 { font-size: 1.4rem; font-weight: 700; }
-        .card-header p { font-size: 0.83rem; opacity: 0.85; margin-top: 3px; }
+        .layout {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            animation: pageIn 0.7s ease;
+        }
 
-        .card-body { padding: 28px 40px 32px; }
+        .left-panel {
+            background:
+                linear-gradient(130deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)),
+                url('/images/unnamed.jpg') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 28px 34px;
+            border-right: 1px solid rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(8px);
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-row img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.38);
+            background: #fff;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+        }
+
+        .brand-row h1 {
+            font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+            letter-spacing: 0.3px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+            font-family: 'Caveat', cursive;
+            font-weight: 700;
+            color: #b2622f;
+        }
+
+        .right-panel {
+            background: #165157;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .form-shell {
+            width: min(540px, 96%);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.26);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            padding: 14px 16px 12px;
+            box-shadow: 0 14px 40px rgba(0,0,0,0.23);
+        }
+
+        .form-shell h3 {
+            font-size: 1.15rem;
+            margin-bottom: 2px;
+        }
+
+        .form-shell .sub {
+            font-size: 0.76rem;
+            color: rgba(255,255,255,0.86);
+            margin-bottom: 8px;
+        }
 
         .alert {
-            padding: 12px 16px;
+            padding: 8px 10px;
             border-radius: 8px;
-            margin-bottom: 18px;
-            font-size: 0.875rem;
-            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.76rem;
+            font-weight: 700;
         }
 
         .alert-danger { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
-        .form-group { margin-bottom: 18px; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 10px;
+        }
+
+        .form-group { margin-bottom: 2px; }
 
         label {
             display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 5px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 3px;
         }
 
         input[type="text"],
@@ -64,49 +136,48 @@
         input[type="password"],
         select {
             width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 0.92rem;
+            padding: 8px 10px;
+            border: 1px solid rgba(255,255,255,0.34);
+            border-radius: 7px;
+            font-size: 0.84rem;
             color: #111827;
             background: #fff;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         input:focus, select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+            border-color: var(--brand-clay);
+            box-shadow: 0 0 0 3px rgba(178,98,47,0.22);
         }
 
         input.is-invalid { border-color: #dc2626; }
 
         .field-hint {
-            color: #9ca3af;
-            font-size: 0.73rem;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.66rem;
             margin-top: 3px;
         }
 
         .field-error {
-            color: #dc2626;
-            font-size: 0.78rem;
-            margin-top: 4px;
+            color: #ffe2e2;
+            font-size: 0.68rem;
+            margin-top: 3px;
         }
 
         .role-group {
             display: flex;
-            gap: 12px;
+            gap: 8px;
         }
 
         .role-option {
             flex: 1;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 12px 10px;
+            border: 1px solid rgba(255,255,255,0.32);
+            border-radius: 8px;
+            padding: 8px 7px;
             cursor: pointer;
             text-align: center;
-            transition: border-color 0.2s, background 0.2s;
             position: relative;
+            background: rgba(255,255,255,0.05);
         }
 
         .role-option input[type="radio"] {
@@ -115,149 +186,162 @@
             width: 0;
         }
 
-        .role-option .role-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
-        .role-option .role-label { font-size: 0.82rem; font-weight: 600; color: #374151; }
-        .role-option .role-desc { font-size: 0.72rem; color: #9ca3af; margin-top: 2px; }
+        .role-option .role-icon { font-size: 1.15rem; display: block; margin-bottom: 2px; }
+        .role-option .role-label { font-size: 0.72rem; font-weight: 700; color: #ffffff; }
+        .role-option .role-desc { font-size: 0.62rem; color: rgba(255,255,255,0.85); margin-top: 2px; }
 
         .role-option:has(input:checked) {
-            border-color: #667eea;
-            background: #f0f0ff;
+            border-color: #ffd8c0;
+            background: rgba(178,98,47,0.28);
         }
 
         .btn {
             width: 100%;
-            padding: 12px;
+            padding: 9px;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.84rem;
+            font-weight: 800;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
             margin-top: 6px;
+            color: var(--brand-white);
+            background: linear-gradient(135deg, var(--brand-clay) 0%, #ca7a45 100%);
         }
 
         .btn:active { transform: scale(0.98); }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-        }
 
         .btn-primary:hover { opacity: 0.92; }
 
         .login-link {
             text-align: center;
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-top: 20px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.92);
+            margin-top: 8px;
         }
 
         .login-link a {
-            color: #667eea;
-            font-weight: 600;
+            color: #ffe4d2;
+            font-weight: 700;
             text-decoration: none;
         }
 
         .login-link a:hover { text-decoration: underline; }
+
+        @keyframes pageIn {
+            from { opacity: 0; transform: scale(1.02); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 1100px) {
+            .layout { grid-template-columns: 1fr; }
+            .left-panel { display: none; }
+            .form-grid { grid-template-columns: 1fr; }
+            .right-panel { padding: 12px; }
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <div class="card-header">
-        <div class="logo">🛍️</div>
-        <h1>Create Account</h1>
-        <p>Join Mini Marketplace today</p>
-    </div>
-    <div class="card-body">
-
-        <!-- General Error -->
-        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-
-        <form th:action="@{/auth/register}" th:object="${registerRequest}" method="post" novalidate>
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-            <!-- Full Name -->
-            <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" th:field="*{fullName}"
-                       th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
-                       placeholder="Your full name" />
-                <div class="field-error" th:if="${#fields.hasErrors('fullName')}"
-                     th:errors="*{fullName}"></div>
-            </div>
-
-            <!-- Username -->
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" th:field="*{username}"
-                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
-                       placeholder="Choose a username" />
-                <div class="field-error" th:if="${#fields.hasErrors('username')}"
-                     th:errors="*{username}"></div>
-                <div class="field-hint" th:unless="${#fields.hasErrors('username')}">
-                    3–30 characters · letters, digits and underscores only
-                </div>
-            </div>
-
-            <!-- Email -->
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" th:field="*{email}"
-                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
-                       placeholder="your@email.com" />
-                <div class="field-error" th:if="${#fields.hasErrors('email')}"
-                     th:errors="*{email}"></div>
-            </div>
-
-            <!-- Password -->
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" th:field="*{password}"
-                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
-                       placeholder="At least 6 characters" />
-                <div class="field-error" th:if="${#fields.hasErrors('password')}"
-                     th:errors="*{password}"></div>
-                <div class="field-hint" th:unless="${#fields.hasErrors('password')}">
-                    Minimum 6 characters
-                </div>
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
-                       th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
-                       placeholder="Repeat your password" />
-                <div class="field-error" th:if="${#fields.hasErrors('confirmPassword')}"
-                     th:errors="*{confirmPassword}"></div>
-            </div>
-
-            <!-- Role Selection -->
-            <div class="form-group">
-                <label>Register as</label>
-                <div class="role-group">
-                    <label class="role-option">
-                        <input type="radio" th:field="*{role}" value="BUYER" />
-                        <span class="role-icon">🛒</span>
-                        <span class="role-label">Buyer</span>
-                        <span class="role-desc">Browse &amp; purchase</span>
-                    </label>
-                    <label class="role-option">
-                        <input type="radio" th:field="*{role}" value="SELLER" />
-                        <span class="role-icon">🏪</span>
-                        <span class="role-label">Seller</span>
-                        <span class="role-desc">List &amp; sell products</span>
-                    </label>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Create Account</button>
-        </form>
-
-        <div class="login-link">
-            Already have an account? <a th:href="@{/auth/login}">Sign in</a>
+<div class="layout">
+    <section class="left-panel">
+        <div class="brand-row">
+            <img src="/images/Haat_Bazar-logo.png" alt="Haat Bazar logo">
+            <h1>Haat Bazar</h1>
         </div>
-    </div>
+    </section>
+
+    <section class="right-panel">
+        <div class="form-shell">
+            <h3>Create Account</h3>
+            <p class="sub">Join Haat Bazar today</p>
+
+            <!-- General Error -->
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <form th:action="@{/auth/register}" th:object="${registerRequest}" method="post" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="form-grid">
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" th:field="*{fullName}"
+                               th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                               placeholder="Your full name" />
+                        <div class="field-error" th:if="${#fields.hasErrors('fullName')}"
+                             th:errors="*{fullName}"></div>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" th:field="*{username}"
+                               th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
+                               placeholder="Choose a username" />
+                        <div class="field-error" th:if="${#fields.hasErrors('username')}"
+                             th:errors="*{username}"></div>
+                        <div class="field-hint" th:unless="${#fields.hasErrors('username')}">
+                            letters, digits and underscores only
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" th:field="*{email}"
+                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                               placeholder="your@email.com" />
+                        <div class="field-error" th:if="${#fields.hasErrors('email')}"
+                             th:errors="*{email}"></div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" th:field="*{password}"
+                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                               placeholder="At least 6 characters" />
+                        <div class="field-error" th:if="${#fields.hasErrors('password')}"
+                             th:errors="*{password}"></div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                               th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
+                               placeholder="Repeat your password" />
+                        <div class="field-error" th:if="${#fields.hasErrors('confirmPassword')}"
+                             th:errors="*{confirmPassword}"></div>
+                    </div>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="form-group">
+                    <label>Register as</label>
+                    <div class="role-group">
+                        <label class="role-option">
+                            <input type="radio" th:field="*{role}" value="BUYER" />
+                            <span class="role-icon">🛒</span>
+                            <span class="role-label">Buyer</span>
+                            <span class="role-desc">Browse &amp; purchase</span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" th:field="*{role}" value="SELLER" />
+                            <span class="role-icon">🏪</span>
+                            <span class="role-label">Seller</span>
+                            <span class="role-desc">List &amp; sell products</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a th:href="@{/auth/login}">Sign in</a>
+            </div>
+        </div>
+    </section>
 </div>
 </body>
 </html>
