@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haat Bazar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
@@ -13,7 +14,7 @@
             --brand-clay: #b2622f;
             --brand-forest: #165157;
             --brand-white: #ffffff;
-            --brand-black: #0f1214;
+            --brand-black: #000000;
             --shadow: rgba(0, 0, 0, 0.32);
         }
 
@@ -23,7 +24,7 @@
             min-height: 100vh;
             font-family: "Trebuchet MS", "Segoe UI", sans-serif;
             color: var(--brand-white);
-            background: #0f1214;
+            background: #000000;
             overflow: auto;
         }
 
@@ -129,7 +130,7 @@
         }
 
         h1 span {
-            color: #ffd8c0;
+            color: #ffffff;
             position: relative;
         }
 
@@ -220,8 +221,23 @@
             .topbar { height: auto; gap: 10px; flex-wrap: wrap; }
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/haatbazar-theme.css}">
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
+    <style>
+        /* Keep entrance CTA buttons as solid brand colors (no gradient mix). */
+        .top-actions .btn.btn-primary {
+            background: var(--brand-forest) !important;
+            color: var(--brand-white) !important;
+        }
+
+        .top-actions .btn.btn-secondary,
+        .bottom-cta .btn.btn-secondary {
+            background: var(--brand-clay) !important;
+            color: var(--brand-white) !important;
+        }
+    </style>
 </head>
-<body>
+<body class="hb-keep-block-layout">
 <div class="hero-bg"></div>
 <div class="noise"></div>
 
@@ -250,3 +266,9 @@
 </main>
 </body>
 </html>
+
+
+
+
+
+

@@ -1,34 +1,37 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Insufficient Stock – HaatBazar</title>
+    <title>Insufficient Stock – HaatBazar</title>    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ffffff; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         .card {
             background: #fff; border-radius: 16px; padding: 48px 40px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1); text-align: center; max-width: 480px; width: 100%;
         }
         .icon { font-size: 4rem; margin-bottom: 16px; }
-        h1 { font-size: 1.5rem; color: #1f2937; margin-bottom: 12px; }
-        .message { color: #6b7280; font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }
+        h1 { font-size: 1.5rem; color: #000000; margin-bottom: 12px; }
+        .message { color: #000000; font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }
         .stock-details {
-            background: #fef3c7; border-radius: 10px; padding: 16px;
-            margin-bottom: 28px; font-size: 0.875rem; color: #92400e;
+            background: #ffffff; border-radius: 10px; padding: 16px;
+            margin-bottom: 28px; font-size: 0.875rem; color: #b2622f;
         }
         .stock-details p { margin: 4px 0; }
-        .stock-details strong { color: #78350f; }
+        .stock-details strong { color: #b2622f; }
         .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         .btn {
             padding: 10px 24px; border-radius: 8px; text-decoration: none;
             font-size: 0.875rem; font-weight: 600; transition: opacity 0.2s;
         }
         .btn:hover { opacity: 0.85; }
-        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
-        .btn-secondary { background: #f3f4f6; color: #374151; }
+        .btn-primary { background: linear-gradient(135deg, #165157, #b2622f); color: #fff; }
+        .btn-secondary { background: #ffffff; color: #000000; }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <div class="card">
@@ -49,3 +52,9 @@
 </div>
 </body>
 </html>
+
+
+
+
+
+
