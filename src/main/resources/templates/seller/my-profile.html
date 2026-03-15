@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haat Bazar</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ffffff; min-height: 100vh; }
+
+        nav {
+            background: linear-gradient(135deg, #165157 0%, #b2622f 100%);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            color: #fff;
+        }
+        .brand { font-size: 1.1rem; font-weight: 700; }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            font-size: 0.875rem;
+        }
+        .nav-links a.active,
+        .nav-links a:hover { background: rgba(255, 255, 255, 0.3); }
+
+        .user-area { display: flex; align-items: center; gap: 12px; }
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.35);
+            cursor: pointer;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+        }
+
+        .page {
+            max-width: 1060px;
+            margin: 28px auto;
+            padding: 0 20px 28px;
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            gap: 18px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid rgba(22, 81, 87, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            padding: 18px;
+        }
+
+        .profile-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #165157;
+            color: #ffffff;
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .title { font-size: 1.2rem; font-weight: 800; color: #000000; }
+        .sub { color: #000000; font-size: 0.84rem; margin-top: 2px; }
+
+        .meta {
+            margin-top: 8px;
+            display: grid;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: #000000;
+        }
+
+        .stats {
+            margin-top: 14px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .stat {
+            border: 1px solid rgba(22, 81, 87, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            background: #ffffff;
+        }
+
+        .stat .k { font-size: 0.72rem; color: #000000; }
+        .stat .v { font-size: 1rem; font-weight: 800; color: #165157; }
+
+        .badge {
+            margin-top: 10px;
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #165157;
+            background: #ffffff;
+            border: 1px solid rgba(22, 81, 87, 0.25);
+        }
+
+        .flash {
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+        .flash-success { background: #ffffff; color: #165157; border: 1px solid rgba(22, 81, 87, 0.3); }
+        .flash-error { background: #ffffff; color: #991b1b; border: 1px solid #dc2626; }
+
+        .form-title { font-size: 1rem; font-weight: 800; color: #000000; margin-bottom: 10px; }
+
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.8rem; font-weight: 700; color: #000000; }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid rgba(22, 81, 87, 0.3);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .field-error {
+            color: #991b1b;
+            font-size: 0.76rem;
+            margin-top: 4px;
+            font-weight: 700;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: #165157;
+            color: #ffffff;
+        }
+
+        .btn-danger {
+            background: #991b1b;
+            color: #ffffff;
+        }
+
+        .help {
+            font-size: 0.75rem;
+            color: #000000;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 900px) {
+            .page { grid-template-columns: 1fr; }
+            nav { padding: 0 12px; }
+            .nav-links { gap: 6px; }
+            .nav-links a { padding: 6px 10px; font-size: 0.8rem; }
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/haatbazar-theme.css}">
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
+</head>
+<body>
+<nav>
+    <span class="brand">Haat Bazar</span>
+    <div class="nav-links">
+        <a th:href="@{/seller/dashboard}">Dashboard</a>
+        <a th:href="@{/seller/profile}" class="active">My Profile</a>
+        <a th:href="@{/seller/products}">My Products</a>
+        <a th:href="@{/seller/orders}">Orders</a>
+        <a th:href="@{/seller/reviews}">Reviews</a>
+    </div>
+    <div class="user-area">
+        <span><strong th:text="${username}">Seller</strong></span>
+        <form th:action="@{/auth/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="page">
+    <section class="card">
+        <div class="profile-head">
+            <div class="avatar" th:text="${#strings.substring(profile.username,0,1).toUpperCase()}">S</div>
+            <div>
+                <div class="title" th:text="${profile.fullName}">Seller Name</div>
+                <div class="sub" th:text="'@' + ${profile.username}">@seller</div>
+            </div>
+        </div>
+
+        <div class="meta">
+            <div><strong>Email:</strong> <span th:text="${profile.email}">seller@email.com</span></div>
+            <div><strong>Phone:</strong> <span th:text="${profile.phoneNumber != null ? profile.phoneNumber : 'Not set'}">Not set</span></div>
+            <div><strong>Address:</strong> <span th:text="${profile.address != null ? profile.address : 'Not set'}">Not set</span></div>
+            <div><strong>Member Since:</strong> <span th:text="${#temporals.format(profile.joinDate, 'dd MMM yyyy')}">01 Jan 2026</span></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat"><div class="k">Total Products</div><div class="v" th:text="${profile.totalProducts}">0</div></div>
+            <div class="stat"><div class="k">Active Products</div><div class="v" th:text="${profile.activeProducts}">0</div></div>
+            <div class="stat"><div class="k">Total Sales</div><div class="v" th:text="${profile.totalSales}">0</div></div>
+            <div class="stat"><div class="k">Revenue</div><div class="v" th:text="'$' + ${#numbers.formatDecimal(profile.totalRevenue,1,2)}">$0.00</div></div>
+            <div class="stat"><div class="k">Avg Rating</div><div class="v" th:text="${#numbers.formatDecimal(profile.averageRating,1,1)}">0.0</div></div>
+            <div class="stat"><div class="k">Total Reviews</div><div class="v" th:text="${profile.totalReviews}">0</div></div>
+        </div>
+
+        <span class="badge">SELLER ACCOUNT</span>
+    </section>
+
+    <section class="card">
+        <div th:if="${successMessage}" class="flash flash-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="flash flash-error" th:text="${errorMessage}"></div>
+
+        <div class="form-title">Update Profile Information</div>
+        <form th:action="@{/seller/profile}" th:object="${profileForm}" method="post" novalidate>
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" th:field="*{fullName}" placeholder="Your full name" />
+                <div class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" th:field="*{email}" placeholder="your@email.com" />
+                <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" placeholder="+8801XXXXXXXXX" />
+                <div class="field-error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" th:field="*{address}" placeholder="House, Road, Area, City"></textarea>
+                <div class="field-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn btn-save">Save Changes</button>
+            </div>
+        </form>
+
+        <hr style="margin: 16px 0; border: none; border-top: 1px solid rgba(22,81,87,0.2);">
+
+        <div class="form-title" style="color:#991b1b;">Delete Account</div>
+        <p class="help">This action deactivates your seller account and hides your products.</p>
+        <form th:action="@{/seller/profile/delete}" method="post" onsubmit="return confirm('Delete your seller account?');">
+            <button type="submit" class="btn btn-danger">Delete My Account</button>
+        </form>
+    </section>
+</div>
+</body>
+</html>

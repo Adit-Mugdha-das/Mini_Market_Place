@@ -1,8 +1,10 @@
 package com.example.mini_marketplace.service;
 
 import com.example.mini_marketplace.dto.ProductRequest;
+import com.example.mini_marketplace.dto.SellerAccountProfileDto;
 import com.example.mini_marketplace.dto.SellerDashboardMetrics;
 import com.example.mini_marketplace.dto.SellerOrderView;
+import com.example.mini_marketplace.dto.SellerProfileUpdateRequest;
 import com.example.mini_marketplace.dto.SellerProfileDto;
 import com.example.mini_marketplace.entity.AuditLog.ActionType;
 import com.example.mini_marketplace.entity.AuditLog.EntityType;
@@ -211,6 +213,79 @@ public class SellerService {
     public SellerProfileDto getSellerProfileByUsername(String username) {
         User seller = getUser(username);
         return getSellerProfile(seller.getId());
+    }
+
+    public SellerAccountProfileDto getSellerAccountProfile(String username) {
+        User seller = getUser(username);
+        SellerProfileDto stats = getSellerProfile(seller.getId());
+
+        return new SellerAccountProfileDto(
+                seller.getId(),
+                seller.getUsername(),
+                seller.getFullName(),
+                seller.getEmail(),
+                seller.getPhoneNumber(),
+                seller.getAddress(),
+                seller.getCreatedAt(),
+                stats.getTotalProducts(),
+                stats.getActiveProducts(),
+                stats.getTotalSales(),
+                stats.getTotalRevenue(),
+                stats.getAverageRating(),
+                stats.getTotalReviews()
+        );
+    }
+
+    public SellerProfileUpdateRequest getSellerProfileUpdateRequest(String username) {
+        User seller = getUser(username);
+        SellerProfileUpdateRequest request = new SellerProfileUpdateRequest();
+        request.setFullName(seller.getFullName());
+        request.setEmail(seller.getEmail());
+        request.setPhoneNumber(seller.getPhoneNumber());
+        request.setAddress(seller.getAddress());
+        return request;
+    }
+
+    @Transactional
+    public void updateOwnProfile(String username, SellerProfileUpdateRequest request) {
+        User seller = getUser(username);
+
+        String normalizedEmail = request.getEmail().trim().toLowerCase();
+        if (userRepository.existsByEmailAndIdNot(normalizedEmail, seller.getId())) {
+            throw new IllegalArgumentException("Email is already used by another account.");
+        }
+
+        seller.setFullName(request.getFullName().trim());
+        seller.setEmail(normalizedEmail);
+        seller.setPhoneNumber(nullIfBlank(request.getPhoneNumber()));
+        seller.setAddress(nullIfBlank(request.getAddress()));
+        userRepository.save(seller);
+    }
+
+    @Transactional
+    public void deactivateOwnAccount(String username) {
+        User seller = getUser(username);
+
+        List<Product> products = productRepository.findBySellerOrderByCreatedAtDesc(seller);
+        for (Product product : products) {
+            product.setActive(false);
+        }
+        productRepository.saveAll(products);
+
+        seller.setEnabled(false);
+        seller.getRoles().clear();
+        userRepository.save(seller);
+
+        auditService.log(username, ActionType.DELETE_USER, EntityType.USER,
+                seller.getId(), "Seller deactivated own account");
+    }
+
+    private String nullIfBlank(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }
 

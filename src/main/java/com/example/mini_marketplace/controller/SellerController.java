@@ -1,16 +1,21 @@
 package com.example.mini_marketplace.controller;
 
 import com.example.mini_marketplace.dto.ProductRequest;
+import com.example.mini_marketplace.dto.SellerProfileUpdateRequest;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.repository.CategoryRepository;
 import com.example.mini_marketplace.service.ImageUploadService;
 import com.example.mini_marketplace.service.ReviewService;
 import com.example.mini_marketplace.service.SellerService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,10 +48,57 @@ public class SellerController {
     }
 
     @GetMapping("/profile")
+    @PreAuthorize("hasRole('SELLER')")
     public String myProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("username", userDetails.getUsername());
-        model.addAttribute("profile", sellerService.getSellerProfileByUsername(userDetails.getUsername()));
-        return "seller/profile";
+        String username = userDetails.getUsername();
+        model.addAttribute("username", username);
+        model.addAttribute("profile", sellerService.getSellerAccountProfile(username));
+        model.addAttribute("profileForm", sellerService.getSellerProfileUpdateRequest(username));
+        return "seller/my-profile";
+    }
+
+    @PostMapping("/profile")
+    @PreAuthorize("hasRole('SELLER')")
+    public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                @Valid @ModelAttribute("profileForm") SellerProfileUpdateRequest profileForm,
+                                BindingResult bindingResult,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
+        String username = userDetails.getUsername();
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("username", username);
+            model.addAttribute("profile", sellerService.getSellerAccountProfile(username));
+            return "seller/my-profile";
+        }
+
+        try {
+            sellerService.updateOwnProfile(username, profileForm);
+            redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/seller/profile";
+    }
+
+    @PostMapping("/profile/delete")
+    @PreAuthorize("hasRole('SELLER')")
+    public String deleteProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                HttpServletRequest request,
+                                HttpServletResponse response,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            sellerService.deactivateOwnAccount(userDetails.getUsername());
+            new SecurityContextLogoutHandler().logout(request, response, null);
+            session.invalidate();
+            redirectAttributes.addFlashAttribute("successMessage", "Your seller account has been deleted.");
+            return "redirect:/auth/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Unable to delete account: " + e.getMessage());
+            return "redirect:/seller/profile";
+        }
     }
 
     // ─── Products ──────────────────────────────────────────────────────────────
