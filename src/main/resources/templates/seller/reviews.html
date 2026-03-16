@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Product Reviews – HaatBazar</title>
+    <title>My Product Reviews – HaatBazar</title>    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ffffff; min-height: 100vh; }
         nav {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, #b2622f 0%, #b2622f 100%);
             padding: 0 32px; display: flex; align-items: center;
             justify-content: space-between; height: 60px; color: #fff;
             position: sticky; top: 0; z-index: 100;
@@ -24,16 +26,16 @@
 
         .container { max-width: 860px; margin: 36px auto; padding: 0 20px 60px; }
         .page-header { margin-bottom: 28px; }
-        .page-header h2 { font-size: 1.5rem; font-weight: 800; color: #1f2937; }
-        .page-header p  { color: #9ca3af; font-size: 0.85rem; margin-top: 4px; }
+        .page-header h2 { font-size: 1.5rem; font-weight: 800; color: #000000; }
+        .page-header p  { color: #000000; font-size: 0.85rem; margin-top: 4px; }
 
-        .alert-success { background: #d1fae5; color: #065f46; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.88rem; border-left: 4px solid #059669; }
-        .alert-error   { background: #fee2e2; color: #991b1b; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.88rem; border-left: 4px solid #dc2626; }
+        .alert-success { background: #ffffff; color: #165157; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.88rem; border-left: 4px solid #165157; }
+        .alert-error   { background: #ffffff; color: #991b1b; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.88rem; border-left: 4px solid #dc2626; }
 
         .review-card {
             background: #fff; border-radius: 14px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 20px 22px;
-            margin-bottom: 16px; border: 1px solid #f3f4f6;
+            margin-bottom: 16px; border: 1px solid #ffffff;
             transition: box-shadow 0.2s;
         }
         .review-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.09); }
@@ -41,36 +43,38 @@
         .reviewer-info { display: flex; align-items: center; gap: 10px; }
         .avatar {
             width: 38px; height: 38px; border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #165157, #b2622f);
             display: flex; align-items: center; justify-content: center;
             color: #fff; font-size: 0.9rem; font-weight: 800; flex-shrink: 0;
         }
-        .reviewer-name { font-size: 0.88rem; font-weight: 700; color: #1f2937; }
-        .review-meta   { font-size: 0.72rem; color: #9ca3af; margin-top: 2px; }
+        .reviewer-name { font-size: 0.88rem; font-weight: 700; color: #000000; }
+        .review-meta   { font-size: 0.72rem; color: #000000; margin-top: 2px; }
         .product-tag {
-            display: inline-block; background: #fef3c7; color: #92400e;
+            display: inline-block; background: #ffffff; color: #b2622f;
             font-size: 0.7rem; font-weight: 700; padding: 2px 10px;
             border-radius: 20px; margin-top: 4px;
         }
         .review-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .stars { font-size: 1rem; letter-spacing: 1px; }
-        .rating-num { font-size: 0.85rem; font-weight: 800; color: #f59e0b; }
+        .rating-num { font-size: 0.85rem; font-weight: 800; color: #b2622f; }
         .review-comment {
-            margin-top: 12px; font-size: 0.85rem; color: #4b5563;
-            line-height: 1.6; padding-top: 12px; border-top: 1px solid #f9fafb;
+            margin-top: 12px; font-size: 0.85rem; color: #000000;
+            line-height: 1.6; padding-top: 12px; border-top: 1px solid #ffffff;
         }
-        .no-comment { font-size: 0.8rem; color: #d1d5db; font-style: italic; margin-top: 10px; }
+        .no-comment { font-size: 0.8rem; color: #ffffff; font-style: italic; margin-top: 10px; }
 
-        .empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #000000; }
         .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <nav>
     <span class="brand">🏪 HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/seller/dashboard}">Dashboard</a>
+        <a th:href="@{/seller/profile}">My Profile</a>
         <a th:href="@{/seller/products}">My Products</a>
         <a th:href="@{/seller/orders}">Orders</a>
         <a th:href="@{/seller/reviews}" class="active">Reviews</a>
@@ -126,3 +130,9 @@
 </div>
 </body>
 </html>
+
+
+
+
+
+

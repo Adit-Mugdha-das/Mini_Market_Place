@@ -1,18 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
 
 :root {
     --brand-clay: #b2622f;
     --brand-forest: #165157;
     --brand-white: #ffffff;
-    --brand-black: #0f1214;
-    --brand-muted: #5f6b72;
+    --brand-black: #000000;
+    --brand-muted: rgba(0, 0, 0, 0.65);
     --brand-panel: rgba(255, 255, 255, 0.9);
     --brand-line: rgba(22, 81, 87, 0.2);
     --brand-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
 }
 
 * {
-    scrollbar-color: var(--brand-clay) #e8ecef;
+    scrollbar-color: var(--brand-clay) #ffffff;
 }
 
 body {
@@ -92,14 +92,14 @@ nav .nav-links a:hover {
 .btn-detail,
 .view,
 .search {
-    background: linear-gradient(130deg, var(--brand-forest), #1e6e79) !important;
+    background: linear-gradient(130deg, var(--brand-forest), var(--brand-clay)) !important;
     color: var(--brand-white) !important;
     box-shadow: 0 10px 22px rgba(22, 81, 87, 0.25);
 }
 
 .btn-secondary,
 .btn-signup {
-    background: linear-gradient(130deg, #c26d36, var(--brand-clay)) !important;
+    background: linear-gradient(130deg, var(--brand-clay), var(--brand-forest)) !important;
     color: var(--brand-white) !important;
     box-shadow: 0 10px 22px rgba(178, 98, 47, 0.24);
 }
@@ -176,6 +176,75 @@ textarea:focus {
     border-color: transparent !important;
 }
 
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 550, 'GRAD' 0, 'opsz' 24;
+    font-size: 1.1em;
+    line-height: 1;
+    vertical-align: text-bottom;
+}
+
+.hb-brand-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+    vertical-align: text-bottom;
+    margin-right: 0.45rem;
+}
+
+.hb-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.hb-danger,
+.badge-red,
+.error,
+.alert-error {
+    color: #dc2626 !important;
+}
+
+/* Full-page mode for all pages except entrance/login/register. */
+body:not(.hb-keep-block-layout) {
+    background:
+        linear-gradient(165deg, rgba(22, 81, 87, 0.16), rgba(178, 98, 47, 0.12)) !important;
+    min-height: 100vh;
+}
+
+body:not(.hb-keep-block-layout) .container,
+body:not(.hb-keep-block-layout) main.container,
+body:not(.hb-keep-block-layout) .page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding-left: clamp(16px, 4vw, 42px) !important;
+    padding-right: clamp(16px, 4vw, 42px) !important;
+}
+
+body:not(.hb-keep-block-layout) .card,
+body:not(.hb-keep-block-layout) .product-card,
+body:not(.hb-keep-block-layout) .panel,
+body:not(.hb-keep-block-layout) .content-card,
+body:not(.hb-keep-block-layout) .metric,
+body:not(.hb-keep-block-layout) .stat-card,
+body:not(.hb-keep-block-layout) .empty,
+body:not(.hb-keep-block-layout) .empty-state,
+body:not(.hb-keep-block-layout) .welcome,
+body:not(.hb-keep-block-layout) .filter-bar,
+body:not(.hb-keep-block-layout) .hero,
+body:not(.hb-keep-block-layout) .page-header {
+    background: transparent !important;
+    border: 1px solid rgba(22, 81, 87, 0.22) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(3px);
+}
+
+body:not(.hb-keep-block-layout) .card:hover,
+body:not(.hb-keep-block-layout) .product-card:hover,
+body:not(.hb-keep-block-layout) .stat-card:hover {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
 @keyframes hbEnter {
     from {
         opacity: 0;
@@ -195,3 +264,5 @@ textarea:focus {
         transform: translate3d(0, -8px, 0) scale(1.03);
     }
 }
+
+

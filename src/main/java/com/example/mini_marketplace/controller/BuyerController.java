@@ -1,17 +1,24 @@
 package com.example.mini_marketplace.controller;
 
+import com.example.mini_marketplace.dto.BuyerProfileUpdateRequest;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.exception.InsufficientStockException;
 import com.example.mini_marketplace.repository.CategoryRepository;
 import com.example.mini_marketplace.service.BuyerService;
 import com.example.mini_marketplace.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,6 +33,59 @@ public class BuyerController {
     private final BuyerService buyerService;
     private final ReviewService reviewService;
     private final CategoryRepository categoryRepository;
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('BUYER')")
+    public String myProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String username = userDetails.getUsername();
+        model.addAttribute("username", username);
+        model.addAttribute("profile", buyerService.getBuyerProfile(username));
+        model.addAttribute("profileForm", buyerService.getBuyerProfileUpdateRequest(username));
+        return "buyer/profile";
+    }
+
+    @PostMapping("/profile")
+    @PreAuthorize("hasRole('BUYER')")
+    public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                @Valid @ModelAttribute("profileForm") BuyerProfileUpdateRequest profileForm,
+                                BindingResult bindingResult,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
+        String username = userDetails.getUsername();
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("username", username);
+            model.addAttribute("profile", buyerService.getBuyerProfile(username));
+            return "buyer/profile";
+        }
+
+        try {
+            buyerService.updateProfile(username, profileForm);
+            redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/buyer/profile";
+    }
+
+    @PostMapping("/profile/delete")
+    @PreAuthorize("hasRole('BUYER')")
+    public String deleteMyAccount(@AuthenticationPrincipal UserDetails userDetails,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  HttpSession session,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            buyerService.deleteAccount(userDetails.getUsername());
+            new SecurityContextLogoutHandler().logout(request, response, null);
+            session.invalidate();
+            redirectAttributes.addFlashAttribute("successMessage", "Your account has been deleted.");
+            return "redirect:/auth/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Unable to delete account: " + e.getMessage());
+            return "redirect:/buyer/profile";
+        }
+    }
 
     // ─── 1. Product list ───────────────────────────────────────────────────────
 
@@ -97,6 +157,7 @@ public class BuyerController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
         try {
+            buyerService.assertBuyerEnabled(userDetails.getUsername());
             Product product = buyerService.getProductById(productId);
             if (quantity < 1 || quantity > product.getQuantity()) {
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -125,6 +186,7 @@ public class BuyerController {
                                  @AuthenticationPrincipal UserDetails userDetails,
                                  RedirectAttributes redirectAttributes) {
         try {
+            buyerService.assertBuyerEnabled(userDetails.getUsername());
             com.example.mini_marketplace.entity.Order order =
                     buyerService.placeOrder(userDetails.getUsername(), productId, quantity, paymentMethod);
             redirectAttributes.addFlashAttribute("orderId",          order.getId());
@@ -136,7 +198,7 @@ public class BuyerController {
             throw e;
         } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/buyer/products/" + productId;
+            return "redirect:/buyer/profile";
         }
     }
 

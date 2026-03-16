@@ -1,18 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${product.name} + ' - Haat Bazar'">Product - Haat Bazar</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
     <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         :root {
             --brand-clay: #b2622f;
             --brand-forest: #165157;
             --brand-white: #ffffff;
-            --brand-black: #0f1214;
-            --line: #e5e7eb;
-            --surface: #f6f7f8;
+            --brand-black: #000000;
+            --line: #ffffff;
+            --surface: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -72,7 +73,7 @@
         .back {
             display: inline-block;
             margin-bottom: 14px;
-            color: #374151;
+            color: #000000;
             text-decoration: none;
             font-size: 0.9rem;
             font-weight: 700;
@@ -89,7 +90,7 @@
 
         .image {
             min-height: 320px;
-            background: #eef1f3;
+            background: #ffffff;
         }
 
         .image img {
@@ -102,13 +103,13 @@
 
         .name { font-size: 1.4rem; color: var(--brand-forest); font-weight: 800; }
         .price { font-size: 1.6rem; color: var(--brand-clay); font-weight: 800; }
-        .meta { font-size: 0.9rem; color: #4b5563; }
-        .desc { font-size: 0.94rem; line-height: 1.6; color: #1f2937; }
+        .meta { font-size: 0.9rem; color: #000000; }
+        .desc { font-size: 0.94rem; line-height: 1.6; color: #000000; }
         .read-only {
             margin-top: 8px;
-            background: #eef7f8;
-            border: 1px solid #d3eaee;
-            color: #164e54;
+            background: #ffffff;
+            border: 1px solid #ffffff;
+            color: #165157;
             border-radius: 10px;
             padding: 10px 12px;
             font-size: 0.85rem;
@@ -121,6 +122,7 @@
         }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <header class="topbar">
@@ -160,3 +162,9 @@
 </main>
 </body>
 </html>
+
+
+
+
+
+

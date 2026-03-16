@@ -14,6 +14,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Optional<Review> findByProductIdAndBuyerId(Long productId, Long buyerId);
 
+    void deleteByBuyerId(Long buyerId);
+
     boolean existsByProductIdAndBuyerId(Long productId, Long buyerId);
 
     @Query("SELECT COALESCE(AVG(r.rating), 0.0) FROM Review r WHERE r.product.id = :productId")

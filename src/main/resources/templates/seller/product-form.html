@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title th:text="${productId != null ? 'Edit Product' : 'Add Product'} + ' – HaatBazar'">Product Form</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ffffff; min-height: 100vh; }
         nav {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, #b2622f 0%, #b2622f 100%);
             padding: 0 32px; display: flex; align-items: center;
             justify-content: space-between; height: 60px; color: #fff;
         }
@@ -34,7 +36,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;
         }
         .card-header {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, #b2622f 0%, #b2622f 100%);
             padding: 22px 28px; color: #fff;
         }
         .card-header h2 { font-size: 1.2rem; font-weight: 700; }
@@ -43,67 +45,67 @@
 
         .form-group { margin-bottom: 18px; }
         .form-group label {
-            display: block; font-size: 0.82rem; font-weight: 700; color: #374151;
+            display: block; font-size: 0.82rem; font-weight: 700; color: #000000;
             margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;
         }
-        .form-group label .req { color: #f59e0b; margin-left: 2px; }
+        .form-group label .req { color: #b2622f; margin-left: 2px; }
 
         input[type="text"], input[type="number"], input[type="url"], textarea, select {
-            width: 100%; padding: 10px 13px; border: 1.5px solid #e5e7eb;
-            border-radius: 10px; font-size: 0.9rem; color: #111827;
+            width: 100%; padding: 10px 13px; border: 1.5px solid #ffffff;
+            border-radius: 10px; font-size: 0.9rem; color: #000000;
             outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit; background: #f9fafb;
+            font-family: inherit; background: #ffffff;
         }
         input:focus, textarea:focus, select:focus {
-            border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+            border-color: #b2622f; box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
             background: #fff;
         }
         input.is-invalid, textarea.is-invalid { border-color: #dc2626 !important; }
         textarea { resize: vertical; min-height: 90px; }
 
         .field-error { color: #dc2626; font-size: 0.75rem; margin-top: 4px; font-weight: 500; }
-        .field-hint  { color: #9ca3af; font-size: 0.73rem; margin-top: 3px; }
+        .field-hint  { color: #000000; font-size: 0.73rem; margin-top: 3px; }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
         /* ── Image uploader ── */
         .img-uploader { margin-bottom: 18px; }
-        .img-tabs { display: flex; border-bottom: 2px solid #f3f4f6; margin-bottom: 14px; gap: 0; }
+        .img-tabs { display: flex; border-bottom: 2px solid #ffffff; margin-bottom: 14px; gap: 0; }
         .img-tab {
             padding: 8px 18px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
-            color: #9ca3af; border-bottom: 2px solid transparent; margin-bottom: -2px;
+            color: #000000; border-bottom: 2px solid transparent; margin-bottom: -2px;
             transition: color 0.15s, border-color 0.15s; background: none; border-top: none;
             border-left: none; border-right: none;
         }
-        .img-tab.active { color: #f59e0b; border-bottom-color: #f59e0b; }
+        .img-tab.active { color: #b2622f; border-bottom-color: #b2622f; }
 
         /* Drop zone */
         .drop-zone {
-            border: 2px dashed #e5e7eb; border-radius: 12px;
+            border: 2px dashed #ffffff; border-radius: 12px;
             padding: 28px 16px; text-align: center; cursor: pointer;
-            background: #fafafa; transition: border-color 0.2s, background 0.2s;
+            background: #ffffff; transition: border-color 0.2s, background 0.2s;
             position: relative;
         }
-        .drop-zone.drag-over { border-color: #f59e0b; background: #fffbeb; }
-        .drop-zone.has-file  { border-color: #f59e0b; border-style: solid; }
+        .drop-zone.drag-over { border-color: #b2622f; background: #ffffff; }
+        .drop-zone.has-file  { border-color: #b2622f; border-style: solid; }
         .drop-zone input[type="file"] {
             position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
         }
         .drop-icon { font-size: 2.2rem; margin-bottom: 6px; }
-        .drop-title { font-size: 0.88rem; font-weight: 700; color: #374151; margin-bottom: 2px; }
-        .drop-sub   { font-size: 0.75rem; color: #9ca3af; }
+        .drop-title { font-size: 0.88rem; font-weight: 700; color: #000000; margin-bottom: 2px; }
+        .drop-sub   { font-size: 0.75rem; color: #000000; }
         .drop-btn {
             display: inline-block; margin-top: 10px; padding: 7px 20px;
-            background: #f3f4f6; border: 1.5px solid #e5e7eb; border-radius: 8px;
-            font-size: 0.8rem; font-weight: 700; color: #374151; pointer-events: none;
+            background: #ffffff; border: 1.5px solid #ffffff; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 700; color: #000000; pointer-events: none;
         }
         .file-chosen {
             display: none; align-items: center; gap: 8px; margin-top: 10px;
-            background: #f0fdf4; border-radius: 8px; padding: 8px 12px;
+            background: #ffffff; border-radius: 8px; padding: 8px 12px;
         }
-        .file-chosen .fname { font-size: 0.8rem; color: #166534; font-weight: 600; flex: 1; }
+        .file-chosen .fname { font-size: 0.8rem; color: #165157; font-weight: 600; flex: 1; }
         .file-chosen .fclear {
-            background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1rem;
+            background: none; border: none; cursor: pointer; color: #000000; font-size: 1rem;
             padding: 0 4px;
         }
         .fclear:hover { color: #dc2626; }
@@ -118,8 +120,8 @@
         }
         .btn:active { transform: scale(0.98); }
         .btn:hover { opacity: 0.88; }
-        .btn-primary { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
-        .btn-secondary { background: #e5e7eb; color: #374151; }
+        .btn-primary { background: linear-gradient(135deg, #b2622f, #b2622f); color: #fff; }
+        .btn-secondary { background: #ffffff; color: #000000; }
 
         /* ── Live preview card ── */
         .preview-card {
@@ -128,14 +130,14 @@
             overflow: hidden; position: sticky; top: 24px;
         }
         .preview-header {
-            background: #f9fafb; padding: 14px 18px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 0.75rem; font-weight: 700; color: #9ca3af;
+            background: #ffffff; padding: 14px 18px;
+            border-bottom: 1px solid #ffffff;
+            font-size: 0.75rem; font-weight: 700; color: #000000;
             text-transform: uppercase; letter-spacing: 0.06em;
             display: flex; align-items: center; gap: 6px;
         }
         .preview-image-wrap {
-            width: 100%; height: 200px; background: #f3f4f6;
+            width: 100%; height: 200px; background: #ffffff;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; position: relative;
         }
@@ -144,36 +146,38 @@
             display: block; transition: opacity 0.3s;
         }
         .preview-image-wrap .no-img {
-            color: #d1d5db; font-size: 3.5rem; text-align: center;
+            color: #ffffff; font-size: 3.5rem; text-align: center;
         }
         .preview-badge {
             position: absolute; top: 10px; right: 10px;
-            background: #059669; color: #fff; font-size: 0.65rem; font-weight: 700;
+            background: #165157; color: #fff; font-size: 0.65rem; font-weight: 700;
             padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         .preview-body { padding: 16px 18px; }
-        .preview-name { font-size: 1rem; font-weight: 700; color: #1f2937; margin-bottom: 4px; }
-        .preview-desc { font-size: 0.8rem; color: #6b7280; margin-bottom: 10px; line-height: 1.5; min-height: 36px; }
+        .preview-name { font-size: 1rem; font-weight: 700; color: #000000; margin-bottom: 4px; }
+        .preview-desc { font-size: 0.8rem; color: #000000; margin-bottom: 10px; line-height: 1.5; min-height: 36px; }
         .preview-meta { display: flex; align-items: center; justify-content: space-between; }
-        .preview-price { font-size: 1.3rem; font-weight: 800; color: #059669; }
-        .preview-stock { font-size: 0.75rem; color: #9ca3af; }
-        .preview-seller { font-size: 0.72rem; color: #9ca3af; margin-top: 8px;
-                          padding-top: 10px; border-top: 1px solid #f3f4f6; }
+        .preview-price { font-size: 1.3rem; font-weight: 800; color: #165157; }
+        .preview-stock { font-size: 0.75rem; color: #000000; }
+        .preview-seller { font-size: 0.72rem; color: #000000; margin-top: 8px;
+                          padding-top: 10px; border-top: 1px solid #ffffff; }
         .preview-btn {
             display: block; width: 100%; margin-top: 12px; padding: 9px;
-            background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+            background: linear-gradient(135deg, #165157, #b2622f); color: #fff;
             border: none; border-radius: 8px; font-size: 0.82rem; font-weight: 700;
             cursor: default; text-align: center;
         }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <nav>
     <span class="brand">🏪 HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/seller/dashboard}">Dashboard</a>
+        <a th:href="@{/seller/profile}">My Profile</a>
         <a th:href="@{/seller/products}" class="active">My Products</a>
         <a th:href="@{/seller/orders}">Orders</a>
         <a th:href="@{/seller/reviews}">Reviews</a>
@@ -227,7 +231,7 @@
                     <div class="form-group">
                         <label for="categoryId">🏷️ Category</label>
                         <select id="categoryId" th:field="*{categoryId}"
-                                style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;background:#f9fafb;outline:none;transition:border-color 0.2s;width:100%;">
+                                style="padding:9px 12px;border:1.5px solid #ffffff;border-radius:10px;font-size:0.9rem;background:#ffffff;outline:none;transition:border-color 0.2s;width:100%;">
                             <option value="">— Select a category (optional) —</option>
                             <option th:each="cat : ${categories}"
                                     th:value="${cat.id}"
@@ -332,7 +336,7 @@
                     <div class="form-group">
                         <label for="ecategoryId">🏷️ Category</label>
                         <select id="ecategoryId" th:field="*{categoryId}"
-                                style="padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;background:#f9fafb;outline:none;transition:border-color 0.2s;width:100%;">
+                                style="padding:9px 12px;border:1.5px solid #ffffff;border-radius:10px;font-size:0.9rem;background:#ffffff;outline:none;transition:border-color 0.2s;width:100%;">
                             <option value="">— Select a category (optional) —</option>
                             <option th:each="cat : ${categories}"
                                     th:value="${cat.id}"
@@ -345,17 +349,17 @@
 
                     <!-- ── Image Uploader ── -->
                     <div class="img-uploader">
-                        <label style="display:block;font-size:0.82rem;font-weight:700;color:#374151;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">
-                            🖼️ Product Image <span style="background:#fef3c7;color:#92400e;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:4px;">Optional</span>
+                        <label style="display:block;font-size:0.82rem;font-weight:700;color:#000000;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">
+                            🖼️ Product Image <span style="background:#ffffff;color:#b2622f;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:4px;">Optional</span>
                         </label>
                         <!-- Current image thumbnail (if exists) -->
                         <div th:if="${productRequest.imageUrl != null and !productRequest.imageUrl.isEmpty()}"
-                             style="margin-bottom:10px;display:flex;align-items:center;gap:10px;background:#f0fdf4;border-radius:10px;padding:8px 12px;">
+                             style="margin-bottom:10px;display:flex;align-items:center;gap:10px;background:#ffffff;border-radius:10px;padding:8px 12px;">
                             <img th:src="${productRequest.imageUrl}" alt="Current image"
-                                 style="width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;" />
+                                 style="width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid #ffffff;" />
                             <div>
-                                <div style="font-size:0.75rem;font-weight:700;color:#166534;">Current image</div>
-                                <div style="font-size:0.7rem;color:#9ca3af;">Upload a new one below to replace it</div>
+                                <div style="font-size:0.75rem;font-weight:700;color:#165157;">Current image</div>
+                                <div style="font-size:0.7rem;color:#000000;">Upload a new one below to replace it</div>
                             </div>
                         </div>
                         <!-- Tabs -->
@@ -445,8 +449,8 @@
             </div>
 
             <!-- Tips box -->
-            <div style="margin-top:16px; background:#fffbeb; border:1px solid #fde68a;
-                        border-radius:12px; padding:16px; font-size:0.78rem; color:#92400e;">
+            <div style="margin-top:16px; background:#ffffff; border:1px solid #ffffff;
+                        border-radius:12px; padding:16px; font-size:0.78rem; color:#b2622f;">
                 <div style="font-weight:700; margin-bottom:8px;">💡 Image Tips</div>
                 <ul style="padding-left:16px; line-height:1.9;">
                     <li><strong>Upload File</strong> — browse or drag from your computer</li>
@@ -575,3 +579,9 @@
 </script>
 </body>
 </html>
+
+
+
+
+
+

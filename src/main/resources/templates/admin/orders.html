@@ -1,11 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>All Orders – Admin</title>
+    <title>Haat Bazar- Admin</title>    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ffffff; }
         nav {
             background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
             padding: 0 32px; display: flex; align-items: center;
@@ -23,7 +25,7 @@
         .btn-logout { background: rgba(255,255,255,0.2); border: none; cursor: pointer; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; }
 
         .container { max-width: 1200px; margin: 36px auto; padding: 0 20px; }
-        h2 { font-size: 1.4rem; color: #1f2937; margin-bottom: 24px; }
+        h2 { font-size: 1.4rem; color: #000000; margin-bottom: 24px; }
 
         .order-card {
             background: #fff; border-radius: 12px;
@@ -33,29 +35,29 @@
         .order-header {
             display: flex; align-items: center; justify-content: space-between;
             flex-wrap: wrap; gap: 12px;
-            padding: 14px 20px; border-bottom: 1px solid #f3f4f6;
-            background: #fef2f2;
+            padding: 14px 20px; border-bottom: 1px solid #ffffff;
+            background: #ffffff;
         }
         .order-meta { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-        .order-id { font-weight: 700; color: #1f2937; font-size: 0.95rem; }
-        .order-date { color: #9ca3af; font-size: 0.8rem; }
-        .order-parties { font-size: 0.85rem; color: #4b5563; }
-        .order-parties strong { color: #1f2937; }
+        .order-id { font-weight: 700; color: #000000; font-size: 0.95rem; }
+        .order-date { color: #000000; font-size: 0.8rem; }
+        .order-parties { font-size: 0.85rem; color: #000000; }
+        .order-parties strong { color: #000000; }
         .order-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
         .status-badge {
             padding: 4px 14px; border-radius: 20px; font-size: 0.775rem; font-weight: 700;
             text-transform: uppercase; letter-spacing: 0.04em;
         }
-        .status-PENDING   { background: #fef3c7; color: #92400e; }
-        .status-CONFIRMED { background: #dbeafe; color: #1e40af; }
-        .status-SHIPPED   { background: #e0e7ff; color: #3730a3; }
-        .status-DELIVERED { background: #dcfce7; color: #166534; }
-        .status-CANCELLED { background: #fee2e2; color: #991b1b; }
+        .status-PENDING   { background: #ffffff; color: #b2622f; }
+        .status-CONFIRMED { background: #ffffff; color: #165157; }
+        .status-SHIPPED   { background: #ffffff; color: #165157; }
+        .status-DELIVERED { background: #ffffff; color: #165157; }
+        .status-CANCELLED { background: #ffffff; color: #991b1b; }
 
         .override-form { display: flex; gap: 6px; align-items: center; }
         .override-form select {
-            padding: 5px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+            padding: 5px 8px; border: 1px solid #ffffff; border-radius: 6px;
             font-size: 0.78rem; background: #fff; cursor: pointer;
         }
         .btn-override {
@@ -65,38 +67,39 @@
         }
         .btn-override:hover { background: #b91c1c; }
 
-        .alert-success { background: #d1fae5; color: #065f46; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
-        .alert-error   { background: #fee2e2; color: #991b1b; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
+        .alert-success { background: #ffffff; color: #165157; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
+        .alert-error   { background: #ffffff; color: #991b1b; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; font-size: 0.9rem; }
 
         table { width: 100%; border-collapse: collapse; }
         thead th {
             padding: 10px 18px; text-align: left;
-            font-size: 0.77rem; font-weight: 700; color: #6b7280;
+            font-size: 0.77rem; font-weight: 700; color: #000000;
             text-transform: uppercase; letter-spacing: 0.05em;
-            border-bottom: 1px solid #f3f4f6; background: #fafafa;
+            border-bottom: 1px solid #ffffff; background: #ffffff;
         }
-        td { padding: 11px 18px; font-size: 0.875rem; color: #374151; border-bottom: 1px solid #f9fafb; }
+        td { padding: 11px 18px; font-size: 0.875rem; color: #000000; border-bottom: 1px solid #ffffff; }
         tbody tr:last-child td { border-bottom: none; }
 
         .order-footer {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; background: #f9fafb;
-            border-top: 1px solid #f3f4f6; flex-wrap: wrap; gap: 10px;
+            padding: 12px 20px; background: #ffffff;
+            border-top: 1px solid #ffffff; flex-wrap: wrap; gap: 10px;
         }
-        .order-total { font-size: 0.9rem; color: #1f2937; }
-        .order-total strong { color: #059669; font-size: 1rem; }
+        .order-total { font-size: 0.9rem; color: #000000; }
+        .order-total strong { color: #165157; font-size: 1rem; }
 
-        .empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #000000; }
         .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
 
-        .buyer-tag  { display:inline-block; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
-        .seller-tag { display:inline-block; background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
+        .buyer-tag  { display:inline-block; background:rgba(22,81,87,0.16); color:#165157; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
+        .seller-tag { display:inline-block; background:#ffffff; color:#165157; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <nav>
-    <span class="brand">⚙️ HaatBazar – Admin</span>
+    <span class="brand">Haat Bazar</span>
     <div class="nav-links">
         <a th:href="@{/admin/dashboard}">Dashboard</a>
         <a th:href="@{/admin/users}">Users</a>
@@ -136,7 +139,7 @@
                 </span>
                 <!-- Payment badge in header -->
                 <span th:if="${order.paymentMethod != null}"
-                      style="font-size:0.72rem;font-weight:700;background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:20px;border:1px solid #bfdbfe;">
+                      style="font-size:0.72rem;font-weight:700;background:#ffffff;color:#165157;padding:2px 10px;border-radius:20px;border:1px solid #ffffff;">
                     <th:block th:switch="${order.paymentMethod.name()}">
                         <span th:case="'CREDIT_CARD'">💳 Credit Card</span>
                         <span th:case="'DEBIT_CARD'">🏦 Debit Card</span>
@@ -195,7 +198,7 @@
             <!-- Payment info (left) -->
             <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
                 <span th:if="${order.paymentMethod != null}"
-                      style="font-size:0.72rem;font-weight:700;background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:20px;border:1px solid #bfdbfe;">
+                      style="font-size:0.72rem;font-weight:700;background:#ffffff;color:#165157;padding:2px 10px;border-radius:20px;border:1px solid #ffffff;">
                     <th:block th:switch="${order.paymentMethod.name()}">
                         <span th:case="'CREDIT_CARD'">💳 Credit Card</span>
                         <span th:case="'DEBIT_CARD'">🏦 Debit Card</span>
@@ -207,10 +210,10 @@
                     </th:block>
                 </span>
                 <span th:if="${order.paymentReference != null}"
-                      style="font-size:0.65rem;color:#9ca3af;font-family:'Courier New',monospace;"
+                      style="font-size:0.65rem;color:#000000;font-family:'Courier New',monospace;"
                       th:text="${order.paymentReference}">TXN-—</span>
                 <span th:if="${order.paymentMethod == null}"
-                      style="font-size:0.72rem;color:#d1d5db;">No payment info</span>
+                      style="font-size:0.72rem;color:#ffffff;">No payment info</span>
             </div>
             <!-- Order total (right) -->
             <span class="order-total">
@@ -221,3 +224,9 @@
 </div>
 </body>
 </html>
+
+
+
+
+
+

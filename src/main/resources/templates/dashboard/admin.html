@@ -1,11 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard – HaatBazar</title>
+    <title>Haat Bazar- Admin</title>    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+
+    <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ffffff; }
         nav {
             background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
             padding: 0 32px; display: flex; align-items: center;
@@ -27,10 +29,10 @@
             background: #fff; border-radius: 12px; padding: 28px 32px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.07); margin-bottom: 28px;
         }
-        .welcome h2 { font-size: 1.4rem; color: #1f2937; margin-bottom: 6px; }
-        .welcome p { color: #6b7280; font-size: 0.9rem; margin-top: 4px; }
+        .welcome h2 { font-size: 1.4rem; color: #000000; margin-bottom: 6px; }
+        .welcome p { color: #000000; font-size: 0.9rem; margin-top: 4px; }
         .badge {
-            display: inline-block; background: #fee2e2; color: #991b1b;
+            display: inline-block; background: #ffffff; color: #991b1b;
             font-size: 0.75rem; font-weight: 700; padding: 3px 10px;
             border-radius: 20px; margin-top: 10px;
         }
@@ -41,9 +43,9 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center;
         }
         .stat-card .stat-icon { font-size: 1.8rem; margin-bottom: 6px; }
-        .stat-card .stat-number { font-size: 1.6rem; font-weight: 800; color: #1f2937; }
-        .stat-card .stat-sub { font-size: 0.72rem; color: #059669; font-weight: 600; margin-top: 1px; }
-        .stat-card .stat-label { font-size: 0.72rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+        .stat-card .stat-number { font-size: 1.6rem; font-weight: 800; color: #000000; }
+        .stat-card .stat-sub { font-size: 0.72rem; color: #165157; font-weight: 600; margin-top: 1px; }
+        .stat-card .stat-label { font-size: 0.72rem; color: #000000; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
 
         .action-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 20px; }
         .action-card {
@@ -53,18 +55,19 @@
             border-top: 4px solid transparent;
         }
         .action-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
-        .action-card.users   { border-top-color: #6366f1; }
-        .action-card.products{ border-top-color: #059669; }
-        .action-card.orders  { border-top-color: #f59e0b; }
+        .action-card.users   { border-top-color: #165157; }
+        .action-card.products{ border-top-color: #165157; }
+        .action-card.orders  { border-top-color: #b2622f; }
         .action-card .icon { font-size: 2.2rem; margin-bottom: 10px; }
-        .action-card h3 { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
-        .action-card p { color: #6b7280; font-size: 0.82rem; }
+        .action-card h3 { font-size: 0.95rem; font-weight: 700; color: #000000; margin-bottom: 6px; }
+        .action-card p { color: #000000; font-size: 0.82rem; }
     </style>
     <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
+    <script defer th:src="@{/js/emoji-icons.js}"></script>
 </head>
 <body>
 <nav>
-    <span class="brand">⚙️ HaatBazar – Admin</span>
+    <span class="brand">Haat Bazar</span>
     <div class="nav-links">
         <a th:href="@{/admin/dashboard}" class="active">Dashboard</a>
         <a th:href="@{/admin/users}">Users</a>
@@ -129,12 +132,12 @@
             <h3>All Orders</h3>
             <p>View every order — see which buyer bought from which seller.</p>
         </a>
-        <a th:href="@{/admin/audit}" class="action-card" style="border-top-color:#6366f1;">
+        <a th:href="@{/admin/audit}" class="action-card" style="border-top-color:#165157;">
             <div class="icon">🔍</div>
             <h3>Audit Log</h3>
             <p>Track every action: who created, deleted or changed what.</p>
         </a>
-        <a th:href="@{/admin/reviews}" class="action-card" style="border-top-color:#f59e0b;">
+        <a th:href="@{/admin/reviews}" class="action-card" style="border-top-color:#b2622f;">
             <div class="icon">⭐</div>
             <h3>Reviews</h3>
             <p>View all product reviews and delete inappropriate content.</p>
@@ -143,3 +146,9 @@
 </div>
 </body>
 </html>
+
+
+
+
+
+
