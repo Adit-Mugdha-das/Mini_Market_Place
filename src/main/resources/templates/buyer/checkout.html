@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Checkout – Mini Marketplace</title>
+    <title>Checkout – HaatBazar</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
@@ -147,11 +147,12 @@
         .back-link { display: inline-flex; align-items: center; gap: 4px; color: #059669; text-decoration: none; font-size: 0.82rem; font-weight: 600; margin-bottom: 18px; }
         .back-link:hover { text-decoration: underline; }
     </style>
+    <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
 </head>
 <body>
 
 <nav>
-    <span class="brand">🔒 Secure Checkout – Mini Marketplace</span>
+    <span class="brand">🔒 Secure Checkout – HaatBazar</span>
     <div class="user-area">
         <span>👤 <strong th:text="${username}">Buyer</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">

@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Buyer Dashboard – Mini Marketplace</title>
+    <title>Buyer Dashboard – HaatBazar</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
@@ -57,10 +57,11 @@
         .card h3 { font-size: 1rem; color: #1f2937; margin-bottom: 6px; }
         .card p { color: #6b7280; font-size: 0.85rem; }
     </style>
+    <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
 </head>
 <body>
 <nav>
-    <span class="brand">🛒 Mini Marketplace</span>
+    <span class="brand">🛒 HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/dashboard}" class="active">Dashboard</a>
         <a th:href="@{/buyer/products}">Browse Products</a>
@@ -77,7 +78,7 @@
 <div class="container">
     <div class="welcome">
         <h2>👋 Hello, <span th:text="${username}">User</span>!</h2>
-        <p>Welcome to Mini Marketplace. Browse products and place orders easily.</p>
+        <p>Welcome to HaatBazar. Browse products and place orders easily.</p>
         <span class="badge">BUYER</span>
     </div>
     <div class="cards">

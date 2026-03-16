@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Seller Dashboard – Mini Marketplace</title>
+    <title>Seller Dashboard – HaatBazar</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
@@ -63,10 +63,11 @@
         .action-card h3 { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
         .action-card p  { color: #6b7280; font-size: 0.82rem; }
     </style>
+    <link rel='stylesheet' th:href='@{/css/haatbazar-theme.css}'>
 </head>
 <body>
 <nav>
-    <span class="brand">🏪 Mini Marketplace</span>
+    <span class="brand">🏪 HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/seller/dashboard}" class="active">Dashboard</a>
         <a th:href="@{/seller/products}">My Products</a>
