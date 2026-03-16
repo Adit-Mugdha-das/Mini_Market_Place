@@ -20,8 +20,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByIdAndSeller(Long id, User seller);
 
+    @Query("SELECT p FROM Product p WHERE p.active = true AND p.seller.enabled = true")
     List<Product> findByActiveTrue();
 
+    @Query("SELECT p FROM Product p WHERE p.active = true AND p.seller.enabled = true")
     Page<Product> findByActiveTrue(Pageable pageable);
 
     List<Product> findAllByOrderByCreatedAtDesc();
@@ -30,6 +32,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("""
             SELECT p FROM Product p
             WHERE p.active = true
+              AND p.seller.enabled = true
               AND LOWER(p.name) LIKE LOWER(:keyword)
               AND p.price >= :minPrice
               AND p.price <= :maxPrice
@@ -44,7 +47,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // ── Metrics ──────────────────────────────────────────────────────────────
     long countBySellerAndActiveTrue(User seller);
 
-    @Query("SELECT COUNT(DISTINCT p) FROM Product p WHERE p.active = true")
+    @Query("SELECT COUNT(DISTINCT p) FROM Product p WHERE p.active = true AND p.seller.enabled = true")
     long countAllActive();
 }
 

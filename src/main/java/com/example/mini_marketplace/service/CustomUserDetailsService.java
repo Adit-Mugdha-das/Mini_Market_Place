@@ -20,6 +20,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
+        boolean isBuyer = user.getRoles().stream()
+                .anyMatch(role -> "ROLE_BUYER".equals(role.getName().name()));
+        boolean accountEnabledForLogin = isBuyer || user.isEnabled();
+
         var authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
@@ -27,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                user.isEnabled(),
+                accountEnabledForLogin,
                 true, true, true,
                 authorities
         );

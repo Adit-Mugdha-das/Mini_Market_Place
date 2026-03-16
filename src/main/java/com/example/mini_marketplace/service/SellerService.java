@@ -42,8 +42,12 @@ public class SellerService {
     // ─── helpers ───────────────────────────────────────────────────────────────
 
     private User getUser(String username) {
-        return userRepository.findByUsername(username)
+        User seller = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        if (!seller.isEnabled()) {
+            throw new IllegalStateException("Your seller account is deactivated. Contact admin to reactivate it.");
+        }
+        return seller;
     }
 
     private Product getOwnedProduct(Long productId, User seller) {

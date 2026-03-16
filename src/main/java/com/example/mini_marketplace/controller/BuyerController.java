@@ -157,6 +157,7 @@ public class BuyerController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
         try {
+            buyerService.assertBuyerEnabled(userDetails.getUsername());
             Product product = buyerService.getProductById(productId);
             if (quantity < 1 || quantity > product.getQuantity()) {
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -185,6 +186,7 @@ public class BuyerController {
                                  @AuthenticationPrincipal UserDetails userDetails,
                                  RedirectAttributes redirectAttributes) {
         try {
+            buyerService.assertBuyerEnabled(userDetails.getUsername());
             com.example.mini_marketplace.entity.Order order =
                     buyerService.placeOrder(userDetails.getUsername(), productId, quantity, paymentMethod);
             redirectAttributes.addFlashAttribute("orderId",          order.getId());
@@ -196,7 +198,7 @@ public class BuyerController {
             throw e;
         } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/buyer/products/" + productId;
+            return "redirect:/buyer/profile";
         }
     }
 
