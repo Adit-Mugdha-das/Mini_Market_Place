@@ -50,6 +50,11 @@ public class SellerService {
         return seller;
     }
 
+    private User getUserAllowDisabled(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
     private Product getOwnedProduct(Long productId, User seller) {
         return productRepository.findByIdAndSeller(productId, seller)
                 .orElseThrow(() -> new SecurityException("Product not found or access denied."));
@@ -220,7 +225,7 @@ public class SellerService {
     }
 
     public SellerAccountProfileDto getSellerAccountProfile(String username) {
-        User seller = getUser(username);
+        User seller = getUserAllowDisabled(username);
         SellerProfileDto stats = getSellerProfile(seller.getId());
 
         return new SellerAccountProfileDto(
@@ -230,6 +235,7 @@ public class SellerService {
                 seller.getEmail(),
                 seller.getPhoneNumber(),
                 seller.getAddress(),
+            seller.isEnabled(),
                 seller.getCreatedAt(),
                 stats.getTotalProducts(),
                 stats.getActiveProducts(),
@@ -241,7 +247,7 @@ public class SellerService {
     }
 
     public SellerProfileUpdateRequest getSellerProfileUpdateRequest(String username) {
-        User seller = getUser(username);
+        User seller = getUserAllowDisabled(username);
         SellerProfileUpdateRequest request = new SellerProfileUpdateRequest();
         request.setFullName(seller.getFullName());
         request.setEmail(seller.getEmail());
