@@ -44,6 +44,13 @@ public class BuyerService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
+    public void assertBuyerEnabled(String username) {
+        User buyer = getUser(username);
+        if (!buyer.isEnabled()) {
+            throw new IllegalStateException("Your account is deactivated. You cannot place orders until an admin reactivates your account.");
+        }
+    }
+
     // ─── 1. View all active products (paginated + sortable) ────────────────────
 
     public List<Product> getAllActiveProducts() {
@@ -118,6 +125,9 @@ public class BuyerService {
         if (quantity < 1) throw new IllegalArgumentException("Quantity must be at least 1.");
 
         User buyer = getUser(username);
+        if (!buyer.isEnabled()) {
+            throw new IllegalStateException("Your account is deactivated. You cannot place orders until an admin reactivates your account.");
+        }
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found."));
 
@@ -232,6 +242,7 @@ public class BuyerService {
                 buyer.getEmail(),
                 buyer.getPhoneNumber(),
                 buyer.getAddress(),
+            buyer.isEnabled(),
                 buyer.getCreatedAt(),
                 totalOrders
         );
