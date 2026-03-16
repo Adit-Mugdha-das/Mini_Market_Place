@@ -120,6 +120,19 @@
             border: 1px solid rgba(22, 81, 87, 0.25);
         }
 
+        .badge-danger {
+            color: #991b1b;
+            border-color: rgba(153, 27, 27, 0.45);
+            background: #ffffff;
+        }
+
+        .status-note {
+            margin-top: 8px;
+            color: #991b1b;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
         .flash {
             padding: 10px 12px;
             border-radius: 8px;
@@ -245,7 +258,11 @@
             <div class="stat"><div class="k">Total Reviews</div><div class="v" th:text="${profile.totalReviews}">0</div></div>
         </div>
 
-        <span class="badge">SELLER ACCOUNT</span>
+        <span th:if="${profile.enabled}" class="badge">SELLER ACCOUNT</span>
+        <span th:if="${!profile.enabled}" class="badge badge-danger">ACCOUNT DEACTIVATED</span>
+        <div th:if="${!profile.enabled}" class="status-note">
+            Your seller account is deactivated. You cannot upload or manage products until an admin activates your account.
+        </div>
     </section>
 
     <section class="card">
