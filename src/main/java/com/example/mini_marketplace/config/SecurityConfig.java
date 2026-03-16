@@ -38,8 +38,9 @@ public class SecurityConfig {
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         provider.setPreAuthenticationChecks(userDetails -> {
-            boolean isBuyer = userDetails.getAuthorities().stream()
-                    .anyMatch(authority -> "ROLE_BUYER".equals(authority.getAuthority()));
+            boolean isBuyerOrSeller = userDetails.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_BUYER".equals(authority.getAuthority())
+                    || "ROLE_SELLER".equals(authority.getAuthority()));
 
             if (!userDetails.isAccountNonLocked()) {
                 throw new LockedException("User account is locked");
@@ -50,7 +51,7 @@ public class SecurityConfig {
             if (!userDetails.isCredentialsNonExpired()) {
                 throw new CredentialsExpiredException("User credentials have expired");
             }
-            if (!userDetails.isEnabled() && !isBuyer) {
+            if (!userDetails.isEnabled() && !isBuyerOrSeller) {
                 throw new DisabledException("User is disabled");
             }
         });
@@ -102,13 +103,19 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             var authorities = authentication.getAuthorities();
             String redirectUrl = "/buyer/products";
+            boolean accountEnabled = true;
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
+                accountEnabled = userDetails.isEnabled();
+            }
+
             for (var authority : authorities) {
                 String role = authority.getAuthority();
                 if ("ROLE_ADMIN".equals(role)) {
                     redirectUrl = "/admin/dashboard";
                     break;
                 } else if ("ROLE_SELLER".equals(role)) {
-                    redirectUrl = "/seller/dashboard";
+                    redirectUrl = accountEnabled ? "/seller/dashboard" : "/seller/profile";
                     break;
                 } else if ("ROLE_BUYER".equals(role)) {
                     redirectUrl = "/buyer/products";

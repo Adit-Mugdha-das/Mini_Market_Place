@@ -18,6 +18,7 @@ public class SellerAccountProfileDto {
     private String email;
     private String phoneNumber;
     private String address;
+    private boolean enabled;
     private LocalDateTime joinDate;
 
     private long totalProducts;
