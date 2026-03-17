@@ -13,6 +13,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.UUID;
 
+// Service for handling file uploads (e.g., product images) to the local filesystem.
 @Slf4j
 @Service
 public class ImageUploadService {

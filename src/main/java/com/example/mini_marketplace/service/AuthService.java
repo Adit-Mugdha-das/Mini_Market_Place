@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
+// Service managing authentication and registration logic.
 @Service
 @RequiredArgsConstructor
 public class AuthService {
