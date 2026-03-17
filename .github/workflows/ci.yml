@@ -1,3 +1,4 @@
+# This workflow defines the Continuous Integration pipeline for building and testing the application
 name: CI Pipeline
 
 on:
