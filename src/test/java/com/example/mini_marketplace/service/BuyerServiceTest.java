@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+// Unit tests for Buyer service methods
 @DisplayName("BuyerService Unit Tests")
 class BuyerServiceTest {
 

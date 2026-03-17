@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for Order entity model
 @DisplayName("Order Entity Unit Tests")
 class OrderEntityTest {
 

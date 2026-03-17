@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+// Integration tests for SellerController endpoints
 @DisplayName("SellerController Integration Tests")
 class SellerControllerIntegrationTest {
 

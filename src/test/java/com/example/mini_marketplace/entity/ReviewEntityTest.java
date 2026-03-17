@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for Review entity model
 @DisplayName("Review Entity Unit Tests")
 class ReviewEntityTest {
 

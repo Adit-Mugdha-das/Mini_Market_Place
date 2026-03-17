@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for Category entity model
 @DisplayName("Category Entity Unit Tests")
 class CategoryEntityTest {
 

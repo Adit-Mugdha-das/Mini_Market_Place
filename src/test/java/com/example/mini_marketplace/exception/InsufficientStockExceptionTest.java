@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for InsufficientStockException
 @DisplayName("InsufficientStockException Unit Tests")
 class InsufficientStockExceptionTest {
 

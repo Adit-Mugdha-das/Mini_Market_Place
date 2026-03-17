@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+// Unit tests for Authentication flow
 @DisplayName("AuthService Unit Tests")
 class AuthServiceTest {
 

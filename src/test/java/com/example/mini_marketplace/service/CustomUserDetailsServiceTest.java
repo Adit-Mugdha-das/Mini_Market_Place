@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+// Unit tests for Spring Security Custom User Details
 @DisplayName("CustomUserDetailsService Unit Tests")
 class CustomUserDetailsServiceTest {
 

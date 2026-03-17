@@ -23,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+// Unit tests for Audit logging mechanism
 @DisplayName("AuditService Unit Tests")
 class AuditServiceTest {
 

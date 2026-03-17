@@ -9,6 +9,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for DTO ProductReviewSummary
 @DisplayName("ProductReviewSummary DTO Unit Tests")
 class ProductReviewSummaryTest {
 
