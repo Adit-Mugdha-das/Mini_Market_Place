@@ -69,10 +69,13 @@ class AdminServiceTest {
     @Test
     @DisplayName("deleteUser — successfully deletes a normal user")
     void deleteUser_success() {
+        // Arrange: Mock the repository to return a normal user
         when(userRepository.findById(10L)).thenReturn(Optional.of(normalUser));
 
+        // Act: Call the deleteUser method
         adminService.deleteUser(10L, "admin");
 
+        // Assert: Verify delete was called and audit log was created
         verify(userRepository).delete(normalUser);
         verify(auditService).log(eq("admin"), any(), any(), eq(10L), anyString());
     }
@@ -80,8 +83,10 @@ class AdminServiceTest {
     @Test
     @DisplayName("deleteUser — throws when trying to delete an admin account")
     void deleteUser_throws_whenTargetIsAdmin() {
+        // Arrange: Mock the repository to return an admin user
         when(userRepository.findById(1L)).thenReturn(Optional.of(adminUser));
 
+        // Act & Assert: Verify that deleting an admin throws an exception
         assertThatThrownBy(() -> adminService.deleteUser(1L, "admin"))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Cannot delete an Admin account");
@@ -104,10 +109,13 @@ class AdminServiceTest {
     @Test
     @DisplayName("toggleUserEnabled — disables an active user")
     void toggleUserEnabled_disablesActiveUser() {
+        // Arrange: Mock an active user
         when(userRepository.findById(10L)).thenReturn(Optional.of(normalUser));
 
+        // Act: Toggle the user's status
         adminService.toggleUserEnabled(10L, "admin");
 
+        // Assert: Verify user is disabled and saved
         assertThat(normalUser.isEnabled()).isFalse();
         verify(userRepository).save(normalUser);
     }

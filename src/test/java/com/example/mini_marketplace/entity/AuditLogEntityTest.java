@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for AuditLog entity model
 @DisplayName("AuditLog Entity Unit Tests")
 class AuditLogEntityTest {
 

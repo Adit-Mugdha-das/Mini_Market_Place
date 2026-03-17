@@ -17,6 +17,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
+// Unit tests for Image Upload utility
 @DisplayName("ImageUploadService Unit Tests")
 class ImageUploadServiceTest {
 

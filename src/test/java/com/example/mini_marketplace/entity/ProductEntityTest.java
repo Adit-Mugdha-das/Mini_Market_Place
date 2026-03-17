@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for Product entity model
 @DisplayName("Product Entity Unit Tests")
 class ProductEntityTest {
 

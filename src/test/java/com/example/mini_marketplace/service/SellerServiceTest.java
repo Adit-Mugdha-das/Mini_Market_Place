@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+// Unit tests for Seller functionality
 @DisplayName("SellerService Unit Tests")
 class SellerServiceTest {
 

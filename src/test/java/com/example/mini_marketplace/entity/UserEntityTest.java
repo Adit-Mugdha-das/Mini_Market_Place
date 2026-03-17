@@ -8,6 +8,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 
+// Unit tests for User entity fields and behavior
 @DisplayName("User Entity Unit Tests")
 class UserEntityTest {
 
