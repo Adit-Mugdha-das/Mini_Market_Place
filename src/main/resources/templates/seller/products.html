@@ -123,6 +123,15 @@
                     <tr th:each="p, stat : ${products}">
                         <td th:text="${stat.index + 1}">1</td>
                         <td>
+                            <img th:if="${p.imageUrl != null and !p.imageUrl.isEmpty()}"
+                                 th:src="${p.imageUrl}" alt="Product Image"
+                                 style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;" />
+                            <div th:if="${p.imageUrl == null or p.imageUrl.isEmpty()}"
+                                 style="width: 48px; height: 48px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #ccc;">
+                                📷
+                            </div>
+                        </td>
+                        <td>
                             <div class="product-name" th:text="${p.name}">Product</div>
                             <div class="product-desc" th:text="${p.description}">Desc</div>
                         </td>
