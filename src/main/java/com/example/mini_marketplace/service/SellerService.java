@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Service handling seller-specific operations like product management and order fulfillment.
 @Service
 @RequiredArgsConstructor
 public class SellerService {

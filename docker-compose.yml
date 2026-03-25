@@ -1,3 +1,4 @@
+# Docker Compose file to orchestrate the application and database services
 services:
   db:
     image: postgres:16-alpine

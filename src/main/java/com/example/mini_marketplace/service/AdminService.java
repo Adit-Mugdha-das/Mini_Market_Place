@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 
+// Service class handling administrative operations like managing users, products, and platform metrics.
 @Service
 @RequiredArgsConstructor
 public class AdminService {

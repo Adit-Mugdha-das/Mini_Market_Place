@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
+// Bridge between Spring Security and our User entity for authentication.
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
