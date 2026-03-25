@@ -4,6 +4,7 @@ import com.example.mini_marketplace.dto.ProductReviewSummary;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.entity.Review;
 import com.example.mini_marketplace.entity.User;
+import com.example.mini_marketplace.exception.ResourceNotFoundException;
 import com.example.mini_marketplace.repository.OrderRepository;
 import com.example.mini_marketplace.repository.ProductRepository;
 import com.example.mini_marketplace.repository.ReviewRepository;
@@ -52,7 +53,7 @@ public class ReviewService {
         if (!orderRepository.hasBuyerDeliveredProduct(buyer.getId(), productId))
             throw new IllegalStateException("You can only review products from your DELIVERED orders.");
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
         Review review = new Review();
         review.setProduct(product);
         review.setBuyer(buyer);
@@ -67,7 +68,7 @@ public class ReviewService {
         if (rating < 1 || rating > 5) throw new IllegalArgumentException("Rating must be 1–5.");
         User buyer = getUser(username);
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found."));
         if (!review.getBuyer().getId().equals(buyer.getId()))
             throw new SecurityException("You can only edit your own review.");
         review.setRating(rating);
@@ -80,7 +81,7 @@ public class ReviewService {
     public void deleteReview(String username, Long reviewId) {
         User buyer = getUser(username);
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found."));
         if (!review.getBuyer().getId().equals(buyer.getId()))
             throw new SecurityException("You can only delete your own review.");
         reviewRepository.delete(review);
@@ -90,7 +91,7 @@ public class ReviewService {
     @Transactional
     public void adminDeleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found."));
         reviewRepository.delete(review);
     }
 

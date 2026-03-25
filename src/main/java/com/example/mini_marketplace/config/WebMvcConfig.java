@@ -17,6 +17,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Serve uploaded product images at /uploads/products/**
         String absolutePath = Paths.get(uploadDir).toAbsolutePath().toUri().toString();
+
+        // Ensure trailing slash for directory resource
+        if (!absolutePath.endsWith("/")) {
+            absolutePath += "/";
+        }
+
         registry.addResourceHandler("/uploads/products/**")
                 .addResourceLocations(absolutePath);
     }
