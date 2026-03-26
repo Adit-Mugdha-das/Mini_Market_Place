@@ -19,7 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // Serve uploaded product images at /uploads/products/**
         String absolutePath = Paths.get(uploadDir).toAbsolutePath().toUri().toString();
 
-        // Ensure the path ends with a slash so Spring treats it as a directory
+        // Ensure trailing slash for directory resource
         if (!absolutePath.endsWith("/")) {
             absolutePath += "/";
         }

@@ -4,7 +4,9 @@ import com.example.mini_marketplace.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -14,10 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -67,13 +68,31 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authenticationProvider(authenticationProvider())
+            // Disable CSRF for API endpoints to allow easier testing via Postman
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**")
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/auth/**", "/products/**", "/css/**", "/js/**", "/images/**", "/uploads/products/**", "/webjars/**").permitAll()
+                // API endpoints
+                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll() // GET is public
+                .requestMatchers("/api/products/**").authenticated()             // Other methods authenticated
+                .requestMatchers("/api/orders/**").authenticated()
+                .requestMatchers("/api/reviews/**").authenticated()
+                // Existing roles
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/seller/profile/**").authenticated()
                 .requestMatchers("/seller/**").hasAnyRole("ADMIN", "SELLER")
                 .requestMatchers("/buyer/**").hasAnyRole("ADMIN", "BUYER")
                 .anyRequest().authenticated()
+            )
+            // Custom entry point for API to return 401 instead of redirecting to login
+            .exceptionHandling(exceptions -> exceptions
+                .defaultAuthenticationEntryPointFor(
+                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                    new AntPathRequestMatcher("/api/**")
+                )
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/auth/login"))
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")

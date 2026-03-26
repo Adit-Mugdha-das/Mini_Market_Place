@@ -207,7 +207,7 @@
                       th:action="@{/seller/products/add}"
                       th:object="${productRequest}" method="post" novalidate
                       enctype="multipart/form-data"
-                      id="productForm">
+                      id="addProductForm">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
                     <div class="form-group">
@@ -312,7 +312,7 @@
                       th:action="@{/seller/products/edit/{id}(id=${productId})}"
                       th:object="${productRequest}" method="post" novalidate
                       enctype="multipart/form-data"
-                      id="productForm">
+                      id="editProductForm">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
                     <div class="form-group">
