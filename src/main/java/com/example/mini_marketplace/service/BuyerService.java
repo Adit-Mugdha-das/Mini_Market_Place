@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+// Service handling buyer-related operations such as placing orders and managing profile.
 @Service
 @RequiredArgsConstructor
 public class BuyerService {

@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service to log important system events (audits) asynchronously.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
