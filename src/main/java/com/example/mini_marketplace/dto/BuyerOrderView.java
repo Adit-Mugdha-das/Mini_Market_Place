@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -20,6 +21,21 @@ public class BuyerOrderView {
     private Order.PaymentMethod paymentMethod;
     private String paymentReference;
     private List<ItemView> items;
+
+    public static BuyerOrderView from(Order order) {
+        BuyerOrderView view = new BuyerOrderView();
+        view.setOrderId(order.getId());
+        view.setStatus(order.getStatus());
+        view.setCreatedAt(order.getCreatedAt());
+        view.setTotalAmount(order.getTotalAmount());
+        view.setPaymentMethod(order.getPaymentMethod());
+        view.setPaymentReference(order.getPaymentReference());
+
+        view.setItems(order.getItems().stream()
+                .map(ItemView::from)
+                .collect(Collectors.toList()));
+        return view;
+    }
 
     @Getter
     @Setter

@@ -1,3 +1,4 @@
+# This workflow defines the Continuous Integration pipeline for building and testing the application
 name: CI Pipeline
 
 on:
@@ -120,12 +121,36 @@ jobs:
       - name: Build Docker image
         run: docker build -t haatbazar:${{ github.sha }} .
 
-  # ── Job 5: All Checks Passed ────────────────────────────────────────────────
+  # ── Job 5: Deploy to Render (On push and PRs to main branch) ─────────────────
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: [ build, docker, quality ]
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.base_ref == 'main' && github.event_name == 'pull_request')
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Render
+        run: |
+          curl --request POST \
+            --header "accept: application/json" \
+            --header "content-type: application/json" \
+            --header "authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            --data '{"clearCache":"clear"}' \
+            "https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}"
+
+      - name: Deployment Status
+        run: echo "Deployment to Render initiated!"
+
+  # ── Job 6: All Checks Passed ────────────────────────────────────────────────
   all-checks:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [ build, docker, quality ]
+    needs: [ build, docker, quality, deploy ]
 
     steps:
       - name: All checks passed
         run: echo "✅ All jobs completed successfully!"
+

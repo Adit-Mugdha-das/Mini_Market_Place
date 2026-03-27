@@ -10,6 +10,7 @@ import com.example.mini_marketplace.entity.OrderItem;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.entity.User;
 import com.example.mini_marketplace.exception.InsufficientStockException;
+import com.example.mini_marketplace.exception.ResourceNotFoundException;
 import com.example.mini_marketplace.repository.OrderRepository;
 import com.example.mini_marketplace.repository.ProductRepository;
 import com.example.mini_marketplace.repository.ReviewRepository;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+// Service handling buyer-related operations such as placing orders and managing profile.
 @Service
 @RequiredArgsConstructor
 public class BuyerService {
@@ -111,9 +113,9 @@ public class BuyerService {
 
     public Product getProductById(Long id) {
         Product p = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + id));
         if (!p.isActive()) {
-            throw new IllegalArgumentException("Product is no longer available.");
+            throw new ResourceNotFoundException("Product is no longer available.");
         }
         return p;
     }
@@ -129,7 +131,7 @@ public class BuyerService {
             throw new IllegalStateException("Your account is deactivated. You cannot place orders until an admin reactivates your account.");
         }
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
 
         if (!product.isActive()) throw new IllegalStateException("Product is no longer available.");
         if (product.getQuantity() <= 0)
@@ -182,7 +184,7 @@ public class BuyerService {
         User buyer = getUser(username);
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
 
         // Ownership check
         if (!order.getBuyer().getId().equals(buyer.getId())) {
@@ -297,5 +299,30 @@ public class BuyerService {
         }
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    public BuyerOrderView getOrder(Long orderId, String username) {
+        User buyer = getUser(username);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + orderId));
+
+        if (!order.getBuyer().getId().equals(buyer.getId())) {
+             throw new  SecurityException("Access denied to this order.");
+        }
+
+        BuyerOrderView view = new BuyerOrderView();
+        view.setOrderId(order.getId());
+        view.setStatus(order.getStatus());
+        view.setCreatedAt(order.getCreatedAt());
+        view.setTotalAmount(order.getTotalAmount());
+        view.setPaymentMethod(order.getPaymentMethod());
+        view.setPaymentReference(order.getPaymentReference());
+
+        List<BuyerOrderView.ItemView> itemViews = order.getItems().stream()
+                .map(BuyerOrderView.ItemView::from)
+                .collect(Collectors.toList());
+        view.setItems(itemViews);
+
+        return view;
     }
 }

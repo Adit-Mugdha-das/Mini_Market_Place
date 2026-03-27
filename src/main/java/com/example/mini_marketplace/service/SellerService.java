@@ -12,6 +12,7 @@ import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.OrderItem;
 import com.example.mini_marketplace.entity.Product;
 import com.example.mini_marketplace.entity.User;
+import com.example.mini_marketplace.exception.ResourceNotFoundException;
 import com.example.mini_marketplace.repository.CategoryRepository;
 import com.example.mini_marketplace.repository.OrderItemRepository;
 import com.example.mini_marketplace.repository.OrderRepository;
@@ -27,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Service handling seller-specific operations like product management and order fulfillment.
 @Service
 @RequiredArgsConstructor
 public class SellerService {
@@ -57,7 +59,7 @@ public class SellerService {
 
     private Product getOwnedProduct(Long productId, User seller) {
         return productRepository.findByIdAndSeller(productId, seller)
-                .orElseThrow(() -> new SecurityException("Product not found or access denied."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found or access denied."));
     }
 
     // ─── product CRUD ──────────────────────────────────────────────────────────
@@ -167,11 +169,11 @@ public class SellerService {
         List<OrderItem> myItems =
                 orderItemRepository.findByOrderIdAndSellerId(orderId, seller.getId());
         if (myItems.isEmpty()) {
-            throw new SecurityException("Order not found or access denied.");
+            throw new ResourceNotFoundException("Order not found or access denied.");
         }
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
 
         Order.Status next = switch (order.getStatus()) {
             case PENDING   -> Order.Status.CONFIRMED;
@@ -193,7 +195,7 @@ public class SellerService {
 
     public SellerProfileDto getSellerProfile(Long sellerId) {
         User seller = userRepository.findById(sellerId)
-                .orElseThrow(() -> new IllegalArgumentException("Seller not found: " + sellerId));
+                .orElseThrow(() -> new ResourceNotFoundException("Seller not found: " + sellerId));
 
         List<Product> allProducts = productRepository.findBySellerOrderByCreatedAtDesc(seller);
         long totalProducts  = allProducts.size();
@@ -298,6 +300,8 @@ public class SellerService {
         return trimmed.isEmpty() ? null : trimmed;
     }
 }
+
+
 
 
 

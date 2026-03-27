@@ -1,6 +1,7 @@
 package com.example.mini_marketplace.service;
 
 import com.example.mini_marketplace.dto.ProductRequest;
+import com.example.mini_marketplace.exception.ResourceNotFoundException;
 import com.example.mini_marketplace.entity.Order;
 import com.example.mini_marketplace.entity.OrderItem;
 import com.example.mini_marketplace.entity.Product;
@@ -140,7 +141,7 @@ class SellerServiceTest {
         when(productRepository.findByIdAndSeller(10L, seller)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> sellerService.deleteProduct(10L, "seller1"))
-                .isInstanceOf(SecurityException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("access denied");
 
         verify(productRepository, never()).save(any());
@@ -265,7 +266,7 @@ class SellerServiceTest {
         when(orderItemRepository.findByOrderIdAndSellerId(99L, 1L)).thenReturn(List.of());
 
         assertThatThrownBy(() -> sellerService.advanceOrderStatus(99L, "seller1"))
-                .isInstanceOf(SecurityException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("access denied");
     }
 
