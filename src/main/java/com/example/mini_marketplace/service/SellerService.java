@@ -65,7 +65,7 @@ public class SellerService {
     // ─── product CRUD ──────────────────────────────────────────────────────────
 
     public List<Product> getMyProducts(String username) {
-        return productRepository.findBySellerOrderByCreatedAtDesc(getUser(username));
+        return productRepository.findBySellerAndActiveTrueOrderByCreatedAtDesc(getUser(username));
     }
 
     @Transactional

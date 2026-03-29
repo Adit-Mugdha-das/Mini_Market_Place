@@ -146,7 +146,18 @@ class SellerServiceTest {
 
         verify(productRepository, never()).save(any());
     }
+    @Test
+    @DisplayName("getMyProducts — returns only active products for seller")
+    void getMyProducts_returnsOnlyActiveProducts() {
+        when(userRepository.findByUsername("seller1")).thenReturn(Optional.of(seller));
+        when(productRepository.findBySellerAndActiveTrueOrderByCreatedAtDesc(seller))
+                .thenReturn(List.of(product));
 
+        var products = sellerService.getMyProducts("seller1");
+
+        assertThat(products).hasSize(1).containsExactly(product);
+        verify(productRepository).findBySellerAndActiveTrueOrderByCreatedAtDesc(seller);
+    }
     // ─── updateProduct ────────────────────────────────────────────────────────
 
     @Test
@@ -297,7 +308,7 @@ class SellerServiceTest {
     @DisplayName("getMyProducts — returns products belonging to seller")
     void getMyProducts_returnsSellerProducts() {
         when(userRepository.findByUsername("seller1")).thenReturn(Optional.of(seller));
-        when(productRepository.findBySellerOrderByCreatedAtDesc(seller))
+        when(productRepository.findBySellerAndActiveTrueOrderByCreatedAtDesc(seller))
                 .thenReturn(List.of(product));
 
         List<Product> result = sellerService.getMyProducts("seller1");
@@ -310,7 +321,7 @@ class SellerServiceTest {
     @DisplayName("getMyProducts — returns empty list when seller has no products")
     void getMyProducts_returnsEmpty_whenNoProducts() {
         when(userRepository.findByUsername("seller1")).thenReturn(Optional.of(seller));
-        when(productRepository.findBySellerOrderByCreatedAtDesc(seller)).thenReturn(List.of());
+        when(productRepository.findBySellerAndActiveTrueOrderByCreatedAtDesc(seller)).thenReturn(List.of());
 
         assertThat(sellerService.getMyProducts("seller1")).isEmpty();
     }
