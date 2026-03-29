@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Set;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.hamcrest.Matchers.hasSize;import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -182,6 +181,30 @@ class SellerControllerIntegrationTest {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/seller/products"));
+    }
+
+    @Test
+    @WithMockUser(username = SELLER_USERNAME, roles = "SELLER")
+    @DisplayName("GET /seller/products — does not include soft-deleted product")
+    void getProducts_excludesSoftDeleted() throws Exception {
+        User seller = userRepository.findByUsername(SELLER_USERNAME).orElseThrow();
+        Product product = new Product();
+        product.setName("To Be Deleted");
+        product.setDescription("desc");
+        product.setPrice(BigDecimal.valueOf(1.00));
+        product.setQuantity(1);
+        product.setSeller(seller);
+        product = productRepository.save(product);
+
+        mockMvc.perform(post("/seller/products/delete/" + product.getId())
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/seller/products"));
+
+        mockMvc.perform(get("/seller/products"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("seller/products"))
+                .andExpect(model().attribute("products", hasSize(0)));
     }
 
     // ─── GET /seller/orders ───────────────────────────────────────────────────
