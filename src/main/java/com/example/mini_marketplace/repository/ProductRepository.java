@@ -18,6 +18,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findBySellerOrderByCreatedAtDesc(User seller);
 
+    List<Product> findBySellerAndActiveTrueOrderByCreatedAtDesc(User seller);
+
     Optional<Product> findByIdAndSeller(Long id, User seller);
 
     @Query("SELECT p FROM Product p WHERE p.active = true AND p.seller.enabled = true")
