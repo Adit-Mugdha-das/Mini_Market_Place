@@ -176,6 +176,53 @@ Notes:
 - REVIEWS has a unique constraint on (product_id, buyer_id) to enforce one review per buyer per product.
 - AUDIT_LOGS stores actor and action metadata for administrative traceability.
 
+## REST API Endpoints
+
+This project includes a REST API layer designed for JSON-based communication. The endpoints under `/api/**` follow RESTful principles, use proper HTTP methods (GET, POST, PUT, DELETE), and return standard status codes (200, 201, 400, 401, 403, 404, etc.).
+
+Authentication is handled via session cookies (same as the web app), but API endpoints do not redirect to HTML login pages; unauthenticated or unauthorized access yields a `401 Unauthorized` or `403 Forbidden` JSON response. Also, resources not found will yield `404 Not Found`.
+
+### Products API (`/api/products`)
+
+| Method | Endpoint | Description | Role |
+|---|---|---|---|
+| `GET` | `/api/products` | List and search products | Public |
+| `GET` | `/api/products/{id}` | Get product details | Public |
+| `POST` | `/api/products` | Create a new product | Seller, Admin |
+| `PUT` | `/api/products/{id}` | Update an existing product | Seller, Admin |
+| `DELETE` | `/api/products/{id}` | Delete a product | Seller, Admin |
+
+### Orders API (`/api/orders`)
+
+| Method | Endpoint | Description | Role |
+|---|---|---|---|
+| `GET` | `/api/orders` | List buyer's or seller's orders | Authenticated |
+| `GET` | `/api/orders/{id}` | Get specific order details | Authenticated |
+| `POST` | `/api/orders` | Place a new order | Buyer |
+| `PUT` | `/api/orders/{id}` | Advance order status | Seller, Admin |
+| `DELETE` | `/api/orders/{id}` | Cancel/Delete order | Buyer, Admin |
+
+### Reviews API (`/api/reviews`)
+
+| Method | Endpoint | Description | Role |
+|---|---|---|---|
+| `GET` | `/api/reviews` | List all reviews | Authenticated |
+| `GET` | `/api/reviews/{id}` | Get review details | Authenticated |
+| `POST` | `/api/reviews` | Submit a review | Buyer |
+| `PUT` | `/api/reviews/{id}` | Edit an existing review | Buyer |
+| `DELETE` | `/api/reviews/{id}` | Delete a review | Buyer, Admin |
+
+### Error Handling
+The REST API utilizes `@RestControllerAdvice` to enforce a standardized error schema across all controllers. For example:
+```json
+{
+  "timestamp": "2023-10-27T10:00:00",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product not found: 9999"
+}
+```
+
 ## API Endpoints (MVC Routes)
 
 These routes are server-rendered endpoints (Thymeleaf views and form posts), not a pure JSON REST API.
