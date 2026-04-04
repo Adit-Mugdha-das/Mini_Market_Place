@@ -157,7 +157,7 @@
 <nav>
     <span class="brand">Haat Bazar</span>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">Buyer</strong></span>
+        <span><strong th:text="${username}">Buyer</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -197,33 +197,33 @@
             <input type="hidden" name="quantity"  th:value="${quantity}" />
             <input type="hidden" name="paymentMethod" id="selectedPaymentMethod" value="CREDIT_CARD" />
 
-            <div class="card-title">💳 Choose Payment Method</div>
+            <div class="card-title">Choose Payment Method</div>
 
             <!-- Payment method selector -->
             <div class="pm-grid">
                 <!-- Credit Card -->
                 <input type="radio" name="pm" id="pm_cc" class="pm-option" value="CREDIT_CARD" checked onchange="switchPanel('panel-card','CREDIT_CARD')" />
-                <label for="pm_cc" class="pm-label"><span class="pm-icon">💳</span>Credit Card</label>
+                <label for="pm_cc" class="pm-label"><span class="pm-icon"></span>Credit Card</label>
 
                 <!-- Debit Card -->
                 <input type="radio" name="pm" id="pm_dc" class="pm-option" value="DEBIT_CARD" onchange="switchPanel('panel-card','DEBIT_CARD')" />
-                <label for="pm_dc" class="pm-label"><span class="pm-icon">🏦</span>Debit Card</label>
+                <label for="pm_dc" class="pm-label"><span class="pm-icon"></span>Debit Card</label>
 
                 <!-- PayPal -->
                 <input type="radio" name="pm" id="pm_pp" class="pm-option" value="PAYPAL" onchange="switchPanel('panel-paypal','PAYPAL')" />
-                <label for="pm_pp" class="pm-label"><span class="pm-icon">🅿️</span>PayPal</label>
+                <label for="pm_pp" class="pm-label"><span class="pm-icon"></span>PayPal</label>
 
                 <!-- bKash -->
                 <input type="radio" name="pm" id="pm_bk" class="pm-option" value="BKASH" onchange="switchPanel('panel-mobile','BKASH')" />
-                <label for="pm_bk" class="pm-label"><span class="pm-icon">📱</span>bKash</label>
+                <label for="pm_bk" class="pm-label"><span class="pm-icon"></span>bKash</label>
 
                 <!-- Nagad -->
                 <input type="radio" name="pm" id="pm_ng" class="pm-option" value="NAGAD" onchange="switchPanel('panel-mobile','NAGAD')" />
-                <label for="pm_ng" class="pm-label"><span class="pm-icon">📲</span>Nagad</label>
+                <label for="pm_ng" class="pm-label"><span class="pm-icon"></span>Nagad</label>
 
                 <!-- Cash on Delivery -->
                 <input type="radio" name="pm" id="pm_cod" class="pm-option" value="CASH_ON_DELIVERY" onchange="switchPanel('panel-cod','CASH_ON_DELIVERY')" />
-                <label for="pm_cod" class="pm-label"><span class="pm-icon">💵</span>Cash on Delivery</label>
+                <label for="pm_cod" class="pm-label"><span class="pm-icon"></span>Cash on Delivery</label>
             </div>
 
             <!-- ── Credit / Debit Card Panel ── -->
@@ -288,14 +288,13 @@
                     <input type="password" placeholder="••••••" maxlength="6" />
                 </div>
                 <div style="background:#ffffff;border:1px solid #ffffff;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#b2622f;">
-                    📨 An OTP will be sent to your registered number for verification.
+                    An OTP will be sent to your registered number for verification.
                 </div>
             </div>
 
             <!-- ── Cash on Delivery Panel ── -->
             <div id="panel-cod" class="method-panel">
                 <div class="cod-info">
-                    <div class="cod-icon">💵</div>
                     <strong>Cash on Delivery</strong><br/>
                     Pay when your order arrives at your doorstep. No online payment required.<br/><br/>
                     <strong>Note:</strong> Please keep the exact amount ready at the time of delivery.
@@ -304,10 +303,10 @@
 
             <!-- Pay button -->
             <button type="submit" class="btn-pay" id="payBtn">
-                🔒 Pay Now &amp; Place Order
+                Pay Now &amp; Place Order
             </button>
             <div style="text-align:center;font-size:0.72rem;color:#000000;margin-top:10px;">
-                🔐 256-bit SSL encrypted · Your data is safe
+                256-bit SSL encrypted · Your data is safe
             </div>
         </form>
     </div>
@@ -315,7 +314,7 @@
     <!-- ── RIGHT: Order Summary ── -->
     <div>
         <div class="card">
-            <div class="card-title">🧾 Order Summary</div>
+            <div class="card-title">Order Summary</div>
 
             <!-- Product info -->
             <div class="summary-product">
@@ -323,7 +322,7 @@
                      th:src="${product.imageUrl}" th:alt="${product.name}" class="summary-img"
                      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
                 <div th:if="${product.imageUrl == null or product.imageUrl.isEmpty()}" class="summary-no-img">🛒</div>
-                <div class="summary-no-img" style="display:none;">🛒</div>
+                <div class="summary-no-img" style="display:none;"></div>
                 <div class="summary-product-info">
                     <div class="name" th:text="${product.name}">Product</div>
                     <div class="seller" th:text="'by ' + ${product.seller.username}">by seller</div>
@@ -334,7 +333,7 @@
             <!-- Price lines -->
             <div class="summary-line">
                 <span>Unit Price</span>
-                <span class="val" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</span>
+                <span class="val" th:text="'৳' + ${#numbers.formatDecimal(product.price,1,2)}">৳0.00</span>
             </div>
             <div class="summary-line">
                 <span>Quantity</span>
@@ -342,7 +341,7 @@
             </div>
             <div class="summary-line">
                 <span>Subtotal</span>
-                <span class="val" th:text="'$' + ${#numbers.formatDecimal(subtotal,1,2)}">$0.00</span>
+                <span class="val" th:text="'৳' + ${#numbers.formatDecimal(subtotal,1,2)}">৳0.00</span>
             </div>
             <div class="summary-line">
                 <span>Shipping</span>
@@ -350,19 +349,19 @@
             </div>
             <div class="summary-line">
                 <span>Tax (0%)</span>
-                <span class="val">$0.00</span>
+                <span class="val" th:text="'৳' + ${#numbers.formatDecimal(tax,1,2)}">৳0.00</span>
             </div>
             <div class="summary-line total">
                 <span>Total</span>
-                <span class="val" th:text="'$' + ${#numbers.formatDecimal(subtotal,1,2)}">$0.00</span>
+                <span class="val" th:text="'৳' + ${#numbers.formatDecimal(subtotal,1,2)}">৳0.00</span>
             </div>
 
             <!-- Trust badges -->
             <div class="secure-badges">
-                <span class="secure-badge">🔒 SSL Secured</span>
-                <span class="secure-badge">📦 Fast Delivery</span>
-                <span class="secure-badge">↩️ Easy Cancel</span>
-                <span class="secure-badge">💯 Buyer Protection</span>
+                <span class="secure-badge">SSL Secured</span>
+                <span class="secure-badge">Fast Delivery</span>
+                <span class="secure-badge">Easy Cancel</span>
+                <span class="secure-badge">Buyer Protection</span>
             </div>
         </div>
     </div>

@@ -174,14 +174,14 @@
 </head>
 <body>
 <nav>
-    <span class="brand">🛒 HaatBazar</span>
+    <span class="brand">HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/buyer/profile}">My Profile</a>
         <a th:href="@{/buyer/products}" class="active">Browse Products</a>
         <a th:href="@{/buyer/orders}">My Orders</a>
     </div>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">Buyer</strong></span>
+        <span><strong th:text="${username}">Buyer</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -191,7 +191,7 @@
 
 <div class="container">
     <div class="page-header">
-        <h2>🛍️ Browse Products</h2>
+        <h2>Browse Products</h2>
         <span style="color:#000000;font-size:0.85rem;"
               th:text="${productPage.totalElements} + ' products found'">0 products found</span>
     </div>
@@ -203,26 +203,26 @@
     <form th:action="@{/buyer/products}" method="get" class="filter-bar">
         <!-- Keyword search -->
         <div class="filter-group">
-            <label>🔍 Search</label>
+            <label>Search</label>
             <input type="text" name="keyword" placeholder="Product name…"
                    th:value="${keyword}" />
         </div>
 
         <!-- Price range -->
         <div class="filter-group">
-            <label>Min Price ($)</label>
+            <label>Min Price (৳)</label>
             <input type="number" name="minPrice" placeholder="0.00" min="0" step="0.01"
                    th:value="${minPrice}" style="min-width:100px;" />
         </div>
         <div class="filter-group">
-            <label>Max Price ($)</label>
+            <label>Max Price (৳)</label>
             <input type="number" name="maxPrice" placeholder="Any" min="0" step="0.01"
                    th:value="${maxPrice}" style="min-width:100px;" />
         </div>
 
         <!-- Category -->
         <div class="filter-group">
-            <label>🏷️ Category</label>
+            <label>Category</label>
             <select name="categoryId">
                 <option value="">All Categories</option>
                 <option th:each="cat : ${categories}"
@@ -277,16 +277,15 @@
             · category <strong th:each="cat : ${categories}" th:if="${cat.id == categoryId}" th:text="${cat.name}">Cat</strong>
         </th:block>
         <th:block th:if="${minPrice != null}">
-            · min <strong th:text="'$' + ${minPrice}">$0</strong>
+            · min <strong th:text="'৳' + ${minPrice}">৳0</strong>
         </th:block>
         <th:block th:if="${maxPrice != null}">
-            · max <strong th:text="'$' + ${maxPrice}">$0</strong>
+            · max <strong th:text="'৳' + ${maxPrice}">৳0</strong>
         </th:block>
         — <strong th:text="${productPage.totalElements}">0</strong> product(s) found
     </div>
 
     <div th:if="${products == null or products.isEmpty()}" class="empty-state">
-        <div class="icon">🏪</div>
         <p>No products available yet. Check back soon!</p>
     </div>
 
@@ -300,12 +299,10 @@
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <div th:if="${product.imageUrl == null or product.imageUrl.isEmpty()}"
                      class="card-img-placeholder">
-                    <span class="ph-icon">🛒</span>
                     <span class="ph-text">No image</span>
                 </div>
                 <!-- Fallback placeholder shown by JS onerror -->
                 <div class="card-img-placeholder" style="display:none;">
-                    <span class="ph-icon">🛒</span>
                     <span class="ph-text">Image unavailable</span>
                 </div>
 
@@ -328,7 +325,7 @@
                 <!-- Category badge -->
                 <div th:if="${product.category != null}"
                      style="display:inline-block;background:rgba(22,81,87,0.16);color:#165157;font-size:0.68rem;font-weight:700;padding:2px 10px;border-radius:20px;">
-                    🏷️ <span th:text="${product.category.name}">Category</span>
+                    <span th:text="${product.category.name}">Category</span>
                 </div>
                 <!-- Star rating -->
                 <div class="card-rating" th:with="rs=${ratingMap[product.id]}">
@@ -345,14 +342,14 @@
                     <span class="cnt" th:if="${rs == null or rs.totalReviews == 0}">No reviews yet</span>
                 </div>
                 <div class="product-seller">
-                    🏪 <span th:text="${product.seller.username}">seller</span>
+                    <span th:text="${product.seller.username}">seller</span>
                 </div>
             </div>
 
             <!-- Footer: price + CTA -->
             <div class="card-footer">
                 <span class="product-price"
-                      th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</span>
+                      th:text="'৳' + ${#numbers.formatDecimal(product.price,1,2)}">৳0.00</span>
                 <a th:href="@{/buyer/products/{id}(id=${product.id})}"
                    class="btn-detail">View &amp; Order</a>
             </div>

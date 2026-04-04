@@ -191,14 +191,14 @@
 <body>
 
 <nav>
-    <span class="brand">🛒 HaatBazar</span>
+    <span class="brand">HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/buyer/profile}">My Profile</a>
         <a th:href="@{/buyer/products}">Browse Products</a>
         <a th:href="@{/buyer/orders}" class="active">My Orders</a>
     </div>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">Buyer</strong></span>
+        <span><strong th:text="${username}">Buyer</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -209,7 +209,7 @@
 <div class="container">
 
     <div class="page-header">
-        <h2>📦 My Orders</h2>
+        <h2>My Orders</h2>
         <p th:if="${orders != null and !orders.isEmpty()}"
            th:text="${orders.size()} + ' order(s) found'">0 orders</p>
     </div>
@@ -219,7 +219,6 @@
 
     <!-- ── Empty state ── -->
     <div th:if="${orders == null or orders.isEmpty()}" class="empty-state">
-        <div class="icon">🛍️</div>
         <h3>No orders yet</h3>
         <p>Looks like you haven't placed any orders. Start exploring products!</p>
         <a th:href="@{/buyer/products}" class="btn-shop">Start Shopping</a>
@@ -232,7 +231,7 @@
         <div class="order-header">
             <div class="order-meta">
                 <span class="order-id">
-                    🧾 Order <span th:text="'#' + ${order.orderId}">1</span>
+                    Order <span th:text="'#' + ${order.orderId}">1</span>
                 </span>
                 <span class="order-date"
                       th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy · HH:mm')}">01 Jan 2025</span>
@@ -310,13 +309,13 @@
                 <!-- Info -->
                 <div class="item-info">
                     <div class="item-name" th:text="${item.productName}">Product Name</div>
-                    <div class="item-seller">🏪 <span th:text="${item.sellerUsername}">seller</span></div>
+                    <div class="item-seller"><span th:text="${item.sellerUsername}">seller</span></div>
                 </div>
 
                 <!-- Unit price -->
                 <div class="item-price-col">
                     <div class="item-unit"
-                         th:text="'$' + ${#numbers.formatDecimal(item.unitPrice,1,2)} + ' each'">$0.00 each</div>
+                         th:text="'৳' + ${#numbers.formatDecimal(item.unitPrice,1,2)} + ' each'">৳0.00 each</div>
                 </div>
 
                 <!-- Qty pill -->
@@ -326,7 +325,7 @@
 
                 <!-- Subtotal -->
                 <div class="item-subtotal"
-                     th:text="'$' + ${#numbers.formatDecimal(item.subtotal,1,2)}">$0.00</div>
+                     th:text="'৳' + ${#numbers.formatDecimal(item.subtotal,1,2)}">$0.00</div>
             </div>
         </div>
 
@@ -353,24 +352,24 @@
                           border-radius:8px;font-size:0.8rem;font-weight:700;text-decoration:none;
                           transition:opacity 0.2s;"
                    onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                    ⭐ Write a Review
+                    Write a Review
                 </a>
             </div>
             <div class="order-total-wrap">
                 <div class="order-total-label">Order Total</div>
                 <div class="order-total-amount"
-                     th:text="'$' + ${#numbers.formatDecimal(order.totalAmount,1,2)}">$0.00</div>
+                     th:text="'৳' + ${#numbers.formatDecimal(order.totalAmount,1,2)}">৳0.00</div>
                 <!-- Payment info -->
                 <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
                     <span th:if="${order.paymentMethod != null}"
                           style="font-size:0.72rem;font-weight:700;background:#ffffff;color:#165157;padding:2px 10px;border-radius:20px;border:1px solid #ffffff;">
                         <th:block th:switch="${order.paymentMethod.name()}">
-                            <span th:case="'CREDIT_CARD'">💳 Credit Card</span>
-                            <span th:case="'DEBIT_CARD'">🏦 Debit Card</span>
-                            <span th:case="'PAYPAL'">🅿️ PayPal</span>
-                            <span th:case="'BKASH'">📱 bKash</span>
-                            <span th:case="'NAGAD'">📲 Nagad</span>
-                            <span th:case="'CASH_ON_DELIVERY'">💵 Cash on Delivery</span>
+                            <span th:case="'CREDIT_CARD'">Credit Card</span>
+                            <span th:case="'DEBIT_CARD'">Debit Card</span>
+                            <span th:case="'PAYPAL'">PayPal</span>
+                            <span th:case="'BKASH'">bKash</span>
+                            <span th:case="'NAGAD'">Nagad</span>
+                            <span th:case="'CASH_ON_DELIVERY'">Cash on Delivery</span>
                             <span th:case="*" th:text="${order.paymentMethod}">—</span>
                         </th:block>
                     </span>
