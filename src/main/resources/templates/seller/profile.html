@@ -133,7 +133,7 @@
 <body>
 
 <nav>
-    <span class="brand">🛒 HaatBazar</span>
+    <span class="brand">HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/seller/dashboard}">Dashboard</a>
         <a th:href="@{/seller/profile}" class="active">My Profile</a>
@@ -142,7 +142,7 @@
         <a th:href="@{/seller/reviews}">Reviews</a>
     </div>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">User</strong></span>
+        <span><strong th:text="${username}">User</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -160,10 +160,10 @@
             <div class="seller-name" th:text="${profile.fullName}">Full Name</div>
             <div class="seller-handle" th:text="'@' + ${profile.username}">@username</div>
             <div class="seller-joined">
-                📅 Member since
+                Member since
                 <span th:text="${#temporals.format(profile.joinDate,'MMMM yyyy')}">Jan 2024</span>
             </div>
-            <div class="seller-badge">🏪 Verified Seller</div>
+            <div class="seller-badge">Verified Seller</div>
         </div>
     </div>
 </div>
@@ -173,26 +173,22 @@
     <div class="stats-ribbon">
         <!-- Active Products -->
         <div class="stat-card">
-            <div class="stat-icon">📦</div>
             <div class="stat-num" th:text="${profile.activeProducts}">0</div>
             <div class="stat-sub" th:text="${profile.totalProducts} + ' total'">0 total</div>
             <div class="stat-label">Products</div>
         </div>
         <!-- Total Sales -->
         <div class="stat-card">
-            <div class="stat-icon">🛒</div>
             <div class="stat-num" th:text="${profile.totalSales}">0</div>
             <div class="stat-label">Sales</div>
         </div>
         <!-- Revenue -->
         <div class="stat-card">
-            <div class="stat-icon">💰</div>
-            <div class="stat-num" th:text="'$' + ${#numbers.formatDecimal(profile.totalRevenue,1,0)}">$0</div>
+            <div class="stat-num" th:text="'৳' + ${#numbers.formatDecimal(profile.totalRevenue,1,0)}">৳0</div>
             <div class="stat-label">Revenue</div>
         </div>
         <!-- Average Rating -->
         <div class="stat-card">
-            <div class="stat-icon">⭐</div>
             <div class="stat-num" th:text="${#numbers.formatDecimal(profile.averageRating,1,1)}">0.0</div>
             <div class="stat-sub" th:text="${profile.totalReviews} + ' reviews'">0 reviews</div>
             <div class="stat-label">Avg Rating</div>
@@ -214,14 +210,13 @@
     <a th:href="@{/buyer/products}" class="back-link">← Back to Products</a>
 
     <!-- Product showcase -->
-    <div class="section-title">🛍️ Products by this Seller
+    <div class="section-title">Products by this Seller
         <span style="font-size:0.78rem;font-weight:500;color:#000000;"
               th:if="${!profile.recentProducts.isEmpty()}"
               th:text="'Showing ' + ${profile.recentProducts.size()} + ' of ' + ${profile.activeProducts}"></span>
     </div>
 
     <div th:if="${profile.recentProducts.isEmpty()}" class="empty-state">
-        <div class="icon">📭</div>
         <p>This seller has no active products right now.</p>
     </div>
 

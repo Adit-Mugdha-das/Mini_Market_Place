@@ -78,7 +78,7 @@
         <a th:href="@{/admin/audit}">Audit Log</a>
     </div>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">Admin</strong></span>
+        <span><strong th:text="${username}">Admin</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -88,7 +88,7 @@
 
 <div class="container">
     <div class="page-header">
-        <h2>⭐ All Reviews</h2>
+        <h2>All Reviews</h2>
         <p th:text="${reviews.size()} + ' total review(s) across all products'">0 reviews</p>
     </div>
 
@@ -96,7 +96,6 @@
     <div th:if="${errorMessage}"   class="alert-error"   th:text="${errorMessage}"></div>
 
     <div th:if="${reviews.isEmpty()}" class="empty-state">
-        <div class="icon">💬</div>
         <p>No reviews have been submitted yet.</p>
     </div>
 
@@ -118,7 +117,7 @@
                           th:text="${r.rating} + '/5'">5/5</span>
                 </div>
             </div>
-            <span class="product-tag" th:text="'📦 ' + ${r.productName}">Product</span>
+            <span class="product-tag" th:text="${r.productName}">Product</span>
             <div th:if="${r.comment != null and !r.comment.isEmpty()}"
                  class="review-comment" th:text="${r.comment}"></div>
             <div th:unless="${r.comment != null and !r.comment.isEmpty()}"
@@ -127,7 +126,7 @@
         <form th:action="@{/admin/reviews/{id}/delete(id=${r.id})}" method="post"
               onsubmit="return confirm('Delete this review permanently?');">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit" class="btn-delete">🗑 Delete</button>
+            <button type="submit" class="btn-delete">Delete</button>
         </form>
     </div>
 </div>
