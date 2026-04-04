@@ -86,13 +86,16 @@ public class SecurityConfig {
                 .requestMatchers("/buyer/**").hasAnyRole("ADMIN", "BUYER")
                 .anyRequest().authenticated()
             )
-            // Custom entry point for API to return 401 instead of redirecting to login
+            // Custom entry point: API routes return 401 JSON, web routes redirect to login
             .exceptionHandling(exceptions -> exceptions
                 .defaultAuthenticationEntryPointFor(
                     new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                     new AntPathRequestMatcher("/api/**")
                 )
-                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/auth/login"))
+                .defaultAuthenticationEntryPointFor(
+                    new LoginUrlAuthenticationEntryPoint("/auth/login"),
+                    new AntPathRequestMatcher("/**")
+                )
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
