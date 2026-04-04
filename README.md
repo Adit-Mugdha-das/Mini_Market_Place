@@ -91,11 +91,6 @@ erDiagram
         datetime updated_at
     }
 
-    USER_ROLES {
-        bigint user_id FK
-        bigint role_id FK
-    }
-
     CATEGORIES {
         bigint id PK
         string name UK
@@ -157,8 +152,7 @@ erDiagram
         datetime timestamp
     }
 
-    USERS ||--o{ USER_ROLES : has
-    ROLES ||--o{ USER_ROLES : assigned_to
+    USERS }o--o{ ROLES : has_roles
 
     USERS ||--o{ PRODUCTS : sells
     CATEGORIES ||--o{ PRODUCTS : classifies

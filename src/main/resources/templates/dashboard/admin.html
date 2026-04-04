@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Haat Bazar- Admin</title>    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+    <title>Haat Bazar- Admin</title>    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
 
     <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
@@ -77,7 +78,7 @@
         <a th:href="@{/admin/audit}">Audit Log</a>
     </div>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">Admin</strong></span>
+        <span><strong th:text="${username}">Admin</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -87,58 +88,49 @@
 
 <div class="container">
     <div class="welcome">
-        <h2>⚙️ Admin Control Panel</h2>
+        <h2>Admin Control Panel</h2>
         <p>Manage users, roles, products and orders across the entire platform.</p>
         <span class="badge">ADMIN</span>
     </div>
 
     <div class="stats">
         <div class="stat-card">
-            <div class="stat-icon">👥</div>
             <div class="stat-number" th:text="${totalUsers}">0</div>
             <div class="stat-label">Total Users</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">📦</div>
             <div class="stat-number" th:text="${totalProducts}">0</div>
             <div class="stat-sub" th:text="${activeProducts} + ' active'">0 active</div>
             <div class="stat-label">Products</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">🧾</div>
             <div class="stat-number" th:text="${totalOrders}">0</div>
             <div class="stat-label">Total Orders</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">💰</div>
-            <div class="stat-number" th:text="'$' + ${#numbers.formatDecimal(totalRevenue,1,2)}">$0.00</div>
+            <div class="stat-number" th:text="'৳' + ${#numbers.formatDecimal(totalRevenue,1,2)}">৳0.00</div>
             <div class="stat-label">Total Revenue</div>
         </div>
     </div>
 
     <div class="action-cards">
         <a th:href="@{/admin/users}" class="action-card users">
-            <div class="icon">👥</div>
             <h3>Manage Users</h3>
             <p>View, activate/deactivate, change roles or delete users.</p>
         </a>
         <a th:href="@{/admin/products}" class="action-card products">
-            <div class="icon">🛍️</div>
             <h3>All Products</h3>
             <p>View all seller products and remove inappropriate listings.</p>
         </a>
         <a th:href="@{/admin/orders}" class="action-card orders">
-            <div class="icon">🧾</div>
             <h3>All Orders</h3>
             <p>View every order — see which buyer bought from which seller.</p>
         </a>
         <a th:href="@{/admin/audit}" class="action-card" style="border-top-color:#165157;">
-            <div class="icon">🔍</div>
             <h3>Audit Log</h3>
             <p>Track every action: who created, deleted or changed what.</p>
         </a>
         <a th:href="@{/admin/reviews}" class="action-card" style="border-top-color:#b2622f;">
-            <div class="icon">⭐</div>
             <h3>Reviews</h3>
             <p>View all product reviews and delete inappropriate content.</p>
         </a>
