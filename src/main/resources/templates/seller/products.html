@@ -78,7 +78,7 @@
 </head>
 <body>
 <nav>
-    <span class="brand">🏪 HaatBazar</span>
+    <span class="brand">HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/seller/dashboard}">Dashboard</a>
         <a th:href="@{/seller/profile}">My Profile</a>
@@ -87,7 +87,7 @@
         <a th:href="@{/seller/reviews}">Reviews</a>
     </div>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">Seller</strong></span>
+        <span><strong th:text="${username}">Seller</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -97,7 +97,7 @@
 
 <div class="container">
     <div class="page-header">
-        <h2>📦 My Products</h2>
+        <h2>My Products</h2>
         <a th:href="@{/seller/products/add}" class="btn btn-primary">+ Add Product</a>
     </div>
 
@@ -145,7 +145,7 @@
                             </span>
                             <span th:if="${p.category == null}" style="color:#ffffff;font-size:0.78rem;">—</span>
                         </td>
-                        <td class="price" th:text="'$' + ${#numbers.formatDecimal(p.price,1,2)}">$0.00</td>
+                        <td class="price" th:text="'৳' + ${#numbers.formatDecimal(p.price,1,2)}">৳0.00</td>
                         <td>
                             <span th:class="${p.quantity == 0 ? 'qty-badge qty-zero' : (p.quantity < 5 ? 'qty-badge qty-low' : 'qty-badge qty-ok')}"
                                   th:text="${p.quantity}">0</span>
@@ -154,12 +154,12 @@
                         <td>
                             <div class="actions">
                                 <a th:href="@{/seller/products/edit/{id}(id=${p.id})}"
-                                   class="btn btn-secondary btn-sm">✏️ Edit</a>
+                                   class="btn btn-secondary btn-sm">Edit</a>
                                 <form th:action="@{/seller/products/delete/{id}(id=${p.id})}"
                                       method="post" style="display:inline"
                                       onsubmit="return confirm('Delete this product?')">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                    <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
                             </div>
                         </td>
@@ -170,7 +170,6 @@
 
         <!-- Empty state -->
         <div th:if="${products == null or products.isEmpty()}" class="empty-state">
-            <div class="icon">📦</div>
             <p>You haven't added any products yet.</p>
             <a th:href="@{/seller/products/add}" class="btn btn-primary">Add Your First Product</a>
         </div>

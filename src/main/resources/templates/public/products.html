@@ -361,7 +361,7 @@
                     Description
                 </div>
                 <div class="bottom">
-                    <span class="price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</span>
+                    <span class="price" th:text="'৳' + ${#numbers.formatDecimal(product.price,1,2)}">৳0.00</span>
                     <a class="view" th:href="@{/products/{id}(id=${product.id})}">View</a>
                 </div>
             </div>

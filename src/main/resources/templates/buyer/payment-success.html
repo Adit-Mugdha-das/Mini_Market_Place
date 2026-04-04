@@ -117,15 +117,15 @@
 </div>
 
 <div class="card">
-    <h1>Payment Successful! 🎉</h1>
+    <h1>Payment Successful!</h1>
     <p class="sub">Your order has been placed and is being processed.</p>
 
     <!-- Order status -->
-    <div class="status-pill">⏳ Order Status: PENDING</div>
+    <div class="status-pill">Order Status: PENDING</div>
 
     <!-- Receipt -->
     <div class="receipt">
-        <div class="receipt-title">📋 Order Receipt</div>
+        <div class="receipt-title">Order Receipt</div>
 
         <div class="receipt-row">
             <span class="label">Order ID</span>
@@ -144,12 +144,12 @@
             <span class="value">
                 <span class="pm-display" th:if="${paymentMethod != null}">
                     <th:block th:switch="${paymentMethod}">
-                        <span th:case="'CREDIT_CARD'">💳 Credit Card</span>
-                        <span th:case="'DEBIT_CARD'">🏦 Debit Card</span>
-                        <span th:case="'PAYPAL'">🅿️ PayPal</span>
-                        <span th:case="'BKASH'">📱 bKash</span>
-                        <span th:case="'NAGAD'">📲 Nagad</span>
-                        <span th:case="'CASH_ON_DELIVERY'">💵 Cash on Delivery</span>
+                        <span th:case="'CREDIT_CARD'">Credit Card</span>
+                        <span th:case="'DEBIT_CARD'">Debit Card</span>
+                        <span th:case="'PAYPAL'">PayPal</span>
+                        <span th:case="'BKASH'">bKash</span>
+                        <span th:case="'NAGAD'">Nagad</span>
+                        <span th:case="'CASH_ON_DELIVERY'">Cash on Delivery</span>
                         <span th:case="*" th:text="${paymentMethod}">—</span>
                     </th:block>
                 </span>
@@ -161,7 +161,7 @@
             <span class="label">Amount Paid</span>
             <span class="value green"
                   th:if="${totalAmount != null}"
-                  th:text="'$' + ${#numbers.formatDecimal(totalAmount,1,2)}">$0.00</span>
+                  th:text="'৳' + ${#numbers.formatDecimal(totalAmount,1,2)}">৳0.00</span>
             <span class="value green" th:if="${totalAmount == null}">—</span>
         </div>
 
@@ -173,15 +173,15 @@
 
     <!-- What happens next -->
     <div style="background:#ffffff;border:1px solid #ffffff;border-radius:12px;padding:16px 18px;text-align:left;font-size:0.82rem;color:#165157;margin-bottom:24px;line-height:1.8;">
-        <div style="font-weight:800;margin-bottom:6px;">📦 What happens next?</div>
+        <div style="font-weight:800;margin-bottom:6px;">What happens next?</div>
         <div>1. Seller will <strong>confirm</strong> your order shortly</div>
         <div>2. Your order will be <strong>shipped</strong> once confirmed</div>
         <div>3. Track your order status in <strong>My Orders</strong></div>
     </div>
 
     <div class="actions">
-        <a th:href="@{/buyer/orders}" class="btn btn-primary">📦 View My Orders</a>
-        <a th:href="@{/buyer/products}" class="btn btn-outline">🛒 Continue Shopping</a>
+        <a th:href="@{/buyer/orders}" class="btn btn-primary">View My Orders</a>
+        <a th:href="@{/buyer/products}" class="btn btn-outline">Continue Shopping</a>
     </div>
 </div>
 

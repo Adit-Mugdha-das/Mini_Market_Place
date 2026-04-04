@@ -174,7 +174,7 @@
 </head>
 <body>
 <nav>
-    <span class="brand">🏪 HaatBazar</span>
+    <span class="brand">HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/seller/dashboard}">Dashboard</a>
         <a th:href="@{/seller/profile}">My Profile</a>
@@ -197,7 +197,7 @@
         <div class="card">
             <div class="card-header">
                 <!-- Header changes based on whether we are editing or adding -->
-                <h2 th:text="${productId != null ? '✏️ Edit Product' : '➕ Add New Product'}">Product Form</h2>
+                <h2 th:text="${productId != null ? 'Edit Product' : 'Add New Product'}">Product Form</h2>
                 <p th:text="${productId != null ? 'Update your listing details below.' : 'Fill in the details to list a new product.'}"></p>
             </div>
             <div class="card-body">
@@ -230,7 +230,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="categoryId">🏷️ Category</label>
+                        <label for="categoryId">Category</label>
                         <select id="categoryId" th:field="*{categoryId}"
                                 style="padding:9px 12px;border:1.5px solid #ffffff;border-radius:10px;font-size:0.9rem;background:#ffffff;outline:none;transition:border-color 0.2s;width:100%;">
                             <option value="">— Select a category (optional) —</option>
@@ -248,8 +248,8 @@
                         </label>
                         <!-- Tabs -->
                         <div class="img-tabs">
-                            <button type="button" class="img-tab active" onclick="switchTab(this,'upload-tab-add')">📁 Upload File</button>
-                            <button type="button" class="img-tab" onclick="switchTab(this,'url-tab-add')">🔗 Paste URL</button>
+                            <button type="button" class="img-tab active" onclick="switchTab(this,'upload-tab-add')">Upload File</button>
+                            <button type="button" class="img-tab" onclick="switchTab(this,'url-tab-add')">Paste URL</button>
                         </div>
                         <!-- Upload tab -->
                         <div id="upload-tab-add">
@@ -260,13 +260,11 @@
                                 <input type="file" id="imageFile-add" name="imageFile"
                                        accept="image/jpeg,image/png,image/webp,image/gif"
                                        onchange="onFileChange(this,'dropZoneAdd','fileChosen-add','chosenName-add')" />
-                                <div class="drop-icon">🖼️</div>
                                 <div class="drop-title">Drag &amp; drop your image here</div>
                                 <div class="drop-sub">JPG, PNG, WebP or GIF · max 5 MB</div>
                                 <span class="drop-btn">Browse Computer</span>
                             </div>
                             <div class="file-chosen" id="fileChosen-add">
-                                <span>✅</span>
                                 <span class="fname" id="chosenName-add">file.jpg</span>
                                 <button type="button" class="fclear" title="Remove"
                                         onclick="clearFile('imageFile-add','dropZoneAdd','fileChosen-add','chosenName-add')">✕</button>
@@ -284,12 +282,12 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="price">Price ($) <span class="req">*</span></label>
+                            <label for="price">Price (৳) <span class="req">*</span></label>
                             <input type="number" id="price" th:field="*{price}" step="0.01" min="0.01"
                                    th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'"
                                    placeholder="0.00" oninput="updatePreview()" />
                             <div class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
-                            <div class="field-hint" th:unless="${#fields.hasErrors('price')}">$0.01 – $999,999.99</div>
+                            <div class="field-hint" th:unless="${#fields.hasErrors('price')}">৳0.01 – ৳999,999.99</div>
                         </div>
                         <div class="form-group">
                             <label for="quantity">Stock Qty <span class="req">*</span></label>
@@ -303,7 +301,7 @@
 
                     <div class="btn-group">
                         <a th:href="@{/seller/products}" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">🚀 List Product</button>
+                        <button type="submit" class="btn btn-primary">List Product</button>
                     </div>
                 </form>
 
@@ -335,7 +333,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="ecategoryId">🏷️ Category</label>
+                        <label for="ecategoryId">Category</label>
                         <select id="ecategoryId" th:field="*{categoryId}"
                                 style="padding:9px 12px;border:1.5px solid #ffffff;border-radius:10px;font-size:0.9rem;background:#ffffff;outline:none;transition:border-color 0.2s;width:100%;">
                             <option value="">— Select a category (optional) —</option>
@@ -351,7 +349,7 @@
                     <!-- ── Image Uploader ── -->
                     <div class="img-uploader">
                         <label style="display:block;font-size:0.82rem;font-weight:700;color:#000000;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">
-                            🖼️ Product Image <span style="background:#ffffff;color:#b2622f;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:4px;">Optional</span>
+                            Product Image <span style="background:#ffffff;color:#b2622f;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:4px;">Optional</span>
                         </label>
                         <!-- Current image thumbnail (if exists) -->
                         <div th:if="${productRequest.imageUrl != null and !productRequest.imageUrl.isEmpty()}"
@@ -365,8 +363,8 @@
                         </div>
                         <!-- Tabs -->
                         <div class="img-tabs">
-                            <button type="button" class="img-tab active" onclick="switchTab(this,'upload-tab-edit')">📁 Upload File</button>
-                            <button type="button" class="img-tab" onclick="switchTab(this,'url-tab-edit')">🔗 Paste URL</button>
+                            <button type="button" class="img-tab active" onclick="switchTab(this,'upload-tab-edit')">Upload File</button>
+                            <button type="button" class="img-tab" onclick="switchTab(this,'url-tab-edit')">Paste URL</button>
                         </div>
                         <!-- Upload tab -->
                         <div id="upload-tab-edit">
@@ -377,13 +375,12 @@
                                 <input type="file" id="imageFile-edit" name="imageFile"
                                        accept="image/jpeg,image/png,image/webp,image/gif"
                                        onchange="onFileChange(this,'dropZoneEdit','fileChosen-edit','chosenName-edit')" />
-                                <div class="drop-icon">🖼️</div>
                                 <div class="drop-title">Drag &amp; drop a new image here</div>
                                 <div class="drop-sub">JPG, PNG, WebP or GIF · max 5 MB</div>
                                 <span class="drop-btn">Browse Computer</span>
                             </div>
                             <div class="file-chosen" id="fileChosen-edit">
-                                <span>✅</span>
+                                <span></span>
                                 <span class="fname" id="chosenName-edit">file.jpg</span>
                                 <button type="button" class="fclear" title="Remove"
                                         onclick="clearFile('imageFile-edit','dropZoneEdit','fileChosen-edit','chosenName-edit')">✕</button>
@@ -420,7 +417,7 @@
 
                     <div class="btn-group">
                         <a th:href="@{/seller/products}" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>
 
@@ -430,7 +427,7 @@
         <!-- ── Right: Live Preview ── -->
         <div>
             <div class="preview-card">
-                <div class="preview-header">👁️ Live Preview — Buyer View</div>
+                <div class="preview-header">Live Preview — Buyer View</div>
                 <div class="preview-image-wrap">
                     <img id="previewImg" src="" alt="Product image" style="display:none;"
                          onerror="this.style.display='none'; document.getElementById('noImg').style.display='block';" />
@@ -444,7 +441,7 @@
                         <span class="preview-price" id="previewPrice">$0.00</span>
                         <span class="preview-stock" id="previewStock">Qty: 0</span>
                     </div>
-                    <div class="preview-seller">🏪 Sold by: <strong>You</strong></div>
+                    <div class="preview-seller">Sold by: <strong>You</strong></div>
                     <div class="preview-btn">View &amp; Order</div>
                 </div>
             </div>
@@ -452,7 +449,7 @@
             <!-- Tips box -->
             <div style="margin-top:16px; background:#ffffff; border:1px solid #ffffff;
                         border-radius:12px; padding:16px; font-size:0.78rem; color:#b2622f;">
-                <div style="font-weight:700; margin-bottom:8px;">💡 Image Tips</div>
+                <div style="font-weight:700; margin-bottom:8px;">Image Tips</div>
                 <ul style="padding-left:16px; line-height:1.9;">
                     <li><strong>Upload File</strong> — browse or drag from your computer</li>
                     <li><strong>Paste URL</strong> — any public JPG/PNG/WebP link</li>
@@ -561,7 +558,7 @@
 
         document.getElementById('previewName').textContent  = name;
         document.getElementById('previewDesc').textContent  = desc.length > 100 ? desc.slice(0,100)+'…' : desc;
-        document.getElementById('previewPrice').textContent = '$' + price.toFixed(2);
+        document.getElementById('previewPrice').textContent = '৳' + price.toFixed(2);
         document.getElementById('previewStock').textContent = 'Qty: ' + qty;
     }
 

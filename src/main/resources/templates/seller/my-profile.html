@@ -253,7 +253,7 @@
             <div class="stat"><div class="k">Total Products</div><div class="v" th:text="${profile.totalProducts}">0</div></div>
             <div class="stat"><div class="k">Active Products</div><div class="v" th:text="${profile.activeProducts}">0</div></div>
             <div class="stat"><div class="k">Total Sales</div><div class="v" th:text="${profile.totalSales}">0</div></div>
-            <div class="stat"><div class="k">Revenue</div><div class="v" th:text="'$' + ${#numbers.formatDecimal(profile.totalRevenue,1,2)}">$0.00</div></div>
+            <div class="stat"><div class="k">Revenue</div><div class="v" th:text="'৳' + ${#numbers.formatDecimal(profile.totalRevenue,1,2)}">৳0.00</div></div>
             <div class="stat"><div class="k">Avg Rating</div><div class="v" th:text="${#numbers.formatDecimal(profile.averageRating,1,1)}">0.0</div></div>
             <div class="stat"><div class="k">Total Reviews</div><div class="v" th:text="${profile.totalReviews}">0</div></div>
         </div>

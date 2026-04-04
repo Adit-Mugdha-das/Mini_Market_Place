@@ -148,7 +148,7 @@
 
         <div class="info">
             <h1 class="name" th:text="${product.name}">Product Name</h1>
-            <div class="price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0.00</div>
+            <div class="price" th:text="'৳' + ${#numbers.formatDecimal(product.price,1,2)}">৳0.00</div>
             <div class="meta">Seller: <strong th:text="${product.seller.username}">seller</strong></div>
             <div class="meta" th:if="${product.category != null}">Category: <strong th:text="${product.category.name}">Category</strong></div>
             <div class="meta">Stock: <strong th:text="${product.quantity}">0</strong></div>

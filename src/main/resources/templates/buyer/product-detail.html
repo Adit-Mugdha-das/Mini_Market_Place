@@ -193,14 +193,14 @@
 </head>
 <body>
 <nav>
-    <span class="brand">🛒 HaatBazar</span>
+    <span class="brand">HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/buyer/profile}">My Profile</a>
         <a th:href="@{/buyer/products}">Browse Products</a>
         <a th:href="@{/buyer/orders}">My Orders</a>
     </div>
     <div class="user-area">
-        <span>👤 <strong th:text="${username}">Buyer</strong></span>
+        <span><strong th:text="${username}">Buyer</strong></span>
         <form th:action="@{/auth/logout}" method="post" style="display:inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-logout">Logout</button>
@@ -227,14 +227,13 @@
                 <div id="phDetail"
                      th:style="${product.imageUrl != null and !product.imageUrl.isEmpty()} ? 'display:none' : 'display:flex'"
                      class="img-placeholder">
-                    <span class="ph-icon">🛒</span>
                     <span class="ph-text">No image provided</span>
                 </div>
             </div>
             <div class="stock-row">
-                <span th:if="${product.quantity > 5}" class="badge badge-green">✅ In Stock</span>
-                <span th:if="${product.quantity > 0 and product.quantity <= 5}" class="badge badge-yellow">⚠️ Low Stock</span>
-                <span th:if="${product.quantity == 0}" class="badge badge-red">❌ Out of Stock</span>
+                <span th:if="${product.quantity > 5}" class="badge badge-green">In Stock</span>
+                <span th:if="${product.quantity > 0 and product.quantity <= 5}" class="badge badge-yellow">Low Stock</span>
+                <span th:if="${product.quantity == 0}" class="badge badge-red">Out of Stock</span>
                 <span style="color:#000000; font-size:0.82rem;"
                       th:text="${product.quantity} + ' units available'">0 units available</span>
             </div>
@@ -245,7 +244,7 @@
             <div class="product-name" th:text="${product.name}">Product Name</div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
                 <div class="product-seller">
-                    🏪 Sold by:
+                    Sold by:
                     <a th:href="@{/seller/profile/{id}(id=${product.seller.id})}"
                        style="color:#165157;font-weight:700;text-decoration:none;"
                        th:text="${product.seller.username}"
@@ -254,7 +253,7 @@
                 </div>
                 <span th:if="${product.category != null}"
                       style="background:rgba(22,81,87,0.16);color:#165157;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;">
-                    🏷️ <span th:text="${product.category.name}">Category</span>
+                    <span th:text="${product.category.name}">Category</span>
                 </span>
             </div>
 
@@ -288,14 +287,14 @@
 
                 <button type="submit" class="btn-order" th:disabled="${product.quantity == 0}"
                         style="background:linear-gradient(135deg,#165157,#165157);">
-                    🔒 Proceed to Checkout
+                    Proceed to Checkout
                 </button>
             </form>
 
             <div class="trust-row">
-                <span class="trust-item">🔒 Secure checkout</span>
-                <span class="trust-item">📦 Order tracking</span>
-                <span class="trust-item">↩️ Cancel if PENDING</span>
+                <span class="trust-item">Secure checkout</span>
+                <span class="trust-item">Order tracking</span>
+                <span class="trust-item">Cancel if PENDING</span>
             </div>
         </div><!-- /info-panel -->
     </div><!-- /detail-layout -->
@@ -304,7 +303,7 @@
          REVIEWS & RATINGS
     ══════════════════════════════════════════════════════════ -->
     <div class="reviews-section" id="reviews">
-        <h3>⭐ Customer Reviews
+        <h3>Customer Reviews
             <span style="font-size:0.82rem;font-weight:500;color:#000000;"
                   th:if="${reviewSummary.totalReviews > 0}"
                   th:text="'(' + ${reviewSummary.totalReviews} + ' reviews)'"></span>
@@ -338,7 +337,7 @@
 
         <!-- Write a review -->
         <div class="review-form-card" th:if="${canReview}">
-            <h4>✍️ Write Your Review</h4>
+            <h4>Write Your Review</h4>
             <form th:action="@{/buyer/products/{id}/review(id=${product.id})}" method="post">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="star-picker">
@@ -356,14 +355,14 @@
                 <textarea name="comment" class="review-textarea"
                           placeholder="Share your experience with this product… (optional)"
                           maxlength="1000"></textarea>
-                <button type="submit" class="btn-review">Submit Review ⭐</button>
+                <button type="submit" class="btn-review">Submit Review</button>
             </form>
         </div>
 
         <!-- Already reviewed — show edit + delete -->
         <div class="review-form-card" th:if="${hasReviewed and myReview != null}">
             <h4 style="display:flex;align-items:center;justify-content:space-between;">
-                <span>✏️ Your Review</span>
+                <span>Your Review</span>
                 <!-- Delete -->
                 <form th:action="@{/buyer/reviews/{rid}/delete(rid=${myReview.id})}" method="post"
                       onsubmit="return confirm('Delete your review?');" style="margin:0;">
@@ -394,13 +393,13 @@
                 <textarea name="comment" class="review-textarea" maxlength="1000"
                           th:text="${myReview.comment}"
                           placeholder="Update your comment… (optional)"></textarea>
-                <button type="submit" class="btn-review">💾 Update Review</button>
+                <button type="submit" class="btn-review">Update Review</button>
             </form>
         </div>
 
         <!-- Not eligible (no delivered order) -->
         <div class="review-locked" th:if="${!canReview and !hasReviewed}">
-            🔒 Only buyers with a <strong>DELIVERED</strong> order for this product can leave a review.
+            Only buyers with a <strong>DELIVERED</strong> order for this product can leave a review.
         </div>
 
         <!-- Review list -->

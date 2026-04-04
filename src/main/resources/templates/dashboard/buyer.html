@@ -3,7 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Buyer Dashboard – HaatBazar</title>    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+    <title>Buyer Dashboard – HaatBazar</title>    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
 
     <link rel="icon" type="image/png" th:href="@{/images/Haat_Bazar-logo.png}">
     <style>
@@ -64,7 +65,7 @@
 </head>
 <body>
 <nav>
-    <span class="brand">🛒 HaatBazar</span>
+    <span class="brand">HaatBazar</span>
     <div class="nav-links">
         <a th:href="@{/buyer/profile}">My Profile</a>
         <a th:href="@{/buyer/products}">Browse Products</a>
@@ -80,18 +81,16 @@
 </nav>
 <div class="container">
     <div class="welcome">
-        <h2>👋 Hello, <span th:text="${username}">User</span>!</h2>
+        <h2>Hello, <span th:text="${username}">User</span>!</h2>
         <p>Welcome to HaatBazar. Browse products and place orders easily.</p>
         <span class="badge">BUYER</span>
     </div>
     <div class="cards">
         <a th:href="@{/buyer/products}" class="card">
-            <div class="icon">🛍️</div>
             <h3>Browse Products</h3>
             <p>Explore all available products from our sellers.</p>
         </a>
         <a th:href="@{/buyer/orders}" class="card">
-            <div class="icon">📦</div>
             <h3>My Orders</h3>
             <p>Track your orders and view order history.</p>
         </a>
