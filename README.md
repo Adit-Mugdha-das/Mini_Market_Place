@@ -67,6 +67,52 @@ flowchart TB
 - src/main/resources/templates: Thymeleaf pages
 - src/main/resources/static: CSS/JS/assets
 
+## Design Patterns in Mini MarketPlace
+
+This document outlines the software design patterns implemented across the Mini MarketPlace project. Utilizing these patterns ensures a clean, maintainable, and scalable architecture.
+
+1. MVC Pattern (Model-View-Controller)
+The primary architectural pattern governing the application's structure.
+
+- Model (entity/): Represents the data structures (e.g., User, Product, Order) and database tables.
+- View (templates/): Thymeleaf templates responsible for rendering the UI and presenting data to the user.
+- Controller (controller/): Intercepts HTTP requests, routes them to the appropriate services, and returns the appropriate view or JSON response.
+
+2. Repository Pattern
+Abstracts the Data Access Layer (DAL).
+
+- Implementation: Interfaces extending JpaRepository (e.g., ProductRepository, UserRepository).
+
+3. DTO Pattern (Data Transfer Object)
+Used to encapsulate data and send it between subsystems.
+
+- Implementation: The dto/ package (e.g., ProductRequest, ProductResponseDto).
+
+4. Strategy Pattern
+Defines a family of algorithms, encapsulates each one, and makes them interchangeable.
+
+- Implementation: CustomUserDetailsService implements Spring Security's UserDetailsService.
+
+5. Observer Pattern
+Allows an object to notify other objects of state changes automatically.
+
+- Implementation: AuditService utilizing @Async.
+
+6. Facade Pattern
+Provides a simplified interface to a complex body of code.
+
+- Implementation: Complex service classes like BuyerService and SellerService.
+
+7. Factory Method Pattern (Lazy Initialization)
+Creates objects without specifying the exact class to create.
+
+- Implementation: Usage of orElseGet() when retrieving roles in AuthService and AdminService. Example: roleRepository.findByName().orElseGet(() -> new Role(...)).
+
+8. Template Method Pattern
+Defines the skeleton of an algorithm, deferring some steps to subclasses.
+
+- Implementation: Built into the Spring Data JpaRepository inheritance.
+
 ## ER Diagram
 
 ```mermaid
